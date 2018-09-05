@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="SceneRenderer.cpp">
+      <Filter>App\Content</Filter>
+    </ClCompile>
+    <ClCompile Include="DXResource.cpp">
+      <Filter>App\DX</Filter>
+    </ClCompile>
+    <ClCompile Include="FileReader.cpp">
+      <Filter>App\File</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\Box.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\Camera.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineManager.cpp">
+      <Filter>App\Content</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\Shape.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\Transform.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SceneRenderer.h">
+      <Filter>App\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderStructures.h">
+      <Filter>App\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>App\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXHelper.h">
+      <Filter>App\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="DXResource.h">
+      <Filter>App\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="FileReader.h">
+      <Filter>App\File</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="header.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\Box.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\Camera.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineManager.h">
+      <Filter>App\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\Shape.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\Transform.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="SampleVertexShader.hlsl">
+      <Filter>App\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="SamplePixelShader.hlsl">
+      <Filter>App\HLSL</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="App">
+      <UniqueIdentifier>{abd6c365-adff-4ca1-864f-eb85700d2413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Content">
+      <UniqueIdentifier>{58c67af9-c441-4bc8-9df9-f076634a8903}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\DX">
+      <UniqueIdentifier>{b75fd476-87fe-4e3e-8013-f0331febe8e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\File">
+      <UniqueIdentifier>{91977760-415f-4ee1-9390-b0e77862c208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\HLSL">
+      <UniqueIdentifier>{369587fc-8549-4b9c-884b-4a5e839a29ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{0f506a41-ecad-4da5-b340-53e93f36df28}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Next Work" />
+  </ItemGroup>
+</Project>

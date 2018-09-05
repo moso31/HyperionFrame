@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HyperionFrame", "HyperionFrame\HyperionFrame.vcxproj", "{A55055E4-9F58-47F2-9806-8A909F0DA7CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x64.ActiveCfg = Debug|x64
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x64.Build.0 = Debug|x64
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x86.ActiveCfg = Debug|Win32
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x86.Build.0 = Debug|Win32
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x64.ActiveCfg = Release|x64
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x64.Build.0 = Release|x64
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x86.ActiveCfg = Release|Win32
+		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5DCF4EAB-631A-46FC-BE29-A57A9A2EABB1}
+	EndGlobalSection
+EndGlobal
