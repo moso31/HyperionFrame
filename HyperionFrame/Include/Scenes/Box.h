@@ -20,9 +20,6 @@ private:
 	shared_ptr<DXResource> m_dxResources;
 
 	// 立体几何的 Direct3D 资源。
-	ComPtr<ID3D12GraphicsCommandList>					m_commandList;
-	ComPtr<ID3D12RootSignature>							m_rootSignature;
-	ComPtr<ID3D12PipelineState>							m_pipelineState;
 	ComPtr<ID3D12DescriptorHeap>						m_cbvHeap;
 	ComPtr<ID3D12Resource>								m_vertexBuffer;
 	ComPtr<ID3D12Resource>								m_indexBuffer;
@@ -30,8 +27,6 @@ private:
 
 	UINT8*												m_mappedConstantBuffer;
 	UINT												m_cbvDescriptorSize;
-	vector<byte>										m_vertexShader;
-	vector<byte>										m_pixelShader;
 	D3D12_VERTEX_BUFFER_VIEW							m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW								m_indexBufferView;
 };

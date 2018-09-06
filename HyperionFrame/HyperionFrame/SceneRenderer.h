@@ -8,7 +8,8 @@ public:
 	SceneRenderer(const std::shared_ptr<DXResource>& dxResource);
 	~SceneRenderer();
 
-	void CreateDeviceDependentResources();
+	void CreateSceneResources();
+	void LoadSceneAssets();
 	void WindowSizeChanged();
 
 	void Update();
@@ -17,8 +18,12 @@ public:
 private:
 	std::shared_ptr<DXResource> m_dxResources;
 
-	// 立体几何的 Direct3D 资源。
-	//ComPtr<ID3D12PipelineState>							m_pipelineState;
+	ComPtr<ID3D12GraphicsCommandList>					m_commandList;
+	ComPtr<ID3D12RootSignature>							m_rootSignature;
+	ComPtr<ID3D12PipelineState>							m_pipelineState;
+	vector<byte>										m_vertexShader;
+	vector<byte>										m_pixelShader;
+
 	ComPtr<ID3D12DescriptorHeap>						m_cbvHeap;
 
 	D3D12_RECT											m_scissorRect;
