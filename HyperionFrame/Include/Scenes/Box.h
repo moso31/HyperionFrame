@@ -10,23 +10,26 @@ public:
 	Box(const shared_ptr<DXResource>& dxResources, Camera* camera);
 	~Box();
 
-	void Init();
+	void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	void Update();
-	void Render();
+	void Update(UINT8 * destination);
+	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+
+	void ReleaseUploadBuffers();
 
 private:
 	Camera* m_camera;
 	shared_ptr<DXResource> m_dxResources;
 
 	// 立体几何的 Direct3D 资源。
-	ComPtr<ID3D12DescriptorHeap>						m_cbvHeap;
 	ComPtr<ID3D12Resource>								m_vertexBuffer;
 	ComPtr<ID3D12Resource>								m_indexBuffer;
-	ComPtr<ID3D12Resource>								m_constantBuffer;
 
-	UINT8*												m_mappedConstantBuffer;
-	UINT												m_cbvDescriptorSize;
+	// 在 GPU 的默认堆中创建顶点缓冲区资源并使用上载堆将顶点数据复制到其中。
+	// 在 GPU 使用完之前，不得释放上载资源。
+	ComPtr<ID3D12Resource> m_vertexBufferUpload;
+	ComPtr<ID3D12Resource> m_indexBufferUpload;
+
 	D3D12_VERTEX_BUFFER_VIEW							m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW								m_indexBufferView;
 };

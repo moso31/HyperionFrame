@@ -15,7 +15,7 @@ Box::~Box()
 {
 }
 
-void Box::Init()
+void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	auto d3dDevice = m_dxResources->GetD3DDevice();
 
@@ -36,10 +36,6 @@ void Box::Init()
 
 	const UINT vertexBufferSize = sizeof(cubeVertices);
 
-	// 在 GPU 的默认堆中创建顶点缓冲区资源并使用上载堆将顶点数据复制到其中。
-	// 在 GPU 使用完之前，不得释放上载资源。
-	ComPtr<ID3D12Resource> vertexBufferUpload;
-
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
 	ThrowIfFailed(d3dDevice->CreateCommittedResource(
@@ -57,10 +53,10 @@ void Box::Init()
 		&vertexBufferDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&vertexBufferUpload)));
+		IID_PPV_ARGS(&m_vertexBufferUpload)));
 
 	NAME_D3D12_OBJECT(m_vertexBuffer);
-	NAME_D3D12_OBJECT(vertexBufferUpload);
+	NAME_D3D12_OBJECT(m_vertexBufferUpload);
 
 	// 将顶点缓冲区上载到 GPU。
 	{
@@ -69,11 +65,11 @@ void Box::Init()
 		vertexData.RowPitch = vertexBufferSize;
 		vertexData.SlicePitch = vertexData.RowPitch;
 
-		UpdateSubresources(m_commandList.Get(), m_vertexBuffer.Get(), vertexBufferUpload.Get(), 0, 0, 1, &vertexData);
+		UpdateSubresources(pCommandList.Get(), m_vertexBuffer.Get(), m_vertexBufferUpload.Get(), 0, 0, 1, &vertexData);
 
 		CD3DX12_RESOURCE_BARRIER vertexBufferResourceBarrier =
 			CD3DX12_RESOURCE_BARRIER::Transition(m_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-		m_commandList->ResourceBarrier(1, &vertexBufferResourceBarrier);
+		pCommandList->ResourceBarrier(1, &vertexBufferResourceBarrier);
 	}
 
 	// 加载网格索引。每三个索引表示要在屏幕上呈现的三角形。
@@ -102,10 +98,6 @@ void Box::Init()
 
 	const UINT indexBufferSize = sizeof(cubeIndices);
 
-	// 在 GPU 的默认堆中创建索引缓冲区资源并使用上载堆将索引数据复制到其中。
-	// 在 GPU 使用完之前，不得释放上载资源。
-	ComPtr<ID3D12Resource> indexBufferUpload;
-
 	CD3DX12_RESOURCE_DESC indexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
 	ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&defaultHeapProperties,
@@ -121,10 +113,10 @@ void Box::Init()
 		&indexBufferDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&indexBufferUpload)));
+		IID_PPV_ARGS(&m_indexBufferUpload)));
 
 	NAME_D3D12_OBJECT(m_indexBuffer);
-	NAME_D3D12_OBJECT(indexBufferUpload);
+	NAME_D3D12_OBJECT(m_indexBufferUpload);
 
 	// 将索引缓冲区上载到 GPU。
 	{
@@ -133,57 +125,12 @@ void Box::Init()
 		indexData.RowPitch = indexBufferSize;
 		indexData.SlicePitch = indexData.RowPitch;
 
-		UpdateSubresources(m_commandList.Get(), m_indexBuffer.Get(), indexBufferUpload.Get(), 0, 0, 1, &indexData);
+		UpdateSubresources(pCommandList.Get(), m_indexBuffer.Get(), m_indexBufferUpload.Get(), 0, 0, 1, &indexData);
 
 		CD3DX12_RESOURCE_BARRIER indexBufferResourceBarrier =
 			CD3DX12_RESOURCE_BARRIER::Transition(m_indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
-		m_commandList->ResourceBarrier(1, &indexBufferResourceBarrier);
+		pCommandList->ResourceBarrier(1, &indexBufferResourceBarrier);
 	}
-
-	// 为常量缓冲区创建描述符堆。
-	{
-		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = DXResource::c_frameCount;
-		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
-		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		ThrowIfFailed(d3dDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvHeap)));
-
-		NAME_D3D12_OBJECT(m_cbvHeap);
-	}
-
-	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * c_alignedConstantBufferSize);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&constantBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_constantBuffer)));
-
-	NAME_D3D12_OBJECT(m_constantBuffer);
-
-	// 创建常量缓冲区视图以访问上载缓冲区。
-	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-	m_cbvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	for (int n = 0; n < DXResource::c_frameCount; n++)
-	{
-		D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
-		desc.BufferLocation = cbvGpuAddress;
-		desc.SizeInBytes = c_alignedConstantBufferSize;
-		d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-
-		cbvGpuAddress += desc.SizeInBytes;
-		cbvCpuHandle.Offset(m_cbvDescriptorSize);
-	}
-
-	// 映射常量缓冲区。
-	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
-	ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * c_alignedConstantBufferSize);
-	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 
 	// 创建顶点/索引缓冲区视图。
 	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
@@ -195,16 +142,22 @@ void Box::Init()
 	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 }
 
-void Box::Update()
+void Box::Update(UINT8* destination)
 {
 	// 准备将更新的模型矩阵传递到着色器。
 	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(GetTransformMatrix()));
 
-	// 更新常量缓冲区资源。
-	UINT8* destination = m_mappedConstantBuffer + (m_dxResources->GetCurrentFrameIndex() * c_alignedConstantBufferSize);
 	memcpy(destination, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
 }
 
-void Box::Render()
+void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+{
+	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+	pCommandList->IASetIndexBuffer(&m_indexBufferView);
+	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
+}
+
+void Box::ReleaseUploadBuffers()
 {
 }

@@ -79,7 +79,54 @@ void SceneRenderer::CreateSceneResources()
 	ThrowIfFailed(d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_dxResources->GetCommandAllocator(), m_pipelineState.Get(), IID_PPV_ARGS(&m_commandList)));
 	NAME_D3D12_OBJECT(m_commandList);
 
+	// 创建场景资源
 	LoadSceneAssets();
+
+	// 为常量缓冲区创建描述符堆。
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = DXResource::c_frameCount;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		ThrowIfFailed(d3dDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvHeap)));
+
+		NAME_D3D12_OBJECT(m_cbvHeap);
+	}
+
+	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * c_alignedConstantBufferSize);
+	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+		&uploadHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&constantBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&m_constantBuffer)));
+
+	NAME_D3D12_OBJECT(m_constantBuffer);
+
+	// 映射常量缓冲区。
+	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
+	ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
+	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * c_alignedConstantBufferSize);
+	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
+
+	// 创建常量缓冲区视图以访问上载缓冲区。
+	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+	m_cbvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	for (int n = 0; n < DXResource::c_frameCount; n++)
+	{
+		D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+		desc.BufferLocation = cbvGpuAddress;
+		desc.SizeInBytes = c_alignedConstantBufferSize;
+		d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+
+		cbvGpuAddress += desc.SizeInBytes;
+		cbvCpuHandle.Offset(m_cbvDescriptorSize);
+	}
 
 	// 关闭命令列表并执行它，以开始将顶点/索引缓冲区复制到 GPU 的默认堆中。
 	ThrowIfFailed(m_commandList->Close());
@@ -88,6 +135,9 @@ void SceneRenderer::CreateSceneResources()
 
 	// 等待命令列表完成执行；顶点/索引缓冲区需要在上载资源超出范围之前上载到 GPU。
 	m_dxResources->WaitForGpu();
+
+	m_test_box->ReleaseUploadBuffers();
+	m_test_box_2->ReleaseUploadBuffers();
 }
 
 void SceneRenderer::LoadSceneAssets()
@@ -96,10 +146,10 @@ void SceneRenderer::LoadSceneAssets()
 	m_test_mainCamera->Init();
 
 	m_test_box = new Box(m_dxResources, m_test_mainCamera);
-	m_test_box->Init();
+	m_test_box->Init(m_commandList);
 
 	m_test_box_2 = new Box(m_dxResources, m_test_mainCamera);
-	m_test_box_2->Init();
+	m_test_box_2->Init(m_commandList);
 
 	m_test_box_2->SetTranslation(10.0f, 0.0f, -10.0f);
 }
@@ -114,9 +164,13 @@ void SceneRenderer::Update()
 	static float x = 0;
 	x += 0.01f;
 	m_test_box->SetRotation(0.0f, x, 0.0f);
-	m_test_box->Update();
+
+	// 更新常量缓冲区资源。
+	UINT8* destination = m_mappedConstantBuffer + (m_dxResources->GetCurrentFrameIndex() * c_alignedConstantBufferSize);
+	m_test_box->Update(destination);
+
 	m_test_box_2->SetRotation(0.0f, 0.0f, x);
-	m_test_box_2->Update();
+	m_test_box_2->Update(destination);
 }
 
 bool SceneRenderer::Render()
@@ -140,7 +194,7 @@ bool SceneRenderer::Render()
 		// 设置视区和剪刀矩形。
 		D3D12_VIEWPORT viewport = m_dxResources->GetScreenViewport();
 		m_commandList->RSSetViewports(1, &viewport);
-		m_commandList->RSSetScissorRects(1, &(m_camera->GetScissorRect()));
+		m_commandList->RSSetScissorRects(1, &(m_test_mainCamera->GetScissorRect()));
 
 		// 指示此资源会用作呈现目标。
 		CD3DX12_RESOURCE_BARRIER renderTargetResourceBarrier =
@@ -155,10 +209,8 @@ bool SceneRenderer::Render()
 
 		m_commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
 
-		m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-		m_commandList->IASetIndexBuffer(&m_indexBufferView);
-		m_commandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
+		m_test_box->Render(m_commandList);
+		m_test_box_2->Render(m_commandList);
 
 		// 指示呈现目标现在会用于展示命令列表完成执行的时间。
 		CD3DX12_RESOURCE_BARRIER presentResourceBarrier =
