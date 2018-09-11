@@ -149,6 +149,7 @@
     <ClInclude Include="..\Include\Scenes\Camera.h" />
     <ClInclude Include="..\Include\Scenes\Shape.h" />
     <ClInclude Include="..\Include\Scenes\Transform.h" />
+    <ClInclude Include="..\Math\Math.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DirectXHelper.h" />

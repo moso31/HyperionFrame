@@ -72,6 +72,9 @@
     <ClInclude Include="..\Include\Scenes\Transform.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="..\Math\Math.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SampleVertexShader.hlsl">
@@ -99,6 +102,9 @@
     </Filter>
     <Filter Include="Include">
       <UniqueIdentifier>{0f506a41-ecad-4da5-b340-53e93f36df28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{f56d8c1d-88ae-4b32-81ea-a8c56eee1645}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
