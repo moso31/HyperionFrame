@@ -1,6 +1,6 @@
 #include "SceneRenderer.h"
 
-static const UINT c_boxCount = 2;
+static const UINT c_boxCount = 3;
 
 SceneRenderer::SceneRenderer()
 {
@@ -129,7 +129,7 @@ void SceneRenderer::CreateSceneResources()
 			//cbvCpuHandle.Offset(m_cbvDescriptorSize);
 
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-			cbvGpuAddress += i * c_alignedConstantBufferSize;
+			cbvGpuAddress += (n * c_boxCount + i) * c_alignedConstantBufferSize;
 
 			int heapIndex = n * c_boxCount + i;
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
@@ -182,6 +182,7 @@ void SceneRenderer::LoadSceneAssets()
 		box->Init(m_commandList);
 
 		if (i == 1) box->SetTranslation(10.0f, 0.0f, -10.0f);
+		if (i == 2) box->SetTranslation(-10.0f, 0.0f, -10.0f);
 	}
 }
 
@@ -204,11 +205,11 @@ void SceneRenderer::Update()
 	//m_test_box_2->Update(destination);
 
 	// 更新常量缓冲区资源。
-	UINT8* destination = m_mappedConstantBuffer + (m_dxResources->GetCurrentFrameIndex() * c_alignedConstantBufferSize);
 
 	for (int i = 0; i < m_test_boxes.size(); i++)
 	{
 		m_test_boxes[i]->SetRotation(0.0f, x, 0.0f);
+		UINT8* destination = m_mappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * c_boxCount + i) * c_alignedConstantBufferSize);
 		m_test_boxes[i]->Update(destination);
 	}
 }
@@ -246,16 +247,22 @@ bool SceneRenderer::Render()
 		m_commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 		// 将当前帧的常量缓冲区绑定到管道。
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_dxResources->GetCurrentFrameIndex() * 2, m_cbvDescriptorSize);
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_dxResources->GetCurrentFrameIndex() * c_boxCount, m_cbvDescriptorSize);
 
 		//m_test_box->Render(m_commandList);
 		//m_test_box_2->Render(m_commandList);
 		for (int i = 0; i < m_test_boxes.size(); i++)
 		{
+			//m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+			//m_test_boxes[i]->Render(m_commandList);
+			//gpuHandle.Offset(m_cbvDescriptorSize);
+
+			UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * c_boxCount + i;
+			CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+			gpuHandle.Offset(cbvIndex, m_cbvDescriptorSize);
+
 			m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 			m_test_boxes[i]->Render(m_commandList);
-
-			gpuHandle.Offset(m_cbvDescriptorSize);
 		}
 
 		// 指示呈现目标现在会用于展示命令列表完成执行的时间。
