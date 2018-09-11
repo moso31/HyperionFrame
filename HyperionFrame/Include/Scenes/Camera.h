@@ -4,9 +4,9 @@
 #include "FileReader.h"
 #include "ShaderStructures.h"
 
-#include "Shape.h"
+#include "Transform.h"
 
-class Camera : public Shape
+class Camera : public Transform
 {
 public:
 	Camera();

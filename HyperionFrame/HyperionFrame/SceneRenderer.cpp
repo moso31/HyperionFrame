@@ -113,25 +113,16 @@ void SceneRenderer::CreateSceneResources()
 
 	// 创建常量缓冲区视图以访问上载缓冲区。
 	m_cbvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-	//CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());// , c_boxCount, m_cbvDescriptorSize);
 
 	for (int n = 0; n < DXResource::c_frameCount; n++)
 	{
 		for (int i = 0; i < c_boxCount; i++)
 		{
-			//D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
-			//desc.BufferLocation = cbvGpuAddress;
-			//desc.SizeInBytes = c_alignedConstantBufferSize;
-			//d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-
-			//cbvGpuAddress += desc.SizeInBytes;
-			//cbvCpuHandle.Offset(m_cbvDescriptorSize);
+			int heapIndex = n * c_boxCount + i;
 
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
 			cbvGpuAddress += (n * c_boxCount + i) * c_alignedConstantBufferSize;
 
-			int heapIndex = n * c_boxCount + i;
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
 			cbvCpuHandle.Offset(heapIndex, m_cbvDescriptorSize);
 
@@ -153,27 +144,16 @@ void SceneRenderer::CreateSceneResources()
 	// 等待命令列表完成执行；顶点/索引缓冲区需要在上载资源超出范围之前上载到 GPU。
 	m_dxResources->WaitForGpu();
 
-	for (int i = 0; i < m_test_boxes.size(); i++)
+	for (size_t i = 0; i < m_test_boxes.size(); i++)
 	{
 		m_test_boxes[i]->ReleaseUploadBuffers();
 	}
-
-	//m_test_box->ReleaseUploadBuffers();
-	//m_test_box_2->ReleaseUploadBuffers();
 }
 
 void SceneRenderer::LoadSceneAssets()
 {
 	m_test_mainCamera = new Camera(m_dxResources);
 	m_test_mainCamera->Init();
-
-	//m_test_box = new Box(m_dxResources, m_test_mainCamera);
-	//m_test_box->Init(m_commandList);
-
-	//m_test_box_2 = new Box(m_dxResources, m_test_mainCamera);
-	//m_test_box_2->Init(m_commandList);
-
-	//m_test_box_2->SetTranslation(10.0f, 0.0f, -10.0f);
 
 	for (int i = 0; i < c_boxCount; i++)
 	{
@@ -195,18 +175,10 @@ void SceneRenderer::Update()
 {
 	static float x = 0;
 	x += 0.01f;
-	//m_test_box->SetRotation(0.0f, x, 0.0f);
-
-	//// 更新常量缓冲区资源。
-	//UINT8* destination = m_mappedConstantBuffer + (m_dxResources->GetCurrentFrameIndex() * c_alignedConstantBufferSize);
-	//m_test_box->Update(destination);
-
-	//m_test_box_2->SetRotation(0.0f, 0.0f, x);
-	//m_test_box_2->Update(destination);
 
 	// 更新常量缓冲区资源。
 
-	for (int i = 0; i < m_test_boxes.size(); i++)
+	for (size_t i = 0; i < m_test_boxes.size(); i++)
 	{
 		m_test_boxes[i]->SetRotation(0.0f, x, 0.0f);
 		UINT8* destination = m_mappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * c_boxCount + i) * c_alignedConstantBufferSize);
@@ -249,14 +221,8 @@ bool SceneRenderer::Render()
 		// 将当前帧的常量缓冲区绑定到管道。
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_dxResources->GetCurrentFrameIndex() * c_boxCount, m_cbvDescriptorSize);
 
-		//m_test_box->Render(m_commandList);
-		//m_test_box_2->Render(m_commandList);
-		for (int i = 0; i < m_test_boxes.size(); i++)
+		for (size_t i = 0; i < m_test_boxes.size(); i++)
 		{
-			//m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
-			//m_test_boxes[i]->Render(m_commandList);
-			//gpuHandle.Offset(m_cbvDescriptorSize);
-
 			UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * c_boxCount + i;
 			CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 			gpuHandle.Offset(cbvIndex, m_cbvDescriptorSize);
@@ -278,7 +244,5 @@ bool SceneRenderer::Render()
 	ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };
 	m_dxResources->GetCommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-	//m_test_box->Render();
-	//m_test_box_2->Render();
 	return true;
 }

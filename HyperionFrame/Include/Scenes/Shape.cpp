@@ -4,31 +4,37 @@ Shape::Shape()
 {
 }
 
+Shape::Shape(const shared_ptr<DXResource>& dxResources, Camera * camera) :
+	m_dxResources(dxResources),
+	m_camera(camera)
+{
+}
+
 Shape::~Shape()
 {
 }
 
 Transform Shape::GetTransform()
 {
-	return m_transform;
+	return Transform(*this);
 }
 
 XMMATRIX Shape::GetTransformMatrix()
 {
-	return m_transform.GetMatrix();
+	return Transform(*this).GetMatrix();
 }
 
 void Shape::SetTranslation(float x, float y, float z)
 {
-	m_transform.translation = XMFLOAT3(x, y, z);
+	translation = XMFLOAT3(x, y, z);
 }
 
 void Shape::SetRotation(float x, float y, float z)
 {
-	m_transform.rotation = XMFLOAT3(x, y, z);
+	rotation = XMFLOAT3(x, y, z);
 }
 
 void Shape::SetScale(float x, float y, float z)
 {
-	m_transform.scale = XMFLOAT3(x, y, z);
+	scale = XMFLOAT3(x, y, z);
 }
