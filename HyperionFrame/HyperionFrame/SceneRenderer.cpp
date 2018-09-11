@@ -84,7 +84,7 @@ void SceneRenderer::CreateSceneResources()
 	// 为常量缓冲区创建描述符堆。
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = DXResource::c_frameCount * c_boxCount;
+		heapDesc.NumDescriptors = DXResource::c_frameCount * (c_boxCount);
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -112,21 +112,33 @@ void SceneRenderer::CreateSceneResources()
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 
 	// 创建常量缓冲区视图以访问上载缓冲区。
-	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
 	m_cbvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());// , c_boxCount, m_cbvDescriptorSize);
+	//D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
+	//CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());// , c_boxCount, m_cbvDescriptorSize);
 
 	for (int n = 0; n < DXResource::c_frameCount; n++)
 	{
 		for (int i = 0; i < c_boxCount; i++)
 		{
+			//D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+			//desc.BufferLocation = cbvGpuAddress;
+			//desc.SizeInBytes = c_alignedConstantBufferSize;
+			//d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+
+			//cbvGpuAddress += desc.SizeInBytes;
+			//cbvCpuHandle.Offset(m_cbvDescriptorSize);
+
+			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
+			cbvGpuAddress += i * c_alignedConstantBufferSize;
+
+			int heapIndex = n * c_boxCount + i;
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+			cbvCpuHandle.Offset(heapIndex, m_cbvDescriptorSize);
+
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 			desc.BufferLocation = cbvGpuAddress;
 			desc.SizeInBytes = c_alignedConstantBufferSize;
 			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-
-			cbvGpuAddress += desc.SizeInBytes;
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 		}
 	}
 
