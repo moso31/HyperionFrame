@@ -1,5 +1,7 @@
 #pragma once
-#include "Shape.h"
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 namespace HIFrameMath
 {

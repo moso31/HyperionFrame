@@ -9,13 +9,6 @@ public:
 	Shape(const shared_ptr<DXResource>& dxResources, Camera* camera);
 	~Shape();
 
-	Transform	GetTransform();
-	XMMATRIX	GetTransformMatrix();
-
-	void SetTranslation(float x, float y, float z);
-	void SetRotation(float x, float y, float z);
-	void SetScale(float x, float y, float z);
-
 protected:
 	Camera*		m_camera;
 

@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\Include\Scenes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\Include\Scenes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -149,7 +149,7 @@
     <ClInclude Include="..\Include\Scenes\Camera.h" />
     <ClInclude Include="..\Include\Scenes\Shape.h" />
     <ClInclude Include="..\Include\Scenes\Transform.h" />
-    <ClInclude Include="..\Math\Math.h" />
+    <ClInclude Include="..\Math\HMath.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DirectXHelper.h" />

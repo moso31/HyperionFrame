@@ -8,12 +8,22 @@ HINSTANCE g_hInstance;
 App* g_app;
 XMFLOAT2 g_windowSize;
 
+FILE* fp = 0;
+
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	DWORD x = HIWORD(lParam);
+	DWORD y = LOWORD(lParam);
+
 	switch (msg)
 	{
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		break;
+	case WM_INPUT:
+		break;
+	case WM_LBUTTONDOWN:
+		g_app->OnLButtonClicked(XMINT2(x, y));
 		break;
 	default:
 		break;
@@ -23,6 +33,9 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 bool InitWindow()
 {
+	AllocConsole();
+	freopen_s(&fp, "CONOUT$", "w", stdout);
+
 	printf("正在执行WIN32 API 窗口初始化...");
 	WNDCLASSEX wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;

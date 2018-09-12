@@ -154,6 +154,10 @@ void SceneRenderer::LoadSceneAssets()
 {
 	m_test_mainCamera = new Camera(m_dxResources);
 	m_test_mainCamera->Init();
+	//m_test_mainCamera->SetTranslation(0.0f, 0.7f, 1.5f);
+	//m_test_mainCamera->SetLookAt(0.0f, -0.1f, 0.0f);
+	m_test_mainCamera->SetTranslation(0.0f, 0.0f, 1.5f);
+	m_test_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
 	for (int i = 0; i < c_boxCount; i++)
 	{
@@ -176,7 +180,7 @@ void SceneRenderer::Update()
 	static float x = 0;
 	x += 0.01f;
 
-	// 更新常量缓冲区资源。
+	m_test_mainCamera->Update();
 
 	for (size_t i = 0; i < m_test_boxes.size(); i++)
 	{
@@ -228,7 +232,7 @@ bool SceneRenderer::Render()
 			gpuHandle.Offset(cbvIndex, m_cbvDescriptorSize);
 
 			m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
-			m_test_boxes[i]->Render(m_commandList);
+			//m_test_boxes[i]->Render(m_commandList);
 		}
 
 		// 指示呈现目标现在会用于展示命令列表完成执行的时间。
@@ -245,4 +249,10 @@ bool SceneRenderer::Render()
 	m_dxResources->GetCommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
 	return true;
+}
+
+void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
+{
+	Ray ray = m_test_mainCamera->GenerateRay(static_cast<float>(screenXY.x), static_cast<float>(screenXY.y));
+	printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 }

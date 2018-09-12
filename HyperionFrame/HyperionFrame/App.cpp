@@ -60,3 +60,8 @@ void App::CreateRenderers()
 	m_sceneRenderer = std::make_shared<SceneRenderer>(m_dxResources);
 	m_sceneRenderer->WindowSizeChanged();
 }
+
+void App::OnLButtonClicked(XMINT2 screenXY)
+{
+	m_sceneRenderer->OnLButtonClicked(screenXY);
+}

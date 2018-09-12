@@ -16,6 +16,8 @@ public:
 	void Update();
 	bool Render();
 
+	void OnLButtonClicked(XMINT2 screenXY);
+
 private:
 	std::shared_ptr<DXResource> m_dxResources;
 

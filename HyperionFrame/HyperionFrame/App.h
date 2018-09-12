@@ -17,6 +17,8 @@ public:
 	void SetWindow(XMFLOAT2 size);
 	void CreateRenderers();
 
+	void OnLButtonClicked(XMINT2 screenXY);
+
 private:
 	HWND m_hwnd;
 	std::shared_ptr<DXResource> m_dxResources;
