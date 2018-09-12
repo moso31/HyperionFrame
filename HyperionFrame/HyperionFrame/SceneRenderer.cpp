@@ -1,4 +1,5 @@
 #include "SceneRenderer.h"
+#include "HMath.h"
 
 static const UINT c_boxCount = 3;
 
@@ -227,12 +228,12 @@ bool SceneRenderer::Render()
 
 		for (size_t i = 0; i < m_test_boxes.size(); i++)
 		{
-			UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * c_boxCount + i;
+			UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * c_boxCount + (UINT)i;
 			CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 			gpuHandle.Offset(cbvIndex, m_cbvDescriptorSize);
 
 			m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
-			//m_test_boxes[i]->Render(m_commandList);
+			m_test_boxes[i]->Render(m_commandList);
 		}
 
 		// 指示呈现目标现在会用于展示命令列表完成执行的时间。
@@ -255,4 +256,6 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 {
 	Ray ray = m_test_mainCamera->GenerateRay(static_cast<float>(screenXY.x), static_cast<float>(screenXY.y));
 	printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
+	auto x = m_test_boxes[0]->GenerateAABB();
+	//if (RayIntersectP(ray, ));
 }

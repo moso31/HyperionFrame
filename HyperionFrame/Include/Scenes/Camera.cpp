@@ -110,18 +110,19 @@ Ray Camera::GenerateRay(float screenX, float screenY)
 {
 	float x = (2.0f * (float)screenX / (float)m_dxResources->GetOutputSize().x - 1.0f) / m_projectionMatrix._11;
 	float y = (1.0f - 2.0f * (float)screenX / (float)m_dxResources->GetOutputSize().y) / m_projectionMatrix._22;
-	XMVECTOR rayOrigin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	XMVECTOR rayDir = XMVectorSet(x, y, 1.0f, 0.0f);
-
-	XMFLOAT2 outputSize = m_dxResources->GetOutputSize();
-	XMVECTOR rayView = { screenX / outputSize.x, screenY / outputSize.y, m_nearZ, 0.0 };
+	XMVECTOR vOrigin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	XMVECTOR vDir = XMVectorSet(x, y, 1.0f, 0.0f);
 
 	XMMATRIX mxView = XMLoadFloat4x4(&m_viewMatrix);
-	XMMATRIX mxView2World = XMMatrixInverse(&XMMatrixDeterminant(mxView), mxView);
+	XMMATRIX mxInvView = XMMatrixInverse(&XMMatrixDeterminant(mxView), mxView);
 
-	XMVECTOR rayWorld = XMVector3TransformNormal(rayView, mxView2World);
+	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxInvView);
+	XMVECTOR vWorldDir = XMVector3TransformNormal(vDir, mxInvView);
 
-	XMFLOAT3 resultRayWorld;
-	XMStoreFloat3(&resultRayWorld, rayWorld);
-	return resultRayWorld;
+	XMFLOAT3 origin, dir;
+	XMStoreFloat3(&origin, vWorldOrigin);
+	XMStoreFloat3(&dir, vWorldDir);
+
+	Ray result(origin, dir);
+	return result;
 }

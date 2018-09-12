@@ -21,7 +21,7 @@ void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	// 创建立方体几何图形资源并上载到 GPU。
 
 	// 立方体顶点。每个顶点都有一个位置和一个颜色。
-	VertexPositionColor cubeVertices[] =
+	m_vertices =
 	{
 		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
 		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 1.0f) },
@@ -33,7 +33,7 @@ void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		{ XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f) },
 	};
 
-	const UINT vertexBufferSize = sizeof(cubeVertices);
+	const UINT vertexBufferSize = sizeof(VertexPositionColor) * m_vertices.size();
 
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
@@ -60,7 +60,7 @@ void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	// 将顶点缓冲区上载到 GPU。
 	{
 		D3D12_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pData = reinterpret_cast<BYTE*>(cubeVertices);
+		vertexData.pData = reinterpret_cast<BYTE*>(m_vertices.data());
 		vertexData.RowPitch = vertexBufferSize;
 		vertexData.SlicePitch = vertexData.RowPitch;
 
@@ -134,7 +134,7 @@ void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	// 创建顶点/索引缓冲区视图。
 	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = sizeof(VertexPositionColor);
-	m_vertexBufferView.SizeInBytes = sizeof(cubeVertices);
+	m_vertexBufferView.SizeInBytes = sizeof(VertexPositionColor) * m_vertices.size();
 
 	m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.SizeInBytes = sizeof(cubeIndices);

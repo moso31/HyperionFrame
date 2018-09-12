@@ -31,6 +31,9 @@
     <ClCompile Include="..\Include\Scenes\Transform.cpp">
       <Filter>Include</Filter>
     </ClCompile>
+    <ClCompile Include="..\Math\HMath.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -109,5 +112,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Next Work" />
+    <None Include="..\..\HyperionFrame Include Hierarchy.vsdx" />
   </ItemGroup>
 </Project>

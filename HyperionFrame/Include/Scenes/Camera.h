@@ -5,7 +5,6 @@
 #include "ShaderStructures.h"
 
 #include "Transform.h"
-#include "HMath.h"
 
 using namespace HIFrameMath;
 

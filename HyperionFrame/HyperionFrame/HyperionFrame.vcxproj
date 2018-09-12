@@ -137,6 +137,7 @@
     <ClCompile Include="..\Include\Scenes\Camera.cpp" />
     <ClCompile Include="..\Include\Scenes\Shape.cpp" />
     <ClCompile Include="..\Include\Scenes\Transform.cpp" />
+    <ClCompile Include="..\Math\HMath.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="DXResource.cpp" />
     <ClCompile Include="FileReader.cpp" />
@@ -173,6 +174,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\HyperionFrame Include Hierarchy.vsdx" />
     <None Include="..\..\Next Work" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
