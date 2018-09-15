@@ -17,5 +17,9 @@ public:
 
 	void ReleaseUploadBuffers();
 
+	bool IntersectP(Ray worldRay);
+
 private:
+	void _initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+	void _initParameters();
 };

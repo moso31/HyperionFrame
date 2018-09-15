@@ -29,6 +29,7 @@ public:
 	XMFLOAT3 GetAt();
 	XMFLOAT3 GetUp();
 
+	XMFLOAT4X4 GetViewToWorld(XMMATRIX& out_mxResult);
 	Ray GenerateRay(float screenX, float screenY);
 
 private:

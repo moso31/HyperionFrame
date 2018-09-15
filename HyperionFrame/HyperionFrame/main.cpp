@@ -12,8 +12,8 @@ FILE* fp = 0;
 
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	DWORD x = HIWORD(lParam);
-	DWORD y = LOWORD(lParam);
+	DWORD x = LOWORD(lParam);
+	DWORD y = HIWORD(lParam);
 
 	switch (msg)
 	{
@@ -64,7 +64,8 @@ bool InitWindow()
 	int screenHeight = GetDeviceCaps(screen, VERTRES);
 	ReleaseDC(NULL, screen);
 
-	g_windowSize = XMFLOAT2(screenWidth * WINDOW_RATIO, screenHeight * WINDOW_RATIO);
+	//g_windowSize = XMFLOAT2(screenWidth * WINDOW_RATIO, screenHeight * WINDOW_RATIO);
+	g_windowSize = XMFLOAT2(1366, 768);
 
 	g_hWnd = CreateWindowEx(WS_EX_APPWINDOW, wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW, 100, 100, lroundf(g_windowSize.x), lroundf(g_windowSize.y), NULL, NULL, g_hInstance, NULL);
 	

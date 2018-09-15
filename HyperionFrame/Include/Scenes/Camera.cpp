@@ -26,14 +26,14 @@ void Camera::Init(float m_nearZ, float m_farZ)
 
 	// 此示例使用行主序矩阵利用右手坐标系。
 	XMMATRIX projectionMatrix =
-		XMMatrixTranspose(XMMatrixPerspectiveFovRH(
+		XMMatrixPerspectiveFovRH(
 			fovAngleY,
 			aspectRatio,
 			m_nearZ,
 			m_farZ
-		));
+		);
 	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);
-	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.projection, projectionMatrix);
+	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.projection, XMMatrixTranspose(projectionMatrix));
 }
 
 void Camera::OnResize()
@@ -42,7 +42,7 @@ void Camera::OnResize()
 
 void Camera::Update()
 {
-	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.view, XMLoadFloat4x4(&m_viewMatrix));
+	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.view, XMMatrixTranspose(XMLoadFloat4x4(&m_viewMatrix)));
 }
 
 void Camera::Render()
@@ -65,7 +65,7 @@ void Camera::SetRotation(float x, float y, float z)
 	XMStoreFloat3(&m_at, at);
 	XMStoreFloat3(&m_up, up);
 
-	XMMATRIX viewMatrix = XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up));
+	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, at, up);
 	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
 }
 
@@ -92,7 +92,7 @@ void Camera::SetLookAt(float x, float y, float z)
 	XMStoreFloat3(&m_at, vAt);
 	XMStoreFloat3(&m_up, vUp);
 
-	XMMATRIX viewMatrix = XMMatrixTranspose(XMMatrixLookAtRH(vEye, vAt, vUp));
+	XMMATRIX viewMatrix = XMMatrixLookAtRH(vEye, vAt, vUp);
 	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
 }
 
@@ -106,18 +106,38 @@ XMFLOAT3 Camera::GetUp()
 	return m_up;
 }
 
+XMFLOAT4X4 Camera::GetViewToWorld(XMMATRIX& out_mxResult)
+{
+	XMVECTOR vTranslation = XMLoadFloat3(&translation);
+	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&m_at) - vTranslation);
+	XMVECTOR vUp = XMVector3Normalize(XMLoadFloat3(&m_up));
+	XMVECTOR vLeft = XMVector3Normalize(XMVector3Cross(vDir, vUp));
+	XMVECTOR vNewUp = XMVector3Cross(vDir, vLeft);
+
+	out_mxResult.r[0] = vLeft;
+	out_mxResult.r[1] = vNewUp;
+	out_mxResult.r[2] = vDir;	
+	out_mxResult.r[3] = XMVectorSetW(vTranslation, 1.0f);
+
+	XMFLOAT4X4 result;
+	XMStoreFloat4x4(&result, XMMatrixTranspose(out_mxResult));
+	return result;
+}
+
 Ray Camera::GenerateRay(float screenX, float screenY)
 {
-	float x = (2.0f * (float)screenX / (float)m_dxResources->GetOutputSize().x - 1.0f) / m_projectionMatrix._11;
-	float y = (1.0f - 2.0f * (float)screenX / (float)m_dxResources->GetOutputSize().y) / m_projectionMatrix._22;
+	XMFLOAT2 outputSize = m_dxResources->GetOutputSize();
+	float x = (2.0f * screenX / outputSize.x - 1.0f) / m_projectionMatrix._11;
+	float y = (1.0f - 2.0f * screenY / outputSize.y) / m_projectionMatrix._22;
 	XMVECTOR vOrigin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	XMVECTOR vDir = XMVectorSet(x, y, 1.0f, 0.0f);
 
-	XMMATRIX mxView = XMLoadFloat4x4(&m_viewMatrix);
-	XMMATRIX mxInvView = XMMatrixInverse(&XMMatrixDeterminant(mxView), mxView);
+	XMMATRIX mxView2World;
+	GetViewToWorld(mxView2World);
+	XMMATRIX mxInvView2World = XMMatrixInverse(&XMMatrixDeterminant(mxView2World), mxView2World);
 
-	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxInvView);
-	XMVECTOR vWorldDir = XMVector3TransformNormal(vDir, mxInvView);
+	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxInvView2World);
+	XMVECTOR vWorldDir = XMVector3Normalize(XMVector3TransformNormal(vDir, mxInvView2World));
 
 	XMFLOAT3 origin, dir;
 	XMStoreFloat3(&origin, vWorldOrigin);

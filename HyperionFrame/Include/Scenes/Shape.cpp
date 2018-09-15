@@ -14,6 +14,11 @@ Shape::~Shape()
 {
 }
 
+AABB Shape::GetAABB()
+{
+	return m_aabb;
+}
+
 AABB Shape::GenerateAABB()
 {
 	AABB result;

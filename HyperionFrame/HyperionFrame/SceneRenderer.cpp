@@ -179,7 +179,7 @@ void SceneRenderer::WindowSizeChanged()
 void SceneRenderer::Update()
 {
 	static float x = 0;
-	x += 0.01f;
+	x = 0.0f;
 
 	m_test_mainCamera->Update();
 
@@ -256,6 +256,12 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 {
 	Ray ray = m_test_mainCamera->GenerateRay(static_cast<float>(screenXY.x), static_cast<float>(screenXY.y));
 	printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
-	auto x = m_test_boxes[0]->GenerateAABB();
-	//if (RayIntersectP(ray, ));
+
+	for (int i = 0; i < c_boxCount; i++)
+	{
+		if (m_test_boxes[i]->IntersectP(ray))
+		{
+			printf("Object %d intersected.\n", i);
+		}
+	}
 }

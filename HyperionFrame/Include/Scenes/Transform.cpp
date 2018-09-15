@@ -42,11 +42,14 @@ Transform Transform::GetTransform()
 	return Transform(*this);
 }
 
-XMMATRIX Transform::GetTransformMatrix()
+XMFLOAT4X4 Transform::GetWorldMatrix()
 {
 	XMVECTOR vTran = XMLoadFloat3(&translation);
 	XMVECTOR vRota = XMLoadFloat3(&rotation);
 	XMVECTOR vScal = XMLoadFloat3(&scale);
 
-	return XMMatrixScalingFromVector(vScal) * XMMatrixRotationRollPitchYawFromVector(vRota) * XMMatrixTranslationFromVector(vTran);
+	XMFLOAT4X4 result;
+	XMStoreFloat4x4(&result, XMMatrixScalingFromVector(vScal) * XMMatrixRotationRollPitchYawFromVector(vRota) * XMMatrixTranslationFromVector(vTran));
+
+	return result;
 }

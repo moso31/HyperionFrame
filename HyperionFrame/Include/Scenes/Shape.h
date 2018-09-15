@@ -8,11 +8,25 @@ public:
 	Shape(const shared_ptr<DXResource>& dxResources, Camera* camera);
 	~Shape();
 
-//protected:
+	AABB GetAABB();
+
+	// 重新计算整个模型的AABB。
 	AABB GenerateAABB();
+
+	virtual void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
+	virtual void Update(UINT8 * destination) = 0;
+	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
+
+private:
+	// 初始化缓存
+	virtual void _initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
+
+	// 初始化数据（AABB、长宽高、半径等）
+	virtual void _initParameters() = 0;
 
 protected:
 	Camera*		m_camera;
+	AABB		m_aabb;
 
 	shared_ptr<DXResource> m_dxResources;
 

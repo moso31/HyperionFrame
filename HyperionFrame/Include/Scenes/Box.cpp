@@ -16,6 +16,59 @@ Box::~Box()
 
 void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
+	_initBufferData(pCommandList);
+	_initParameters();
+}
+
+void Box::Update(UINT8* destination)
+{
+	// 准备将更新的模型矩阵传递到着色器。
+	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(XMLoadFloat4x4(&GetWorldMatrix())));
+
+	memcpy(destination, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
+}
+
+void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+{
+	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+	pCommandList->IASetIndexBuffer(&m_indexBufferView);
+	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
+}
+
+void Box::ReleaseUploadBuffers()
+{
+}
+
+bool Box::IntersectP(Ray worldRay)
+{
+	XMFLOAT3 vTemp;
+	vTemp = m_aabb.GetVecMax();
+	XMVECTOR vMax = XMLoadFloat3(&vTemp);
+	vTemp = m_aabb.GetVecMin();
+	XMVECTOR vMin = XMLoadFloat3(&vTemp);
+
+	XMMATRIX mxWorld = XMLoadFloat4x4(&GetWorldMatrix());
+	XMMATRIX mxInvWorld = XMMatrixInverse(&XMMatrixDeterminant(mxWorld), mxWorld);
+	XMVECTOR vRayOrig = XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), mxInvWorld);
+	XMVECTOR vRayDir = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), mxInvWorld));
+	XMVECTOR vRayDirReciprocal = XMVectorReciprocal(vRayDir);
+
+	XMVECTOR tMax = (vMax - vRayOrig) * vRayDirReciprocal;
+	XMVECTOR tMin = (vMin - vRayOrig) * vRayDirReciprocal;
+
+	XMFLOAT3 t1, t2;
+	XMStoreFloat3(&t1, XMVectorMin(tMin, tMax));
+	XMStoreFloat3(&t2, XMVectorMax(tMin, tMax));
+
+	float tNear = max(t1.x, max(t1.y, t1.z));
+	float tFar = min(t2.x, min(t2.y, t2.z));
+
+	return tNear < tFar;
+}
+
+void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+{
 	auto d3dDevice = m_dxResources->GetD3DDevice();
 
 	// 创建立方体几何图形资源并上载到 GPU。
@@ -141,22 +194,7 @@ void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 }
 
-void Box::Update(UINT8* destination)
+void Box::_initParameters()
 {
-	// 准备将更新的模型矩阵传递到着色器。
-	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(GetTransformMatrix()));
-
-	memcpy(destination, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
-}
-
-void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
-{
-	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-	pCommandList->IASetIndexBuffer(&m_indexBufferView);
-	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
-}
-
-void Box::ReleaseUploadBuffers()
-{
+	m_aabb = AABB(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.5f, 0.5f, 0.5f));
 }
