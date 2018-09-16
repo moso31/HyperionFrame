@@ -86,7 +86,7 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		{ XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f) },
 	};
 
-	const UINT vertexBufferSize = sizeof(VertexPositionColor) * m_vertices.size();
+	const UINT vertexBufferSize = UINT(sizeof(VertexPositionColor) * m_vertices.size());
 
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
@@ -187,7 +187,7 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	// 创建顶点/索引缓冲区视图。
 	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = sizeof(VertexPositionColor);
-	m_vertexBufferView.SizeInBytes = sizeof(VertexPositionColor) * m_vertices.size();
+	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPositionColor) * m_vertices.size());
 
 	m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.SizeInBytes = sizeof(cubeIndices);

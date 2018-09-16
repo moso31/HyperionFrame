@@ -10,6 +10,9 @@ XMFLOAT2 g_windowSize;
 
 FILE* fp = 0;
 
+bool g_test = false;
+XMINT2 g_pos;
+
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	DWORD x = LOWORD(lParam);
@@ -23,7 +26,11 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_INPUT:
 		break;
 	case WM_LBUTTONDOWN:
-		g_app->OnLButtonClicked(XMINT2(x, y));
+		g_test = true;
+		g_pos = { (int)x, (int)y };
+		break;
+	case WM_LBUTTONUP:
+		g_test = false;
 		break;
 	default:
 		break;
@@ -67,7 +74,12 @@ bool InitWindow()
 	//g_windowSize = XMFLOAT2(screenWidth * WINDOW_RATIO, screenHeight * WINDOW_RATIO);
 	g_windowSize = XMFLOAT2(1366, 768);
 
-	g_hWnd = CreateWindowEx(WS_EX_APPWINDOW, wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW, 100, 100, lroundf(g_windowSize.x), lroundf(g_windowSize.y), NULL, NULL, g_hInstance, NULL);
+	RECT R = { 0, 0, (int)g_windowSize.x, (int)g_windowSize.y };
+	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
+	int clientW = R.right - R.left;
+	int clientH = R.bottom - R.top;
+
+	g_hWnd = CreateWindowEx(WS_EX_APPWINDOW, wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW, 100, 100, clientW, clientH, NULL, NULL, g_hInstance, NULL);
 	
 	ShowWindow(g_hWnd, SW_SHOW);
 	UpdateWindow(g_hWnd);
@@ -101,6 +113,9 @@ int Run()
 		}
 		else
 		{
+			if (g_test)
+				g_app->OnLButtonClicked(g_pos);
+
 			RunApp();
 		}
 	}

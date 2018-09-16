@@ -179,7 +179,7 @@ void SceneRenderer::WindowSizeChanged()
 void SceneRenderer::Update()
 {
 	static float x = 0;
-	x = 0.0f;
+	x += 0.01f;
 
 	m_test_mainCamera->Update();
 

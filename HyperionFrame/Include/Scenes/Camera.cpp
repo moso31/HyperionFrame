@@ -15,11 +15,15 @@ Camera::~Camera()
 {
 }
 
-void Camera::Init(float m_nearZ, float m_farZ)
+void Camera::Init(float fovY, float nearZ, float farZ)
 {
 	XMFLOAT2 outputSize = m_dxResources->GetOutputSize();
 	float aspectRatio = outputSize.x / outputSize.y;
-	float fovAngleY = 70.0f * XM_PI / 180.0f;
+	float fovAngleY = fovY * XM_PI / 180.0f;
+
+	m_fovY = fovAngleY;
+	m_nearZ = nearZ;
+	m_farZ = farZ;
 
 	D3D12_VIEWPORT viewport = m_dxResources->GetScreenViewport();
 	m_scissorRect = { 0, 0, static_cast<LONG>(viewport.Width), static_cast<LONG>(viewport.Height) };
@@ -29,8 +33,8 @@ void Camera::Init(float m_nearZ, float m_farZ)
 		XMMatrixPerspectiveFovRH(
 			fovAngleY,
 			aspectRatio,
-			m_nearZ,
-			m_farZ
+			nearZ,
+			farZ
 		);
 	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);
 	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.projection, XMMatrixTranspose(projectionMatrix));
@@ -127,17 +131,18 @@ XMFLOAT4X4 Camera::GetViewToWorld(XMMATRIX& out_mxResult)
 Ray Camera::GenerateRay(float screenX, float screenY)
 {
 	XMFLOAT2 outputSize = m_dxResources->GetOutputSize();
+
 	float x = (2.0f * screenX / outputSize.x - 1.0f) / m_projectionMatrix._11;
 	float y = (1.0f - 2.0f * screenY / outputSize.y) / m_projectionMatrix._22;
+
 	XMVECTOR vOrigin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	XMVECTOR vDir = XMVectorSet(x, y, 1.0f, 0.0f);
 
-	XMMATRIX mxView2World;
-	GetViewToWorld(mxView2World);
+	XMMATRIX mxView2World = XMLoadFloat4x4(&m_viewMatrix);
 	XMMATRIX mxInvView2World = XMMatrixInverse(&XMMatrixDeterminant(mxView2World), mxView2World);
 
-	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxInvView2World);
-	XMVECTOR vWorldDir = XMVector3Normalize(XMVector3TransformNormal(vDir, mxInvView2World));
+	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxView2World);
+	XMVECTOR vWorldDir = /*XMVector3Normalize*/(XMVector3TransformNormal(vDir, mxView2World));
 
 	XMFLOAT3 origin, dir;
 	XMStoreFloat3(&origin, vWorldOrigin);

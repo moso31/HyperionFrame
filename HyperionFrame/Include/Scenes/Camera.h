@@ -17,7 +17,7 @@ public:
 
 	D3D12_RECT GetScissorRect() { return m_scissorRect; }
 
-	void Init(float m_nearZ = 0.01f, float m_farZ = 100.0f);
+	void Init(float fovY = 70.0f, float nearZ = 0.01f, float farZ = 100.0f);
 	void OnResize();
 
 	void Update();
@@ -40,6 +40,7 @@ private:
 	XMFLOAT4X4 m_projectionMatrix;
 	XMFLOAT4X4 m_viewMatrix;
 
+	float m_fovY;
 	float m_nearZ, m_farZ;
 	XMFLOAT3 m_at, m_up;
 };
