@@ -83,7 +83,7 @@ void Camera::SetLookAt(float x, float y, float z)
 
 	XMFLOAT3 dir;
 	XMStoreFloat3(&dir, vDir);
-	float dis = dir.x * dir.x + dir.z * dir.z;
+	float dis = sqrtf(dir.x * dir.x + dir.z * dir.z);
 
 	rotation = XMFLOAT3(
 		atan2f(-dir.y, dis),	// pitch
@@ -136,17 +136,21 @@ Ray Camera::GenerateRay(float screenX, float screenY)
 	float y = (1.0f - 2.0f * screenY / outputSize.y) / m_projectionMatrix._22;
 
 	XMVECTOR vOrigin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	XMVECTOR vDir = XMVectorSet(x, y, 1.0f, 0.0f);
+	XMVECTOR vDir = XMVector3Normalize(XMVectorSet(-x, y, 1.0f, 0.0f));
 
-	XMMATRIX mxView2World = XMLoadFloat4x4(&m_viewMatrix);
-	XMMATRIX mxInvView2World = XMMatrixInverse(&XMMatrixDeterminant(mxView2World), mxView2World);
+	XMMATRIX mxWorld2View = XMLoadFloat4x4(&m_viewMatrix);
+	XMMATRIX mxView2World = XMMatrixInverse(&XMMatrixDeterminant(mxWorld2View), mxWorld2View);
+
+	XMMATRIX mxRotation = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
+	//mxRotation = XMMatrixInverse(&XMMatrixDeterminant(mxRotation), mxRotation);
 
 	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxView2World);
-	XMVECTOR vWorldDir = /*XMVector3Normalize*/(XMVector3TransformNormal(vDir, mxView2World));
+	XMVECTOR vWorldDir = (XMVector3TransformNormal(vDir, mxRotation));
 
 	XMFLOAT3 origin, dir;
 	XMStoreFloat3(&origin, vWorldOrigin);
 	XMStoreFloat3(&dir, vWorldDir);
+	//XMStoreFloat3(&dir, XMVectorSetZ(vWorldDir, -XMVectorGetZ(vWorldDir)));
 
 	Ray result(origin, dir);
 	return result;

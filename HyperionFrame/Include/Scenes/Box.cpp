@@ -48,10 +48,10 @@ bool Box::IntersectP(Ray worldRay)
 	vTemp = m_aabb.GetVecMin();
 	XMVECTOR vMin = XMLoadFloat3(&vTemp);
 
-	XMMATRIX mxWorld = XMLoadFloat4x4(&GetWorldMatrix());
-	XMMATRIX mxInvWorld = XMMatrixInverse(&XMMatrixDeterminant(mxWorld), mxWorld);
-	XMVECTOR vRayOrig = XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), mxInvWorld);
-	XMVECTOR vRayDir = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), mxInvWorld));
+	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetWorldMatrix());
+	XMMATRIX mxWorld2Object = XMMatrixInverse(&XMMatrixDeterminant(mxObject2World), mxObject2World);
+	XMVECTOR vRayOrig = XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), mxWorld2Object);
+	XMVECTOR vRayDir = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), mxWorld2Object));
 	XMVECTOR vRayDirReciprocal = XMVectorReciprocal(vRayDir);
 
 	XMVECTOR tMax = (vMax - vRayOrig) * vRayDirReciprocal;

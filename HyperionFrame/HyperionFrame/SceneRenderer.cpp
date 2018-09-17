@@ -157,7 +157,7 @@ void SceneRenderer::LoadSceneAssets()
 	m_test_mainCamera->Init();
 	//m_test_mainCamera->SetTranslation(0.0f, 0.7f, 1.5f);
 	//m_test_mainCamera->SetLookAt(0.0f, -0.1f, 0.0f);
-	m_test_mainCamera->SetTranslation(0.0f, 0.0f, 1.5f);
+	m_test_mainCamera->SetTranslation(4.0f, 2.0f, -2.0f);
 	m_test_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
 	for (int i = 0; i < c_boxCount; i++)
@@ -166,8 +166,9 @@ void SceneRenderer::LoadSceneAssets()
 		m_test_boxes.push_back(box);
 		box->Init(m_commandList);
 
-		if (i == 1) box->SetTranslation(10.0f, 0.0f, -10.0f);
-		if (i == 2) box->SetTranslation(-10.0f, 0.0f, -10.0f);
+		if (i == 0) box->SetTranslation(0.0f, 0.0f, 0.0f);
+		if (i == 1) box->SetTranslation(2.0f, 0.0f, -2.0f);
+		if (i == 2) box->SetTranslation(-2.0f, 0.0f, -2.0f);
 	}
 }
 

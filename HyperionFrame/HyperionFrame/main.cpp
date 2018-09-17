@@ -32,6 +32,12 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONUP:
 		g_test = false;
 		break;
+	case WM_MOUSEMOVE:
+		g_pos = { (int)x, (int)y };
+		break;
+	case WM_MOUSEACTIVATE:
+		g_pos = { (int)x, (int)y };
+		break;
 	default:
 		break;
 	}
