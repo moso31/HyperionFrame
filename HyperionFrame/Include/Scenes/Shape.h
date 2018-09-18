@@ -35,6 +35,8 @@ public:
 	UINT GetFaceCount();
 	HTriangle GetFace(UINT faceIndex);
 
+	void Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex);
+
 private:
 	// ≥ı ºªØª∫¥Ê
 	virtual void _initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;

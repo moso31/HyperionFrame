@@ -17,7 +17,6 @@ public:
 
 	void ReleaseUploadBuffers();
 
-	void Intersect(Ray worldRay, XMFLOAT3& out_hitPos, int& out_hitIndex);
 	bool IntersectP(Ray worldRay);
 
 private:
