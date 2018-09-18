@@ -131,7 +131,6 @@ XMFLOAT4X4 Camera::GetViewToWorld(XMMATRIX& out_mxResult)
 Ray Camera::GenerateRay(float screenX, float screenY)
 {
 	XMFLOAT2 outputSize = m_dxResources->GetOutputSize();
-
 	float x = (2.0f * screenX / outputSize.x - 1.0f) / m_projectionMatrix._11;
 	float y = (1.0f - 2.0f * screenY / outputSize.y) / m_projectionMatrix._22;
 
@@ -142,7 +141,6 @@ Ray Camera::GenerateRay(float screenX, float screenY)
 	XMMATRIX mxView2World = XMMatrixInverse(&XMMatrixDeterminant(mxWorld2View), mxWorld2View);
 
 	XMMATRIX mxRotation = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
-	//mxRotation = XMMatrixInverse(&XMMatrixDeterminant(mxRotation), mxRotation);
 
 	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxView2World);
 	XMVECTOR vWorldDir = (XMVector3TransformNormal(vDir, mxRotation));
@@ -150,7 +148,6 @@ Ray Camera::GenerateRay(float screenX, float screenY)
 	XMFLOAT3 origin, dir;
 	XMStoreFloat3(&origin, vWorldOrigin);
 	XMStoreFloat3(&dir, vWorldDir);
-	//XMStoreFloat3(&dir, XMVectorSetZ(vWorldDir, -XMVectorGetZ(vWorldDir)));
 
 	Ray result(origin, dir);
 	return result;

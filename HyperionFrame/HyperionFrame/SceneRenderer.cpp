@@ -262,7 +262,14 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 	{
 		if (m_test_boxes[i]->IntersectP(ray))
 		{
-			printf("Object %d intersected.\n", i);
+			//printf("Object %d intersected.\n", i);
+			int index;
+			XMFLOAT3 hitPos;
+			m_test_boxes[i]->Intersect(ray, hitPos, index);
+			if (index != -1)
+			{
+				printf("hit: %d\n", index);
+			}
 		}
 	}
 }

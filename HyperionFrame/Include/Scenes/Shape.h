@@ -1,6 +1,21 @@
 #pragma once
 #include "Camera.h"
 
+struct HTriangle
+{
+	union 
+	{
+		struct
+		{
+			XMFLOAT3 point0, point1, point2;
+		};
+		struct
+		{
+			XMFLOAT3 p[3];
+		};
+	};
+};
+
 class Shape : public Transform
 {
 public:
@@ -16,6 +31,9 @@ public:
 	virtual void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 	virtual void Update(UINT8 * destination) = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
+
+	UINT GetFaceCount();
+	HTriangle GetFace(UINT faceIndex);
 
 private:
 	// ≥ı ºªØª∫¥Ê

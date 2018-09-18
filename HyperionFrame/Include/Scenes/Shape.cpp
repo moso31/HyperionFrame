@@ -26,3 +26,16 @@ AABB Shape::GenerateAABB()
 		result.Merge(m_vertices[i].pos);
 	return result;
 }
+
+UINT Shape::GetFaceCount()
+{
+	return m_indices.size() / 3;
+}
+
+HTriangle Shape::GetFace(UINT faceIndex)
+{
+	HTriangle result;
+	for (int i = 0; i < 3; i++)
+		result.p[i] = m_vertices[m_indices[faceIndex * 3 + i]].pos;
+	return result;
+}
