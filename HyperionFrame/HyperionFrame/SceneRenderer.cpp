@@ -260,15 +260,17 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 
 	for (int i = 0; i < c_boxCount; i++)
 	{
-		int index;
-		XMFLOAT3 hitPos;
-		m_test_boxes[i]->Intersect(ray, hitPos, index);
-		if (index != -1)
+		if (m_test_boxes[i]->IntersectP(ray))
 		{
-			//printf("hit: %d\n", index);
-			// 获取交互表面法向量
-
-			// 计算出射方向
+			SurfaceInteraction* isect = new SurfaceInteraction();
+			//printf("Object %d intersected.\n", i);
+			int index;
+			XMFLOAT3 hitPos;
+			m_test_boxes[i]->Intersect(ray, hitPos, index, isect);
+			if (index != -1)
+			{
+				printf("hit: %d\n", index);
+			}
 		}
 	}
 }

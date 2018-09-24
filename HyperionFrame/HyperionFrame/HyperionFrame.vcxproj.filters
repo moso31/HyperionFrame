@@ -16,23 +16,29 @@
     <ClCompile Include="App.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Scenes\Camera.cpp">
-      <Filter>Include</Filter>
-    </ClCompile>
     <ClCompile Include="PipelineManager.cpp">
       <Filter>App\Content</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Include\Scenes\Transform.cpp">
-      <Filter>Include</Filter>
     </ClCompile>
     <ClCompile Include="..\Math\HMath.cpp">
       <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Scenes\Box.cpp">
-      <Filter>Include\Shape</Filter>
+      <Filter>Include\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\Camera.cpp">
+      <Filter>Include\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Scenes\Shape.cpp">
-      <Filter>Include\Shape</Filter>
+      <Filter>Include\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\Transform.cpp">
+      <Filter>Include\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Material\HMaterial.cpp">
+      <Filter>Include\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Core\Interaction.cpp">
+      <Filter>Include\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,23 +66,29 @@
     <ClInclude Include="header.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Scenes\Camera.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="PipelineManager.h">
       <Filter>App\Content</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Scenes\Transform.h">
-      <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="..\Math\HMath.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Box.h">
-      <Filter>Include\Shape</Filter>
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\Camera.h">
+      <Filter>Include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Shape.h">
-      <Filter>Include\Shape</Filter>
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\Transform.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Material\HMaterial.h">
+      <Filter>Include\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Core\Interaction.h">
+      <Filter>Include\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -109,8 +121,14 @@
     <Filter Include="Math">
       <UniqueIdentifier>{f56d8c1d-88ae-4b32-81ea-a8c56eee1645}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Shape">
-      <UniqueIdentifier>{61a61bf0-022e-43da-acc9-88d61b9522f9}</UniqueIdentifier>
+    <Filter Include="Include\Scene">
+      <UniqueIdentifier>{6e6e21e0-a4fa-46ca-9a57-a7a45c85fd9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Material">
+      <UniqueIdentifier>{d3d794de-09b8-4a5c-9b73-582a19754177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Core">
+      <UniqueIdentifier>{aa99ae3f-61fe-426a-9231-f2a22fac6909}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
