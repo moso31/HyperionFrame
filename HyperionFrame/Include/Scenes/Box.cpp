@@ -30,8 +30,8 @@ void Box::Update(UINT8* destination)
 
 void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	//pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
 	pCommandList->IASetIndexBuffer(&m_indexBufferView);
 	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
@@ -41,7 +41,7 @@ void Box::ReleaseUploadBuffers()
 {
 }
 
-void Box::Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex, SurfaceInteraction* out_isect)
+void Box::Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
@@ -128,8 +128,6 @@ void Box::Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex, Sur
 			{
 				nearest = t;
 				out_hitIndex = i;
-				XMStoreFloat3(&out_isect->n, N);
-				XMStoreFloat3(&out_isect->wo, -vRayDir);
 			}
 		}
 	}

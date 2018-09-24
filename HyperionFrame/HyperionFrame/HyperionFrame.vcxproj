@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Scenes;..\Include\Material;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -133,8 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Include\Core\Interaction.cpp" />
-    <ClCompile Include="..\Include\Material\HMaterial.cpp" />
     <ClCompile Include="..\Include\Scenes\Box.cpp" />
     <ClCompile Include="..\Include\Scenes\Camera.cpp" />
     <ClCompile Include="..\Include\Scenes\Shape.cpp" />
@@ -148,8 +146,6 @@
     <ClCompile Include="SceneRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Core\Interaction.h" />
-    <ClInclude Include="..\Include\Material\HMaterial.h" />
     <ClInclude Include="..\Include\Scenes\Box.h" />
     <ClInclude Include="..\Include\Scenes\Camera.h" />
     <ClInclude Include="..\Include\Scenes\Shape.h" />
