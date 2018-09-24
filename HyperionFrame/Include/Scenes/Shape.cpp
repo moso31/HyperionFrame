@@ -29,7 +29,7 @@ AABB Shape::GenerateAABB()
 
 UINT Shape::GetFaceCount()
 {
-	return m_indices.size() / 3;
+	return (UINT)m_indices.size() / 3;
 }
 
 HTriangle Shape::GetFace(UINT faceIndex)
