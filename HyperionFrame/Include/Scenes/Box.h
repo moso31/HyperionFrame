@@ -1,5 +1,6 @@
 #pragma once
 #include "Shape.h"
+#include "Interaction.h"
 
 class Box : public Shape
 {
@@ -17,7 +18,7 @@ public:
 
 	void ReleaseUploadBuffers();
 
-	void Intersect(Ray worldRay, XMFLOAT3& out_hitPos, int& out_hitIndex);
+	void Intersect(Ray worldRay, XMFLOAT3& out_hitPos, int& out_hitIndex, SurfaceInteraction* out_isect);
 	bool IntersectP(Ray worldRay);
 
 private:
