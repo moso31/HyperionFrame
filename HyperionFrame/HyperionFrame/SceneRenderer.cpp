@@ -256,7 +256,7 @@ bool SceneRenderer::Render()
 void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 {
 	Ray ray = m_test_mainCamera->GenerateRay(static_cast<float>(screenXY.x), static_cast<float>(screenXY.y));
-	printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
+	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 
 	for (int i = 0; i < c_boxCount; i++)
 	{
@@ -267,10 +267,10 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 			int index;
 			XMFLOAT3 hitPos;
 			m_test_boxes[i]->Intersect(ray, hitPos, index, isect);
-			if (index != -1)
-			{
-				printf("hit: %d\n", index);
-			}
+			
+			//if (index != -1) printf("hit: %d\n", index);
+
+			
 		}
 	}
 }

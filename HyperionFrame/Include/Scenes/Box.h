@@ -1,6 +1,5 @@
 #pragma once
 #include "Shape.h"
-#include "Interaction.h"
 
 class Box : public Shape
 {

@@ -130,6 +130,7 @@ void Box::Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex, Sur
 				out_hitIndex = i;
 				XMStoreFloat3(&out_isect->n, N);
 				XMStoreFloat3(&out_isect->wo, -vRayDir);
+				out_isect->shape = this;
 			}
 		}
 	}

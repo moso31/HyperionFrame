@@ -28,3 +28,9 @@
 using namespace std;
 using namespace DirectX;
 using namespace Microsoft::WRL;
+
+#include "d3dx12.h"
+
+class SurfaceInteraction;
+class Shape;
+class Material;

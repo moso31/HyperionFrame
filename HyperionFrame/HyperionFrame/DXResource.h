@@ -1,6 +1,5 @@
 #pragma once
 #include "header.h"
-#include "d3dx12.h"
 
 class DXResource
 {

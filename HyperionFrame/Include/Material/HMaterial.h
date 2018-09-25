@@ -1,5 +1,7 @@
 #pragma once
-#include "Interaction.h"
+#include "HMath.h"
+
+using namespace HIFrameMath;
 
 class HMaterial
 {

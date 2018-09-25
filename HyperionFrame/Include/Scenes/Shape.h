@@ -1,5 +1,6 @@
 #pragma once
 #include "Camera.h"
+#include "Interaction.h"
 
 struct HTriangle
 {
@@ -35,7 +36,10 @@ public:
 	UINT GetFaceCount();
 	HTriangle GetFace(UINT faceIndex);
 
-	void Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex);
+	HMaterial* GetMaterial();
+
+	virtual void Intersect(Ray worldRay, XMFLOAT3& out_hitPos, int& out_hitIndex, SurfaceInteraction* out_isect) = 0;
+	virtual bool IntersectP(Ray worldRay) = 0;
 
 private:
 	// ≥ı ºªØª∫¥Ê
@@ -64,4 +68,6 @@ protected:
 
 	vector<VertexPositionColor>		m_vertices;
 	vector<USHORT>					m_indices;
+
+	HMaterial* m_material;
 };
