@@ -7,7 +7,7 @@ public:
 	SurfaceInteraction();
 	~SurfaceInteraction();
 
-	void ComputeScatterFunctions(Ray ray);
+	void ComputeScatterFunctions();
 
 public:
 	// normal vector.

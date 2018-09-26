@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="..\Include\Core\Interaction.cpp" />
     <ClCompile Include="..\Include\Material\HMaterial.cpp" />
+    <ClCompile Include="..\Include\Material\HMatteMaterial.cpp" />
     <ClCompile Include="..\Include\Scenes\Box.cpp" />
     <ClCompile Include="..\Include\Scenes\Camera.cpp" />
     <ClCompile Include="..\Include\Scenes\Shape.cpp" />
@@ -150,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="..\Include\Core\Interaction.h" />
     <ClInclude Include="..\Include\Material\HMaterial.h" />
+    <ClInclude Include="..\Include\Material\HMatteMaterial.h" />
     <ClInclude Include="..\Include\Scenes\Box.h" />
     <ClInclude Include="..\Include\Scenes\Camera.h" />
     <ClInclude Include="..\Include\Scenes\Shape.h" />

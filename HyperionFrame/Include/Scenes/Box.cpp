@@ -1,5 +1,6 @@
 #include "Box.h"
 #include "PipelineManager.h"
+#include "Interaction.h"
 
 Box::Box()
 {

@@ -1,4 +1,5 @@
 #include "Interaction.h"
+#include "Shape.h"
 
 SurfaceInteraction::SurfaceInteraction()
 {
@@ -8,7 +9,8 @@ SurfaceInteraction::~SurfaceInteraction()
 {
 }
 
-void SurfaceInteraction::ComputeScatterFunctions(Ray ray)
+void SurfaceInteraction::ComputeScatterFunctions()
 {
-	shape
+	HMaterial* material = shape->GetMaterial();
+	material->ComputeScatterFunction(this);
 }

@@ -33,4 +33,4 @@ using namespace Microsoft::WRL;
 
 class SurfaceInteraction;
 class Shape;
-class Material;
+class HMaterial;

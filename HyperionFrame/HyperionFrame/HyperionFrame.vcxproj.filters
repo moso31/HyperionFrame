@@ -40,6 +40,9 @@
     <ClCompile Include="..\Include\Core\Interaction.cpp">
       <Filter>Include\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Material\HMatteMaterial.cpp">
+      <Filter>Include\Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -89,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\Core\Interaction.h">
       <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Material\HMatteMaterial.h">
+      <Filter>Include\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

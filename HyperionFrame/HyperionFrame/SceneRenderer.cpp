@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 #include "HMath.h"
+#include "Interaction.h"
 
 static const UINT c_boxCount = 3;
 
@@ -270,7 +271,7 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 			
 			//if (index != -1) printf("hit: %d\n", index);
 
-			
+			isect->ComputeScatterFunctions();
 		}
 	}
 }
