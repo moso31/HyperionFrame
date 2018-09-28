@@ -1,21 +1,6 @@
 #pragma once
 #include "Camera.h"
 
-struct HTriangle
-{
-	union 
-	{
-		struct
-		{
-			XMFLOAT3 point0, point1, point2;
-		};
-		struct
-		{
-			XMFLOAT3 p[3];
-		};
-	};
-};
-
 class Shape : public Transform
 {
 public:
@@ -33,7 +18,8 @@ public:
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
 	UINT GetFaceCount();
-	HTriangle GetFace(UINT faceIndex);
+	void GetFace(UINT faceIndex, XMFLOAT3 out_face[3]);
+	void GetUVs(UINT faceIndex, XMFLOAT2 out_uv[3]);
 
 	HMaterial* GetMaterial();
 
@@ -65,7 +51,7 @@ protected:
 	D3D12_VERTEX_BUFFER_VIEW		m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW			m_indexBufferView;
 
-	vector<VertexPositionColor>		m_vertices;
+	vector<VertexPCT>				m_vertices;
 	vector<USHORT>					m_indices;
 
 	HMaterial* m_material;

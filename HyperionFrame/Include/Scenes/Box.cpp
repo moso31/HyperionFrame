@@ -71,11 +71,12 @@ void Box::Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex, Sur
 		float nearest = FLT_MAX;
 		for (UINT i = 0; i < GetFaceCount(); i++)
 		{
-			HTriangle triData = GetFace(i);
+			XMFLOAT3 triData[3];
+			GetFace(i, triData);
 
-			XMVECTOR v0 = XMLoadFloat3(&triData.point0);
-			XMVECTOR v1 = XMLoadFloat3(&triData.point1);
-			XMVECTOR v2 = XMLoadFloat3(&triData.point2);
+			XMVECTOR v0 = XMLoadFloat3(&triData[0]);
+			XMVECTOR v1 = XMLoadFloat3(&triData[1]);
+			XMVECTOR v2 = XMLoadFloat3(&triData[2]);
 
 			// compute plane's normal
 			XMVECTOR v0v1 = v1 - v0;
@@ -170,17 +171,44 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	// 立方体顶点。每个顶点都有一个位置和一个颜色。
 	m_vertices =
 	{
-		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f) },
-		{ XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT3(1.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f) },
-		{ XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f) },
+		// -X
+		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		
+		// +X
+		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// -Y
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		
+		// +Y
+		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		
+		// -Z
+		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		
+		// +Z
+		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 	};
 
-	const UINT vertexBufferSize = UINT(sizeof(VertexPositionColor) * m_vertices.size());
+	const UINT vertexBufferSize = UINT(sizeof(VertexPCT) * m_vertices.size());
 
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
@@ -223,23 +251,23 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	// 此网格的第一个三角形。
 	m_indices =
 	{
-		0, 2, 1, // -x
-		1, 2, 3,
+		0, 2, 1,
+		0, 3, 2,
 
-		4, 5, 6, // +x
-		5, 7, 6,
+		4, 6, 5,
+		4, 7, 6,
 
-		0, 1, 5, // -y
-		0, 5, 4,
+		8, 10, 9,
+		8, 11, 10,
 
-		2, 6, 7, // +y
-		2, 7, 3,
+		12, 14, 13,
+		12, 15, 14,
 
-		0, 4, 6, // -z
-		0, 6, 2,
+		16, 18, 17,
+		16, 19, 18,
 
-		1, 3, 7, // +z
-		1, 7, 5,
+		20, 22, 21,
+		20, 23, 22
 	};
 
 	const UINT indexBufferSize = UINT(sizeof(unsigned short) * m_indices.size());
@@ -280,8 +308,8 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	// 创建顶点/索引缓冲区视图。
 	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-	m_vertexBufferView.StrideInBytes = sizeof(VertexPositionColor);
-	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPositionColor) * m_vertices.size());
+	m_vertexBufferView.StrideInBytes = sizeof(VertexPCT);
+	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPCT) * m_vertices.size());
 
 	m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.SizeInBytes = (UINT)(sizeof(USHORT) * m_indices.size());

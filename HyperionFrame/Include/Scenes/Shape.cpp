@@ -32,12 +32,20 @@ UINT Shape::GetFaceCount()
 	return (UINT)m_indices.size() / 3;
 }
 
-HTriangle Shape::GetFace(UINT faceIndex)
+void Shape::GetFace(UINT faceIndex, XMFLOAT3 out_face[3])
 {
-	HTriangle result;
-	for (int i = 0; i < 3; i++)
-		result.p[i] = m_vertices[m_indices[faceIndex * 3 + i]].pos;
-	return result;
+	int index = faceIndex * 3;
+	out_face[0] = m_vertices[m_indices[index]].pos;
+	out_face[1] = m_vertices[m_indices[index + 1]].pos;
+	out_face[2] = m_vertices[m_indices[index + 2]].pos;
+}
+
+void Shape::GetUVs(UINT faceIndex, XMFLOAT2 out_uv[3])
+{
+	int index = faceIndex * 3;
+	out_uv[0] = m_vertices[m_indices[index]].uv;
+	out_uv[1] = m_vertices[m_indices[index + 1]].uv;
+	out_uv[2] = m_vertices[m_indices[index + 2]].uv;
 }
 
 HMaterial* Shape::GetMaterial()
