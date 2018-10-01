@@ -268,10 +268,9 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 			//printf("Object %d intersected.\n", i);
 			int index;
 			m_test_boxes[i]->Intersect(ray, index, isect);
-			
-			if (index != -1) printf("hit: %d\n", index);
+			//if (index != -1) printf("hit: %d\n", index);
 
-			//isect->ComputeScatterFunctions();
+			isect->ComputeScatterFunctions();
 		}
 	}
 }
