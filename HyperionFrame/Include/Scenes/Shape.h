@@ -23,7 +23,7 @@ public:
 
 	HMaterial* GetMaterial();
 
-	virtual void Intersect(Ray worldRay, XMFLOAT3& out_hitPos, int& out_hitIndex, SurfaceInteraction* out_isect) = 0;
+	virtual void Intersect(Ray worldRay, int& out_hitIndex, SurfaceInteraction* out_isect) = 0;
 	virtual bool IntersectP(Ray worldRay) = 0;
 
 private:

@@ -42,7 +42,7 @@ void Box::ReleaseUploadBuffers()
 {
 }
 
-void Box::Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex, SurfaceInteraction* out_isect)
+void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_isect)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
@@ -63,78 +63,134 @@ void Box::Intersect(Ray worldRay, XMFLOAT3 & out_hitPos, int & out_hitIndex, Sur
 	float tNear = max(t1.x, max(t1.y, t1.z));
 	float tFar = min(t2.x, min(t2.y, t2.z));
 
-	out_hitIndex = -1;
+	struct
+	{
+		XMFLOAT3 p, n, wo, dpdu, dpdv;
+		XMFLOAT2 uv;
+		float tNearest;
+		int index;
+	} hit;
+
+	hit.tNearest = FLT_MAX;
+	hit.index = -1;
 	if (tNear < tFar)
 	{
-		XMStoreFloat3(&out_hitPos, vRayOrig + vRayDir * tNear);
-
-		float nearest = FLT_MAX;
 		for (UINT i = 0; i < GetFaceCount(); i++)
 		{
 			XMFLOAT3 triData[3];
 			GetFace(i, triData);
 
-			XMVECTOR v0 = XMLoadFloat3(&triData[0]);
-			XMVECTOR v1 = XMLoadFloat3(&triData[1]);
-			XMVECTOR v2 = XMLoadFloat3(&triData[2]);
+			XMVECTOR p0 = XMLoadFloat3(&triData[0]);
+			XMVECTOR p1 = XMLoadFloat3(&triData[1]);
+			XMVECTOR p2 = XMLoadFloat3(&triData[2]);
 
-			// compute plane's normal
-			XMVECTOR v0v1 = v1 - v0;
-			XMVECTOR v0v2 = v2 - v0;
-			// no need to normalize
-			XMVECTOR N = XMVector3Cross(v0v1, v0v2); // N 
-			//float area2 = N.length();
+			XMVECTOR p0t = p0 - vRayOrig;
+			XMVECTOR p1t = p1 - vRayOrig;
+			XMVECTOR p2t = p2 - vRayOrig;
 
-			// Step 1: finding P
-
-			// check if ray and plane are parallel ?
-			float NdotRayDirection = XMVectorGetX(XMVector3Dot(N, vRayDir));
-			if (fabsf(NdotRayDirection) < 0.000001) // almost 0 
-				continue; // they are parallel so they don't intersect ! 
-
-			// compute d parameter using equation 2
-			float d = XMVectorGetX(XMVector3Dot(N, v0));
-
-			// compute t (equation 3)
-			float t = -(XMVectorGetX(XMVector3Dot(N, vRayOrig)) + d) / NdotRayDirection;
-			// check if the triangle is in behind the ray
-			if (t < 0)
-				continue; // the triangle is behind 
-
-			// compute the intersection point using equation 1
-			XMVECTOR P = vRayOrig + t * vRayDir;
-
-			// Step 2: inside-outside test
-			XMVECTOR C; // vector perpendicular to triangle's plane 
-
-			// edge 0
-			XMVECTOR edge0 = v1 - v0;
-			XMVECTOR vp0 = P - v0;
-			C = XMVector3Cross(edge0, vp0);
-
-			if (XMVectorGetX(XMVector3Dot(N, C)) < 0) continue; // P is on the right side 
-
-			// edge 1
-			XMVECTOR edge1 = v2 - v1;
-			XMVECTOR vp1 = P - v1;
-			C = XMVector3Cross(edge1, vp1);
-			if (XMVectorGetX(XMVector3Dot(N, C)) < 0) continue; // P is on the right side 
-
-			// edge 2
-			XMVECTOR edge2 = v0 - v2;
-			XMVECTOR vp2 = P - v2;
-			C = XMVector3Cross(edge2, vp2);
-			if (XMVectorGetX(XMVector3Dot(N, C)) < 0) continue; // P is on the right side; 
-
-			if (nearest > t)
+			int kz = 0;
+			float kValue = fabsf(XMVectorGetByIndex(vRayDir, 0));
+			for (int i = 1; i < 4; i++)
 			{
-				nearest = t;
-				out_hitIndex = i;
-				XMStoreFloat3(&out_isect->n, N);
-				XMStoreFloat3(&out_isect->wo, -vRayDir);
-				out_isect->shape = this;
+				float getByIdx = fabsf(XMVectorGetByIndex(vRayDir, i));
+				if (kValue < getByIdx)
+				{
+					kValue = getByIdx;
+					kz = i;
+				}
+			}
+			int kx = kz + 1;
+			if (kx == 3) kx = 0;
+			int ky = kx + 1;
+			if (ky == 3) ky = 0;
+
+			XMFLOAT3 d, fp0t, fp1t, fp2t;
+			XMStoreFloat3(&d, XMVectorPermute(vRayDir, vRayDir, kx, ky, kz, 3));
+			XMStoreFloat3(&fp0t, XMVectorPermute(p0t, p0t, kx, ky, kz, 3));
+			XMStoreFloat3(&fp1t, XMVectorPermute(p1t, p1t, kx, ky, kz, 3));
+			XMStoreFloat3(&fp2t, XMVectorPermute(p2t, p2t, kx, ky, kz, 3));
+
+			float Sx = -d.x / d.z;
+			float Sy = -d.y / d.z;
+			float Sz = 1.f / d.z;
+			fp0t.x += Sx * fp0t.z;
+			fp0t.y += Sy * fp0t.z;
+			fp1t.x += Sx * fp1t.z;
+			fp1t.y += Sy * fp1t.z;
+			fp2t.x += Sx * fp2t.z;
+			fp2t.y += Sy * fp2t.z;
+
+			float e0 = fp1t.x * fp2t.y - fp1t.y * fp2t.x;
+			float e1 = fp2t.x * fp0t.y - fp2t.y * fp0t.x;
+			float e2 = fp0t.x * fp1t.y - fp0t.y * fp1t.x;
+
+			if (e0 == 0.0f || e1 == 0.0f || e2 == 0.0f) 
+			{
+				double p2txp1ty = (double)fp2t.x * (double)fp1t.y;
+				double p2typ1tx = (double)fp2t.y * (double)fp1t.x;
+				e0 = (float)(p2typ1tx - p2txp1ty);
+				double p0txp2ty = (double)fp0t.x * (double)fp2t.y;
+				double p0typ2tx = (double)fp0t.y * (double)fp2t.x;
+				e1 = (float)(p0typ2tx - p0txp2ty);
+				double p1txp0ty = (double)fp1t.x * (double)fp0t.y;
+				double p1typ0tx = (double)fp1t.y * (double)fp0t.x;
+				e2 = (float)(p1typ0tx - p1txp0ty);
+			}
+
+			if ((e0 < 0 || e1 < 0 || e2 < 0) && (e0 > 0 || e1 > 0 || e2 > 0))
+				continue;
+			float det = e0 + e1 + e2;
+			if (det == 0) continue;
+
+			fp0t.z *= Sz;
+			fp1t.z *= Sz;
+			fp2t.z *= Sz;
+			float tScaled = e0 * fp0t.z + e1 * fp1t.z + e2 * fp2t.z;
+			if (det < 0 && (tScaled >= 0/* || tScaled < ray.tMax * det*/))
+				continue;
+			else if (det > 0 && (tScaled <= 0/* || tScaled > ray.tMax * det*/))
+				continue;
+
+			float invDet = 1 / det;
+			float b0 = e0 * invDet;
+			float b1 = e1 * invDet;
+			float b2 = e2 * invDet;
+			float t = tScaled * invDet;
+
+			XMFLOAT2 uv[3];
+			GetUVs(i, uv);
+
+			float du02 = uv[0].x - uv[2].x;
+			float du12 = uv[1].x - uv[2].x;
+			float dv02 = uv[0].y - uv[2].y;
+			float dv12 = uv[1].y - uv[2].y;
+			XMVECTOR dp02 = p0 - p2, dp12 = p1 - p2;
+			float detUV = du02 * dv12 - dv02 * du12;
+			float invdetUV = 1.0f / det;
+
+			XMVECTOR dpdu = dv12 * dp02 - dv02 * dp12;
+			XMVECTOR dpdv = du02 * dp12 - du12 * dp02;
+
+			XMVECTOR pHit = b0 * p0 + b1 * p1 + b2 * p2;
+			XMVECTOR uvHit = b0 * XMLoadFloat2(&uv[0]) + b1 * XMLoadFloat2(&uv[1]) + b2 * XMLoadFloat2(&uv[2]);
+
+			if (hit.tNearest > t)
+			{
+				hit.tNearest = t;
+				hit.index = i;
+				XMStoreFloat3(&hit.p, vRayOrig + t * vRayDir);
+				hit.wo = worldRay.GetDirection();
+				XMStoreFloat3(&hit.dpdu, dpdu);
+				XMStoreFloat3(&hit.dpdv, dpdv);
+				XMStoreFloat2(&hit.uv, uvHit);
 			}
 		}
+	}
+
+	if (hit.index != -1)
+	{
+		out_hitIndex = hit.index;
+		out_isect = new SurfaceInteraction(hit.p, hit.uv, hit.wo, hit.dpdu, hit.dpdv, this);
 	}
 }
 

@@ -5,15 +5,18 @@ class SurfaceInteraction
 {
 public:
 	SurfaceInteraction();
+	SurfaceInteraction(const XMFLOAT3 &p, const XMFLOAT2 &uv, const XMFLOAT3 &wo, const XMFLOAT3& dpdu, const XMFLOAT3& dpdv, const Shape* shape);
 	~SurfaceInteraction();
 
 	void ComputeScatterFunctions();
 
 public:
-	// normal vector.
+	XMFLOAT3 p;	
 	XMFLOAT3 n;
-	// 出射（交点-摄像机）向量
 	XMFLOAT3 wo;
-	// 交互的物体对象
+
+	XMFLOAT3 dpdu, dpdv;
+	XMFLOAT2 uv;
+
 	Shape* shape;
 };
