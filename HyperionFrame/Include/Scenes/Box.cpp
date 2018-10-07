@@ -62,17 +62,9 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 
 	float tNear = max(t1.x, max(t1.y, t1.z));
 	float tFar = min(t2.x, min(t2.y, t2.z));
-
-	struct
-	{
-		XMFLOAT3 p, n, wo, dpdu, dpdv;
-		XMFLOAT2 uv;
-		float tNearest;
-		int index;
-	} hit;
-
-	hit.tNearest = FLT_MAX;
-	hit.index = -1;
+	
+	float tNearest = FLT_MAX;
+	out_hitIndex = -1;
 	if (tNear < tFar)
 	{
 		for (UINT i = 0; i < GetFaceCount(); i++)
@@ -168,29 +160,25 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 			float detUV = du02 * dv12 - dv02 * du12;
 			float invdetUV = 1.0f / det;
 
-			XMVECTOR dpdu = dv12 * dp02 - dv02 * dp12;
-			XMVECTOR dpdv = du02 * dp12 - du12 * dp02;
+			XMFLOAT3 dpdu, dpdv;
+			XMStoreFloat3(&dpdu, dv12 * dp02 - dv02 * dp12);
+			XMStoreFloat3(&dpdv, du02 * dp12 - du12 * dp02);
 
-			XMVECTOR pHit = b0 * p0 + b1 * p1 + b2 * p2;
-			XMVECTOR uvHit = b0 * XMLoadFloat2(&uv[0]) + b1 * XMLoadFloat2(&uv[1]) + b2 * XMLoadFloat2(&uv[2]);
+			XMFLOAT3 pHit;
+			XMStoreFloat3(&pHit, b0 * p0 + b1 * p1 + b2 * p2);
+			XMFLOAT2 uvHit;
+			XMStoreFloat2(&uvHit, b0 * XMLoadFloat2(&uv[0]) + b1 * XMLoadFloat2(&uv[1]) + b2 * XMLoadFloat2(&uv[2]));
 
-			if (hit.tNearest > t)
+			if (tNearest > t)
 			{
-				hit.tNearest = t;
-				hit.index = i;
-				XMStoreFloat3(&hit.p, vRayOrig + t * vRayDir);
-				hit.wo = worldRay.GetDirection();
-				XMStoreFloat3(&hit.dpdu, dpdu);
-				XMStoreFloat3(&hit.dpdv, dpdv);
-				XMStoreFloat2(&hit.uv, uvHit);
+				tNearest = t;
+				out_hitIndex = i;
+				XMFLOAT3 hitPos;
+				XMStoreFloat3(&hitPos, -(vRayOrig + t * vRayDir));
+				
+				*out_isect = SurfaceInteraction(hitPos, uvHit, hitPos, dpdu, dpdv, this);
 			}
 		}
-	}
-
-	if (hit.index != -1)
-	{
-		out_hitIndex = hit.index;
-		out_isect = new SurfaceInteraction(hit.p, hit.uv, hit.wo, hit.dpdu, hit.dpdv, this);
 	}
 }
 

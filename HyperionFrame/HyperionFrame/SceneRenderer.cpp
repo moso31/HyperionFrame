@@ -264,7 +264,7 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 	{
 		if (m_test_boxes[i]->IntersectP(ray))
 		{
-			SurfaceInteraction* isect = nullptr;
+			SurfaceInteraction* isect = new SurfaceInteraction();
 			//printf("Object %d intersected.\n", i);
 			int index;
 			m_test_boxes[i]->Intersect(ray, index, isect);

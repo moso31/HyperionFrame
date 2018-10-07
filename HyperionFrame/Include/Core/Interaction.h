@@ -5,7 +5,7 @@ class SurfaceInteraction
 {
 public:
 	SurfaceInteraction();
-	SurfaceInteraction(const XMFLOAT3 &p, const XMFLOAT2 &uv, const XMFLOAT3 &wo, const XMFLOAT3& dpdu, const XMFLOAT3& dpdv, const Shape* shape);
+	SurfaceInteraction(const XMFLOAT3 &p, const XMFLOAT2 &uv, const XMFLOAT3 &wo, const XMFLOAT3& dpdu, const XMFLOAT3& dpdv, Shape* shape);
 	~SurfaceInteraction();
 
 	void ComputeScatterFunctions();
