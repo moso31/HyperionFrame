@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Scenes;..\Include\Material;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Scenes;..\Include\Material;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -133,7 +133,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\Core\HScene.cpp" />
     <ClCompile Include="..\Include\Core\Interaction.cpp" />
+    <ClCompile Include="..\Include\Lights\HLight.cpp" />
+    <ClCompile Include="..\Include\Lights\HPointLight.cpp" />
     <ClCompile Include="..\Include\Material\HMaterial.cpp" />
     <ClCompile Include="..\Include\Material\HMatteMaterial.cpp" />
     <ClCompile Include="..\Include\Scenes\Box.cpp" />
@@ -149,7 +152,10 @@
     <ClCompile Include="SceneRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\Core\HScene.h" />
     <ClInclude Include="..\Include\Core\Interaction.h" />
+    <ClInclude Include="..\Include\Lights\HLight.h" />
+    <ClInclude Include="..\Include\Lights\HPointLight.h" />
     <ClInclude Include="..\Include\Material\HMaterial.h" />
     <ClInclude Include="..\Include\Material\HMatteMaterial.h" />
     <ClInclude Include="..\Include\Scenes\Box.h" />

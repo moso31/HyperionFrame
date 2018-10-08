@@ -1,5 +1,5 @@
 #pragma once
-#include "Box.h"
+#include "HScene.h"
 
 class SceneRenderer
 {

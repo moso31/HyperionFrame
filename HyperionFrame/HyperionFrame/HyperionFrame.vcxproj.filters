@@ -43,6 +43,15 @@
     <ClCompile Include="..\Include\Material\HMatteMaterial.cpp">
       <Filter>Include\Material</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Core\HScene.cpp">
+      <Filter>Include\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Lights\HPointLight.cpp">
+      <Filter>Include\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Lights\HLight.cpp">
+      <Filter>Include\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -96,6 +105,15 @@
     <ClInclude Include="..\Include\Material\HMatteMaterial.h">
       <Filter>Include\Material</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\Core\HScene.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Lights\HPointLight.h">
+      <Filter>Include\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Lights\HLight.h">
+      <Filter>Include\Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SampleVertexShader.hlsl">
@@ -135,6 +153,9 @@
     </Filter>
     <Filter Include="Include\Core">
       <UniqueIdentifier>{aa99ae3f-61fe-426a-9231-f2a22fac6909}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Light">
+      <UniqueIdentifier>{cd5e98a5-fcf3-47c9-90f1-5ff6f9192591}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

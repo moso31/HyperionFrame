@@ -34,3 +34,4 @@ using namespace Microsoft::WRL;
 class SurfaceInteraction;
 class Shape;
 class HMaterial;
+class VisibilityTester;
