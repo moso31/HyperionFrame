@@ -2,8 +2,6 @@
 #include "HMath.h"
 #include "Interaction.h"
 
-static const UINT c_boxCount = 3;
-
 SceneRenderer::SceneRenderer()
 {
 }
@@ -11,6 +9,8 @@ SceneRenderer::SceneRenderer()
 SceneRenderer::SceneRenderer(const std::shared_ptr<DXResource>& dxResource) :
 	m_dxResources(dxResource)
 {
+	m_test_scene = new HScene(dxResource);
+
 	CreateSceneResources();
 }
 
@@ -84,10 +84,14 @@ void SceneRenderer::CreateSceneResources()
 	ThrowIfFailed(d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_dxResources->GetCommandAllocator(), m_pipelineState.Get(), IID_PPV_ARGS(&m_commandList)));
 	NAME_D3D12_OBJECT(m_commandList);
 
+	// 创建场景资源
+	m_test_scene->Init(m_commandList);
+	UINT boxCount = m_test_scene->GetShapeCount();
+
 	// 为常量缓冲区创建描述符堆。
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = DXResource::c_frameCount * (c_boxCount);
+		heapDesc.NumDescriptors = DXResource::c_frameCount * boxCount;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -97,7 +101,7 @@ void SceneRenderer::CreateSceneResources()
 	}
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * c_alignedConstantBufferSize * c_boxCount);
+	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * c_alignedConstantBufferSize * boxCount);
 	ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
@@ -111,7 +115,7 @@ void SceneRenderer::CreateSceneResources()
 	// 映射常量缓冲区。
 	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
 	ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * c_alignedConstantBufferSize * c_boxCount);
+	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * c_alignedConstantBufferSize * boxCount);
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 
 	// 创建常量缓冲区视图以访问上载缓冲区。
@@ -119,12 +123,12 @@ void SceneRenderer::CreateSceneResources()
 
 	for (int n = 0; n < DXResource::c_frameCount; n++)
 	{
-		for (int i = 0; i < c_boxCount; i++)
+		for (int i = 0; i < boxCount; i++)
 		{
-			int heapIndex = n * c_boxCount + i;
+			int heapIndex = n * boxCount + i;
 
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-			cbvGpuAddress += (n * c_boxCount + i) * c_alignedConstantBufferSize;
+			cbvGpuAddress += (n * boxCount + i) * c_alignedConstantBufferSize;
 
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
 			cbvCpuHandle.Offset(heapIndex, m_cbvDescriptorSize);
@@ -136,9 +140,6 @@ void SceneRenderer::CreateSceneResources()
 		}
 	}
 
-	// 创建场景资源
-	LoadSceneAssets();
-
 	// 关闭命令列表并执行它，以开始将顶点/索引缓冲区复制到 GPU 的默认堆中。
 	ThrowIfFailed(m_commandList->Close());
 	ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };
@@ -146,52 +147,16 @@ void SceneRenderer::CreateSceneResources()
 
 	// 等待命令列表完成执行；顶点/索引缓冲区需要在上载资源超出范围之前上载到 GPU。
 	m_dxResources->WaitForGpu();
-
-	for (size_t i = 0; i < m_test_boxes.size(); i++)
-	{
-		m_test_boxes[i]->ReleaseUploadBuffers();
-	}
-}
-
-void SceneRenderer::LoadSceneAssets()
-{
-	m_test_mainCamera = new Camera(m_dxResources);
-	m_test_mainCamera->Init();
-	//m_test_mainCamera->SetTranslation(0.0f, 0.7f, 1.5f);
-	//m_test_mainCamera->SetLookAt(0.0f, -0.1f, 0.0f);
-	m_test_mainCamera->SetTranslation(4.0f, 2.0f, -2.0f);
-	m_test_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
-
-	for (int i = 0; i < c_boxCount; i++)
-	{
-		auto box = new Box(m_dxResources, m_test_mainCamera);
-		m_test_boxes.push_back(box);
-		box->Init(m_commandList);
-
-		if (i == 0) box->SetTranslation(0.0f, 0.0f, 0.0f);
-		if (i == 1) box->SetTranslation(2.0f, 0.0f, -2.0f);
-		if (i == 2) box->SetTranslation(-2.0f, 0.0f, -2.0f);
-	}
 }
 
 void SceneRenderer::WindowSizeChanged()
 {
-	m_test_mainCamera->OnResize();
+	m_test_scene->OnResize();
 }
 
 void SceneRenderer::Update()
 {
-	static float x = 0;
-	x += 0.01f;
-
-	m_test_mainCamera->Update();
-
-	for (size_t i = 0; i < m_test_boxes.size(); i++)
-	{
-		m_test_boxes[i]->SetRotation(0.0f, x, 0.0f);
-		UINT8* destination = m_mappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * c_boxCount + i) * c_alignedConstantBufferSize);
-		m_test_boxes[i]->Update(destination);
-	}
+	m_test_scene->Update(m_mappedConstantBuffer);
 }
 
 bool SceneRenderer::Render()
@@ -206,7 +171,7 @@ bool SceneRenderer::Render()
 		// 设置视区和剪刀矩形。
 		D3D12_VIEWPORT viewport = m_dxResources->GetScreenViewport();
 		m_commandList->RSSetViewports(1, &viewport);
-		m_commandList->RSSetScissorRects(1, &(m_test_mainCamera->GetScissorRect()));
+		m_commandList->RSSetScissorRects(1, &(m_test_scene->GetMainCamera()->GetScissorRect()));
 
 		// 指示此资源会用作呈现目标。
 		CD3DX12_RESOURCE_BARRIER renderTargetResourceBarrier =
@@ -227,17 +192,9 @@ bool SceneRenderer::Render()
 		m_commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 		// 将当前帧的常量缓冲区绑定到管道。
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_dxResources->GetCurrentFrameIndex() * c_boxCount, m_cbvDescriptorSize);
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_dxResources->GetCurrentFrameIndex() * m_test_scene->GetShapeCount(), m_cbvDescriptorSize);
 
-		for (size_t i = 0; i < m_test_boxes.size(); i++)
-		{
-			UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * c_boxCount + (UINT)i;
-			CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
-			gpuHandle.Offset(cbvIndex, m_cbvDescriptorSize);
-
-			m_commandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
-			m_test_boxes[i]->Render(m_commandList);
-		}
+		m_test_scene->Render(m_commandList, m_cbvHeap, m_cbvDescriptorSize);
 
 		// 指示呈现目标现在会用于展示命令列表完成执行的时间。
 		CD3DX12_RESOURCE_BARRIER presentResourceBarrier =
@@ -257,20 +214,5 @@ bool SceneRenderer::Render()
 
 void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 {
-	Ray ray = m_test_mainCamera->GenerateRay(static_cast<float>(screenXY.x), static_cast<float>(screenXY.y));
-	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
-
-	for (int i = 0; i < c_boxCount; i++)
-	{
-		if (m_test_boxes[i]->IntersectP(ray))
-		{
-			SurfaceInteraction* isect = new SurfaceInteraction();
-			//printf("Object %d intersected.\n", i);
-			int index;
-			m_test_boxes[i]->Intersect(ray, index, isect);
-			//if (index != -1) printf("hit: %d\n", index);
-
-			isect->ComputeScatterFunctions();
-		}
-	}
+	m_test_scene->OnLButtonClicked(screenXY);
 }

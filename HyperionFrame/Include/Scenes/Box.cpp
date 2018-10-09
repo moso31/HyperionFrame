@@ -38,10 +38,6 @@ void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
 }
 
-void Box::ReleaseUploadBuffers()
-{
-}
-
 void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_isect)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());

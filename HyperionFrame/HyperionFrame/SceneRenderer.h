@@ -10,7 +10,6 @@ public:
 	~SceneRenderer();
 
 	void CreateSceneResources();
-	void LoadSceneAssets();
 	void WindowSizeChanged();
 
 	void Update();
@@ -34,9 +33,6 @@ private:
 
 	D3D12_RECT											m_scissorRect;
 
-	//Box* m_test_box;
-	//Box* m_test_box_2;
-	vector<Box*> m_test_boxes;
-	Camera* m_test_mainCamera;
+	HScene* m_test_scene;
 };
 
