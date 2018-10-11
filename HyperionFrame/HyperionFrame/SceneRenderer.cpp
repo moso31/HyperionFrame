@@ -121,9 +121,9 @@ void SceneRenderer::CreateSceneResources()
 	// 创建常量缓冲区视图以访问上载缓冲区。
 	m_cbvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	for (int n = 0; n < DXResource::c_frameCount; n++)
+	for (UINT n = 0; n < DXResource::c_frameCount; n++)
 	{
-		for (int i = 0; i < boxCount; i++)
+		for (UINT i = 0; i < boxCount; i++)
 		{
 			int heapIndex = n * boxCount + i;
 
