@@ -4,7 +4,7 @@ HMatteMaterial::HMatteMaterial()
 {
 }
 
-HMatteMaterial::HMatteMaterial(const XMFLOAT3 & _Kd, const float & _sigma)
+HMatteMaterial::HMatteMaterial(const XMCOLOR3 & _Kd, const float & _sigma)
 {
 	Kd = _Kd;
 	sigma = _sigma;

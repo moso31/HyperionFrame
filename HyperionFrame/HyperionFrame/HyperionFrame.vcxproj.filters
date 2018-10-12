@@ -52,6 +52,9 @@
     <ClCompile Include="..\Include\Lights\HLight.cpp">
       <Filter>Include\Light</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Core\Reflection.cpp">
+      <Filter>Include\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -113,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\Lights\HLight.h">
       <Filter>Include\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Core\Reflection.h">
+      <Filter>Include\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

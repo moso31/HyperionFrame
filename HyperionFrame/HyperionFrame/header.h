@@ -35,3 +35,8 @@ class SurfaceInteraction;
 class Shape;
 class HMaterial;
 class VisibilityTester;
+class BSDF;
+class BxDF;
+
+typedef XMFLOAT3 XMCOLOR3;
+typedef XMFLOAT4 XMCOLOR4;
