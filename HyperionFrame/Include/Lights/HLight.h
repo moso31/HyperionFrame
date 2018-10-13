@@ -6,7 +6,7 @@ class HLight : public Transform
 {
 public:
 	HLight();
-	~HLight();
+	virtual ~HLight();
 
 	virtual XMCOLOR3 Sample_Li(const Interaction& isect, XMFLOAT3& out_wi, VisibilityTester* out_vis) = 0;
 

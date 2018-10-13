@@ -8,6 +8,7 @@ public:
 	Interaction(const XMFLOAT3 &p) : p(p) {}
 	Interaction(const XMFLOAT3 &p, const XMFLOAT3 &wo) : p(p), n(n) {}
 	Interaction(const XMFLOAT3 &p, const XMFLOAT3 &n, const XMFLOAT3 &wo) : p(p), n(n), wo(wo) {}
+	virtual ~Interaction() {};
 
 public:
 	XMFLOAT3 p;

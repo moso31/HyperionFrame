@@ -6,7 +6,7 @@ class Shape : public Transform
 public:
 	Shape();
 	Shape(const shared_ptr<DXResource>& dxResources, Camera* camera);
-	~Shape();
+	virtual ~Shape();
 
 	AABB GetAABB();
 

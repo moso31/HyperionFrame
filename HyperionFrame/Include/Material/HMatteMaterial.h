@@ -1,8 +1,6 @@
 #pragma once
 #include "HMaterial.h"
 
-using namespace HIFrameMath;
-
 class HMatteMaterial : public HMaterial
 {
 public:

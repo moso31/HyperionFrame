@@ -6,8 +6,6 @@
 
 #include "Transform.h"
 
-using namespace HIFrameMath;
-
 class Camera : public Transform
 {
 public:

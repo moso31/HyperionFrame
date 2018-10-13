@@ -7,6 +7,7 @@ class Transform
 {
 public:
 	Transform(XMFLOAT3 _translation = XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3 _rotation = XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3 _scale = XMFLOAT3(1.0f, 1.0f, 1.0f));
+	virtual ~Transform() {};
 
 	XMFLOAT3 GetTranslation();
 	XMFLOAT3 GetRotation();
