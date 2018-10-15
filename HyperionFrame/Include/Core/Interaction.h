@@ -1,5 +1,6 @@
 #pragma once
 #include "HMaterial.h"
+#include "Reflection.h"
 
 class Interaction
 {
@@ -30,4 +31,5 @@ public:
 	XMFLOAT2 uv;
 
 	Shape* shape;
+	BSDF* bsdf;
 };

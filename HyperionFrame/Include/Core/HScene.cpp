@@ -20,8 +20,7 @@ void HScene::OnResize()
 
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	m_mainCamera = new Camera(m_dxResources);
-	m_mainCamera->Init();
+	m_mainCamera = CreateCamera(); 
 	m_mainCamera->SetTranslation(4.0f, 2.0f, -2.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
@@ -42,7 +41,7 @@ void HScene::Update(UINT8* pMappedConstantBuffer)
 
 	m_mainCamera->Update();
 
-	for (size_t i = 0; i < m_transformNodes.size(); i++)
+	for (size_t i = 0; i < m_shapes.size(); i++)
 	{
 		m_shapes[i]->SetRotation(0.0f, x, 0.0f);
 		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * c_alignedConstantBufferSize);
@@ -72,20 +71,33 @@ void HScene::OnLButtonClicked(XMINT2 screenXY)
 	{
 		if (m_shapes[i]->IntersectP(ray))
 		{
-			SurfaceInteraction* isect = new SurfaceInteraction();
-			printf("Object %d intersected.\n", i);
+			SurfaceInteraction isect;
+			//printf("Object %d intersected.\n", i);
 			int index;
-			m_shapes[i]->Intersect(ray, index, isect);
-			if (index != -1) printf("hit: %d\n", index);
+			m_shapes[i]->Intersect(ray, index, &isect);
+			//if (index != -1) printf("hit: %d\n", index);
+			XMFLOAT3 wo = isect.wo;
 
-			isect->ComputeScatterFunctions();
+			isect.ComputeScatterFunctions();
+
+			for (UINT j = 0; j < m_lights.size(); j++)
+			{
+				XMFLOAT3 wi;
+				VisibilityTester vis;
+				m_lights[i]->Sample_Li(isect, wi, &vis);
+				XMCOLOR3 f = isect.bsdf->f(wo, wi);
+			}
 		}
 	}
 }
 
 Camera * HScene::CreateCamera()
 {
-	return nullptr;
+	auto camera = new Camera(m_dxResources);
+	m_transformNodes.push_back(camera);
+	m_cameras.push_back(camera);
+	camera->Init();
+	return camera;
 }
 
 Box * HScene::CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList)
@@ -97,7 +109,10 @@ Box * HScene::CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	return box;
 }
 
-HPointLight HScene::CreatePointLight()
+HPointLight * HScene::CreatePointLight()
 {
-	return HPointLight();
+	auto pointLight = new HPointLight();
+	m_transformNodes.push_back(pointLight);
+	m_lights.push_back(pointLight);
+	return pointLight;
 }
