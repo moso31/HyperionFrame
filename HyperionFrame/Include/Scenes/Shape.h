@@ -21,7 +21,8 @@ public:
 	void GetFace(UINT faceIndex, XMFLOAT3 out_face[3]);
 	void GetUVs(UINT faceIndex, XMFLOAT2 out_uv[3]);
 
-	HMaterial* GetMaterial();
+	HMaterial* GetMaterial() { return m_material; }
+	void SetMaterial(HMaterial* mat) { m_material = mat; }
 
 	virtual void Intersect(Ray worldRay, int& out_hitIndex, SurfaceInteraction* out_isect) = 0;
 	virtual bool IntersectP(Ray worldRay) = 0;

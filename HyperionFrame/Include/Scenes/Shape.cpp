@@ -47,8 +47,3 @@ void Shape::GetUVs(UINT faceIndex, XMFLOAT2 out_uv[3])
 	out_uv[1] = m_vertices[m_indices[index + 1]].uv;
 	out_uv[2] = m_vertices[m_indices[index + 2]].uv;
 }
-
-HMaterial* Shape::GetMaterial()
-{
-	return m_material;
-}

@@ -67,7 +67,12 @@ BSDF::BSDF(const SurfaceInteraction & si, float eta)
 	XMStoreFloat3(&t, XMVector3Cross(XMLoadFloat3(&n), XMLoadFloat3(&s)));
 }
 
-XMCOLOR3 BSDF::f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags) 
+void BSDF::Add(BxDF * bxdf)
+{
+	m_bxdfs.push_back(bxdf);
+}
+
+XMCOLOR3 BSDF::f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags)
 {
 	XMFLOAT3 wi = WorldToReflectionCoord(wiW), wo = WorldToReflectionCoord(woW);
 	if (wo.z == 0) 

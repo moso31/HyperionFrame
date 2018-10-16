@@ -23,6 +23,7 @@ public:
 	Camera* CreateCamera();
 	Box* CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	HPointLight* CreatePointLight();
+	HMatteMaterial* CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
 
 	Camera* GetMainCamera() { return m_mainCamera; }
 

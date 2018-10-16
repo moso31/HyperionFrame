@@ -23,6 +23,7 @@ public:
 	BSDF(const SurfaceInteraction &si, float eta = 1);
 	virtual ~BSDF() {}
 
+	void Add(BxDF* bxdf);
 	XMCOLOR3 f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags = BSDF_ALL);
 
 	XMCOLOR3 WorldToReflectionCoord(const XMFLOAT3 &v);

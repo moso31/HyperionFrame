@@ -24,14 +24,22 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	m_mainCamera->SetTranslation(4.0f, 2.0f, -2.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
+	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f };
+	auto mtrl = CreateMatteMaterial(red, 0.5f);
+
 	for (int i = 0; i < 3; i++)
 	{
 		auto box = CreateBox(pCommandList);
+		box->SetMaterial(mtrl);
 
 		if (i == 0) box->SetTranslation(0.0f, 0.0f, 0.0f);
 		if (i == 1) box->SetTranslation(2.0f, 0.0f, -2.0f);
 		if (i == 2) box->SetTranslation(-2.0f, 0.0f, -2.0f);
 	}
+
+	auto pointLight = CreatePointLight();
+	pointLight->SetTranslation(5.0f, 5.0f, 5.0f);
+	pointLight->SetIntensity(1.0f, 1.0f, 1.0f);
 }
 
 void HScene::Update(UINT8* pMappedConstantBuffer)
@@ -84,8 +92,13 @@ void HScene::OnLButtonClicked(XMINT2 screenXY)
 			{
 				XMFLOAT3 wi;
 				VisibilityTester vis;
-				m_lights[i]->Sample_Li(isect, wi, &vis);
+				XMCOLOR3 Li = m_lights[j]->Sample_Li(isect, wi, &vis);
 				XMCOLOR3 f = isect.bsdf->f(wo, wi);
+
+				//if (/*!f.IsBlack() && */vis.Unoccluded(scene))
+				//{
+				//	L += f * Li * AbsDot(wi, n) / pdf;
+				//}
 			}
 		}
 	}
@@ -115,4 +128,11 @@ HPointLight * HScene::CreatePointLight()
 	m_transformNodes.push_back(pointLight);
 	m_lights.push_back(pointLight);
 	return pointLight;
+}
+
+HMatteMaterial * HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sigma)
+{
+	auto mat = new HMatteMaterial(kd, sigma);
+	m_materials.push_back(mat);
+	return mat;
 }
