@@ -21,16 +21,21 @@ void HScene::OnResize()
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	m_mainCamera = CreateCamera(); 
-	m_mainCamera->SetTranslation(4.0f, 2.0f, -2.0f);
+	m_mainCamera->SetTranslation(0.0f, 2.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
-	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f };
-	auto mtrl = CreateMatteMaterial(red, 0.5f);
+	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f }, green = { 0.0f, 1.0f, 0.0f }, blue = { 0.0f, 0.0f, 1.0f };
+	float sig = 90.0f;
+	HMatteMaterial* mtrl[3] = {
+		CreateMatteMaterial(red, sig),
+		CreateMatteMaterial(green, sig),
+		CreateMatteMaterial(blue, sig)
+	};
 
 	for (int i = 0; i < 3; i++)
 	{
 		auto box = CreateBox(pCommandList);
-		box->SetMaterial(mtrl);
+		box->SetMaterial(mtrl[i]);
 
 		if (i == 0) box->SetTranslation(0.0f, 0.0f, 0.0f);
 		if (i == 1) box->SetTranslation(2.0f, 0.0f, -2.0f);
@@ -38,14 +43,14 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	}
 
 	auto pointLight = CreatePointLight();
-	pointLight->SetTranslation(5.0f, 5.0f, 5.0f);
+	pointLight->SetTranslation(0.0f, 1.0f, -0.0f);
 	pointLight->SetIntensity(1.0f, 1.0f, 1.0f);
 }
 
 void HScene::Update(UINT8* pMappedConstantBuffer)
 {
 	static float x = 0;
-	x += 0.01f;
+	x += 0.0f;
 
 	m_mainCamera->Update();
 
@@ -83,11 +88,13 @@ void HScene::OnLButtonClicked(XMINT2 screenXY)
 			//printf("Object %d intersected.\n", i);
 			int index;
 			m_shapes[i]->Intersect(ray, index, &isect);
+			//printf("hit: %f, %f, %f\n", isect.p.x, isect.p.y, isect.p.z);
 			//if (index != -1) printf("hit: %d\n", index);
 			XMFLOAT3 wo = isect.wo;
 
 			isect.ComputeScatterFunctions();
 
+			XMCOLORV LV = XMVectorZero();
 			for (UINT j = 0; j < m_lights.size(); j++)
 			{
 				XMFLOAT3 wi;
@@ -96,10 +103,19 @@ void HScene::OnLButtonClicked(XMINT2 screenXY)
 				XMCOLOR3 f = isect.bsdf->f(wo, wi);
 
 				//if (/*!f.IsBlack() && */vis.Unoccluded(scene))
-				//{
-				//	L += f * Li * AbsDot(wi, n) / pdf;
-				//}
+				{
+					XMCOLORV fV = XMLoadFloat3(&f);
+					XMCOLORV LiV = XMLoadFloat3(&Li);
+					XMVECTOR wiV = XMLoadFloat3(&wi);
+					XMVECTOR nV = XMLoadFloat3(&isect.n);
+
+					LV += fV * LiV * XMVectorAbs(XMVector3Dot(wiV, nV));
+				}
 			}
+
+			XMCOLOR3 L;
+			XMStoreFloat3(&L, LV);
+			printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
 		}
 	}
 }
@@ -109,7 +125,7 @@ Camera * HScene::CreateCamera()
 	auto camera = new Camera(m_dxResources);
 	m_transformNodes.push_back(camera);
 	m_cameras.push_back(camera);
-	camera->Init();
+	camera->Init(70.0f, 0.01f, 1000.0f);
 	return camera;
 }
 

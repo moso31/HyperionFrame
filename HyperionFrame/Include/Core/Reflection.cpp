@@ -75,12 +75,15 @@ void BSDF::Add(BxDF * bxdf)
 XMCOLOR3 BSDF::f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags)
 {
 	XMFLOAT3 wi = WorldToReflectionCoord(wiW), wo = WorldToReflectionCoord(woW);
-	if (wo.z == 0) 
+	//printf("wi: %f, %f, %f   wo: %f, %f, %f\n", wiW.x, wiW.y, wiW.z, woW.x, woW.y, woW.z);
+	//printf("wi: %f, %f, %f   wo: %f, %f, %f\n", wi.x, wi.y, wi.z, wo.x, wo.y, wo.z);
+	if (wo.z == 0)
 		return { 0.0f, 0.0f, 0.0f };
 
 	XMVECTOR nV = XMLoadFloat3(&n);
 	float reflect = XMVectorGetX(XMVector3Dot(XMLoadFloat3(&wiW), nV)) * XMVectorGetX(XMVector3Dot(XMLoadFloat3(&woW), nV));
 	bool isReflect = reflect > 0;
+	//printf("normal: %f, %f, %f, reflect: %f\n", n.x, n.y, n.z, reflect);
 
 	XMCOLOR3 f(0.0f, 0.0f, 0.0f); 
 	XMVECTOR fV = XMVectorZero();

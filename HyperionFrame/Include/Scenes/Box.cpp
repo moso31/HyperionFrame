@@ -59,6 +59,7 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 	float tNear = max(t1.x, max(t1.y, t1.z));
 	float tFar = min(t2.x, min(t2.y, t2.z));
 	
+	SurfaceInteraction record;
 	float tNearest = FLT_MAX;
 	out_hitIndex = -1;
 	if (tNear < tFar)
@@ -169,12 +170,34 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 			{
 				tNearest = t;
 				out_hitIndex = i;
-				XMFLOAT3 hitPos;
-				XMStoreFloat3(&hitPos, -(vRayOrig + t * vRayDir));
-				
-				*out_isect = SurfaceInteraction(hitPos, uvHit, hitPos, dpdu, dpdv, this);
+				XMFLOAT3 hitPos, wo;
+				XMStoreFloat3(&hitPos, (vRayOrig + t * vRayDir));
+				XMStoreFloat3(&wo, -vRayDir);
+				record = SurfaceInteraction(hitPos, uvHit, wo, dpdu, dpdv, this);
 			}
 		}
+	}
+
+	if (out_hitIndex != -1)
+	{
+		// isect 转换成世界坐标
+		XMVECTOR pV = XMVector3TransformCoord(XMLoadFloat3(&record.p), mxObject2World);
+		XMVECTOR nV = XMVector3TransformNormal(XMLoadFloat3(&record.n), mxObject2World);
+		XMVECTOR woV = XMVector3TransformNormal(XMLoadFloat3(&record.wo), mxObject2World);
+		XMVECTOR dpduV = XMVector3TransformNormal(XMLoadFloat3(&record.dpdu), mxObject2World);
+		XMVECTOR dpdvV = XMVector3TransformNormal(XMLoadFloat3(&record.dpdv), mxObject2World);
+
+		SurfaceInteraction result;
+		XMStoreFloat3(&result.p, pV);
+		XMStoreFloat3(&result.n, nV);
+		XMStoreFloat3(&result.wo, woV);
+		XMStoreFloat3(&result.dpdu, dpduV);
+		XMStoreFloat3(&result.dpdv, dpdvV);
+		result.uv = record.uv;
+		result.bsdf = record.bsdf;
+		result.shape = record.shape;
+
+		*out_isect = result;
 	}
 }
 
@@ -218,10 +241,10 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 		
 		// +X
-		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 
 		// -Y
 		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
@@ -230,22 +253,22 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 		
 		// +Y
-		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 		
 		// -Z
-		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-		
-		// +Z
 		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
 		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
 		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
 		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		
+		// +Z
+		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 0.0f) },
 	};
 
 	const UINT vertexBufferSize = UINT(sizeof(VertexPCT) * m_vertices.size());
