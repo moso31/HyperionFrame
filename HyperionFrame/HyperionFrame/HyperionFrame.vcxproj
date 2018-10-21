@@ -148,6 +148,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="DXResource.cpp" />
     <ClCompile Include="FileReader.cpp" />
+    <ClCompile Include="ImageGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PipelineManager.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="DXResource.h" />
     <ClInclude Include="FileReader.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="ImageGenerator.h" />
     <ClInclude Include="PipelineManager.h" />
     <ClInclude Include="SceneRenderer.h" />
     <ClInclude Include="ShaderStructures.h" />
@@ -190,6 +192,7 @@
   <ItemGroup>
     <None Include="..\..\HyperionFrame Include Hierarchy.vsdx" />
     <None Include="..\..\Next Work" />
+    <None Include="..\..\Version log" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

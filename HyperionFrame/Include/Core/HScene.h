@@ -27,7 +27,7 @@ public:
 
 	Camera* GetMainCamera() { return m_mainCamera; }
 
-	int GetShapeCount() { return m_shapes.size(); }
+	int GetShapeCount() { return (int)m_shapes.size(); }
 
 private:
 	std::shared_ptr<DXResource> m_dxResources;

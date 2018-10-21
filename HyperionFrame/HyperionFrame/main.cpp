@@ -1,6 +1,6 @@
 #include "App.h"
 
-const static float WINDOW_RATIO = 0.7f;
+const static float WINDOW_RATIO = 0.5f;
 
 HWND g_hWnd;
 HINSTANCE g_hInstance;
@@ -77,8 +77,8 @@ bool InitWindow()
 	int screenHeight = GetDeviceCaps(screen, VERTRES);
 	ReleaseDC(NULL, screen);
 
-	//g_windowSize = XMFLOAT2(screenWidth * WINDOW_RATIO, screenHeight * WINDOW_RATIO);
-	g_windowSize = XMFLOAT2(1366, 768);
+	g_windowSize = XMFLOAT2(screenWidth * WINDOW_RATIO, screenHeight * WINDOW_RATIO);
+	//g_windowSize = XMFLOAT2(1366, 768);
 
 	RECT R = { 0, 0, (int)g_windowSize.x, (int)g_windowSize.y };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
@@ -120,7 +120,10 @@ int Run()
 		else
 		{
 			if (g_test)
+			{
 				g_app->OnLButtonClicked(g_pos);
+				g_test = false;
+			}
 
 			RunApp();
 		}

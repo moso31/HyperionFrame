@@ -55,6 +55,9 @@
     <ClCompile Include="..\Include\Core\Reflection.cpp">
       <Filter>Include\Core</Filter>
     </ClCompile>
+    <ClCompile Include="ImageGenerator.cpp">
+      <Filter>App\File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -120,6 +123,9 @@
     <ClInclude Include="..\Include\Core\Reflection.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
+    <ClInclude Include="ImageGenerator.h">
+      <Filter>App\File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SampleVertexShader.hlsl">
@@ -167,5 +173,6 @@
   <ItemGroup>
     <None Include="..\..\Next Work" />
     <None Include="..\..\HyperionFrame Include Hierarchy.vsdx" />
+    <None Include="..\..\Version log" />
   </ItemGroup>
 </Project>
