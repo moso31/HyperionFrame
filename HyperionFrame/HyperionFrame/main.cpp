@@ -38,6 +38,10 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEACTIVATE:
 		g_pos = { (int)x, (int)y };
 		break;
+	case WM_KEYDOWN:
+	{
+		g_app->OnKeyDown(wParam);
+	}
 	default:
 		break;
 	}

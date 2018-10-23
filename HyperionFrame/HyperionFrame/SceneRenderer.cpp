@@ -6,8 +6,9 @@ SceneRenderer::SceneRenderer()
 {
 }
 
-SceneRenderer::SceneRenderer(const std::shared_ptr<DXResource>& dxResource) :
-	m_dxResources(dxResource)
+SceneRenderer::SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HInput>& input) :
+	m_dxResources(dxResource),
+	m_input(input)
 {
 	m_test_scene = new HScene(dxResource);
 
@@ -86,6 +87,7 @@ void SceneRenderer::CreateSceneResources()
 
 	// 创建场景资源
 	m_test_scene->Init(m_commandList);
+	m_input->Attach(m_test_scene);
 	UINT boxCount = m_test_scene->GetShapeCount();
 
 	// 为常量缓冲区创建描述符堆。
@@ -215,4 +217,9 @@ bool SceneRenderer::Render()
 void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 {
 	m_test_scene->OnLButtonClicked(screenXY);
+}
+
+void SceneRenderer::OnKeyDown(WPARAM wParam)
+{
+	m_input->Notify(wParam);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "HMath.h"
+#include "HInput.h"
 
 using namespace DirectX;
 

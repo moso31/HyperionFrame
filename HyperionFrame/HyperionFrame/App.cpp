@@ -17,6 +17,7 @@ App::~App()
 
 void App::Init(XMFLOAT2 windowSize)
 {
+	m_input = std::make_shared<HInput>();
 	SetWindow(windowSize);
 	CreateRenderers();
 }
@@ -57,11 +58,16 @@ void App::SetWindow(XMFLOAT2 size)
 
 void App::CreateRenderers()
 {
-	m_sceneRenderer = std::make_shared<SceneRenderer>(m_dxResources);
+	m_sceneRenderer = std::make_shared<SceneRenderer>(m_dxResources, m_input);
 	m_sceneRenderer->WindowSizeChanged();
 }
 
 void App::OnLButtonClicked(XMINT2 screenXY)
 {
 	m_sceneRenderer->OnLButtonClicked(screenXY);
+}
+
+void App::OnKeyDown(WPARAM wParam)
+{
+	m_sceneRenderer->OnKeyDown(wParam);
 }

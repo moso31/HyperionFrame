@@ -3,7 +3,7 @@
 #include "HPointLight.h"
 #include "HMatteMaterial.h"
 
-class HScene
+class HScene : public HListener
 {
 public:
 	static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255; // 常量缓冲区大小必须都是 256 字节的整数倍。
@@ -19,6 +19,7 @@ public:
 	void Release() {}
 
 	void OnLButtonClicked(XMINT2 screenXY);
+	void OnListen(WPARAM wParam);
 
 	Camera* CreateCamera();
 	Box* CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList);

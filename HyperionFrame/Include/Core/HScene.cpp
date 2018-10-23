@@ -185,6 +185,11 @@ void HScene::OnLButtonClicked(XMINT2 screenXY)
 	printf("done.\n");
 }
 
+void HScene::OnListen(WPARAM wParam)
+{
+	printf("Listening...\n");
+}
+
 Camera * HScene::CreateCamera()
 {
 	auto camera = new Camera(m_dxResources);

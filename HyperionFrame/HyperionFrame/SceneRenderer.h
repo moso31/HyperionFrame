@@ -6,7 +6,7 @@ class SceneRenderer
 public:
 	static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255; // 常量缓冲区大小必须都是 256 字节的整数倍。
 	SceneRenderer();
-	SceneRenderer(const std::shared_ptr<DXResource>& dxResource);
+	SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HInput>& input);
 	~SceneRenderer();
 
 	void CreateSceneResources();
@@ -16,9 +16,11 @@ public:
 	bool Render();
 
 	void OnLButtonClicked(XMINT2 screenXY);
+	void OnKeyDown(WPARAM wParam);
 
 private:
 	std::shared_ptr<DXResource> m_dxResources;
+	std::shared_ptr<HInput> m_input;
 
 	ComPtr<ID3D12GraphicsCommandList>					m_commandList;
 	ComPtr<ID3D12RootSignature>							m_rootSignature;

@@ -58,6 +58,9 @@
     <ClCompile Include="ImageGenerator.cpp">
       <Filter>App\File</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Input\HInput.cpp">
+      <Filter>Include\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -126,6 +129,9 @@
     <ClInclude Include="ImageGenerator.h">
       <Filter>App\File</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\Input\HInput.h">
+      <Filter>Include\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SampleVertexShader.hlsl">
@@ -168,6 +174,9 @@
     </Filter>
     <Filter Include="Include\Light">
       <UniqueIdentifier>{cd5e98a5-fcf3-47c9-90f1-5ff6f9192591}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Input">
+      <UniqueIdentifier>{acd8700f-52da-4512-96bb-08319f1e9739}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

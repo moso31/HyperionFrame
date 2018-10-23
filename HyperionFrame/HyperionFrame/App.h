@@ -18,9 +18,11 @@ public:
 	void CreateRenderers();
 
 	void OnLButtonClicked(XMINT2 screenXY);
+	void OnKeyDown(WPARAM wParam);
 
 private:
 	HWND m_hwnd;
 	std::shared_ptr<DXResource> m_dxResources;
+	std::shared_ptr<HInput> m_input;
 	std::shared_ptr<SceneRenderer> m_sceneRenderer;
 };
