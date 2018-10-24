@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -137,6 +137,7 @@
     <ClCompile Include="..\Include\Core\Interaction.cpp" />
     <ClCompile Include="..\Include\Core\Reflection.cpp" />
     <ClCompile Include="..\Include\Input\HInput.cpp" />
+    <ClCompile Include="..\Include\Integrators\whitted.cpp" />
     <ClCompile Include="..\Include\Lights\HLight.cpp" />
     <ClCompile Include="..\Include\Lights\HPointLight.cpp" />
     <ClCompile Include="..\Include\Material\HMaterial.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="..\Include\Core\Interaction.h" />
     <ClInclude Include="..\Include\Core\Reflection.h" />
     <ClInclude Include="..\Include\Input\HInput.h" />
+    <ClInclude Include="..\Include\Integrators\whitted.h" />
     <ClInclude Include="..\Include\Lights\HLight.h" />
     <ClInclude Include="..\Include\Lights\HPointLight.h" />
     <ClInclude Include="..\Include\Material\HMaterial.h" />

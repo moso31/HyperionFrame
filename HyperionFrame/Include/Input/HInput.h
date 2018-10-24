@@ -7,7 +7,8 @@ public:
 	HListener() {}
 	virtual ~HListener() {}
 
-	virtual void OnListen(WPARAM wParam) {}
+	virtual void OnMouseDown(int x, int y) {}
+	virtual void OnKeyDown(WPARAM wParam) {}
 
 private:
 	
@@ -24,13 +25,8 @@ public:
 		m_inputList.push_back(listener); 
 	}
 
-	void Notify(WPARAM wParam)
-	{
-		for each (auto listener in m_inputList)
-		{
-			listener->OnListen(wParam);
-		}
-	}
+	void OnMouseDown(int x, int y);
+	void OnKeyDown(WPARAM wParam);
 
 private:
 	vector<HListener*> m_inputList;

@@ -216,10 +216,10 @@ bool SceneRenderer::Render()
 
 void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 {
-	m_test_scene->OnLButtonClicked(screenXY);
+	m_test_scene->OnMouseDown(screenXY.x, screenXY.y);
 }
 
 void SceneRenderer::OnKeyDown(WPARAM wParam)
 {
-	m_input->Notify(wParam);
+	m_input->OnKeyDown(wParam);
 }

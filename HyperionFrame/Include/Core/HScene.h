@@ -18,8 +18,8 @@ public:
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize);
 	void Release() {}
 
-	void OnLButtonClicked(XMINT2 screenXY);
-	void OnListen(WPARAM wParam);
+	void OnMouseDown(int x, int y);
+	void OnKeyDown(WPARAM wParam);
 
 	Camera* CreateCamera();
 	Box* CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList);
@@ -27,18 +27,17 @@ public:
 	HMatteMaterial* CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
 
 	Camera* GetMainCamera() { return m_mainCamera; }
+	int GetShapeCount() { return (int)shapes.size(); }
 
-	int GetShapeCount() { return (int)m_shapes.size(); }
+public:
+	vector<Transform*> transformNodes;
+	vector<Camera*> cameras;
+	vector<HLight*> lights;
+	vector<Shape*> shapes;
+
+	vector<HMaterial*> materials;
 
 private:
 	std::shared_ptr<DXResource> m_dxResources;
-
-	vector<Transform*> m_transformNodes;
-	vector<Camera*> m_cameras;
-	vector<HLight*> m_lights;
-	vector<Shape*> m_shapes;
-
-	vector<HMaterial*> m_materials;
-
 	Camera* m_mainCamera;
 };

@@ -61,6 +61,9 @@
     <ClCompile Include="..\Include\Input\HInput.cpp">
       <Filter>Include\Input</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Integrators\whitted.cpp">
+      <Filter>Include\Integrators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="..\Include\Input\HInput.h">
       <Filter>Include\Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\Integrators\whitted.h">
+      <Filter>Include\Integrators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SampleVertexShader.hlsl">
@@ -177,6 +183,9 @@
     </Filter>
     <Filter Include="Include\Input">
       <UniqueIdentifier>{acd8700f-52da-4512-96bb-08319f1e9739}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Integrators">
+      <UniqueIdentifier>{a2198855-5e23-4999-a3cc-7026ddddf209}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

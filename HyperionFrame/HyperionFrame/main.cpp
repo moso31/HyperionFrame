@@ -26,8 +26,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_INPUT:
 		break;
 	case WM_LBUTTONDOWN:
-		g_test = true;
-		g_pos = { (int)x, (int)y };
+		g_app->OnLButtonClicked(XMINT2((int)x, (int)y));
 		break;
 	case WM_LBUTTONUP:
 		g_test = false;
