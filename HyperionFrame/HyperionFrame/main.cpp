@@ -69,7 +69,7 @@ bool InitWindow()
 
 	if (!RegisterClassEx(&wc))
 	{
-		printf("窗口初始化失败：注册WIN32 API窗口类无效。");
+		printf("窗口初始化失败：注册WIN32 API窗口类无效。\n");
 		MessageBox(0, "RegisterClass Failed.", 0, 0);
 		return false;
 	}
@@ -93,6 +93,7 @@ bool InitWindow()
 	ShowWindow(g_hWnd, SW_SHOW);
 	UpdateWindow(g_hWnd);
 
+	printf("完成。\n");
 	return true;
 }
 

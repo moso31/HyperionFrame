@@ -6,6 +6,7 @@
 #include <memory>
 #include <algorithm>
 #include <functional>
+#include <thread>
 
 #include <Windows.h>
 #include <wincodec.h>

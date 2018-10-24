@@ -1,6 +1,7 @@
 #pragma once
 #include "Box.h"
 #include "HPointLight.h"
+#include "ImageGenerator.h"
 #include "HMatteMaterial.h"
 
 class HScene : public HListener
@@ -28,6 +29,8 @@ public:
 
 	Camera* GetMainCamera() { return m_mainCamera; }
 	int GetShapeCount() { return (int)shapes.size(); }
+
+	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, ImageBMPData* pRGB);
 
 public:
 	vector<Transform*> transformNodes;

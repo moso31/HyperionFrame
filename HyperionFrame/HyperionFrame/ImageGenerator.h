@@ -1,10 +1,17 @@
 #pragma once
 #include <Windows.h>
-#include <io.h>
 #include <pshpack2.h>
+#include <io.h>
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+
+struct ImageBMPData
+{
+	BYTE b;
+	BYTE g;
+	BYTE r;
+};  // 定义位图数据
 
 typedef struct 
 {
