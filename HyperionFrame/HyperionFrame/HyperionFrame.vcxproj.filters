@@ -64,6 +64,18 @@
     <ClCompile Include="..\Include\Integrators\whitted.cpp">
       <Filter>Include\Integrators</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Core\Integrator.cpp">
+      <Filter>Include\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Core\HSampler.cpp">
+      <Filter>Include\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Samplers\HPixelSampler.cpp">
+      <Filter>Include\Samplers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Samplers\HDefaultSampler.cpp">
+      <Filter>Include\Samplers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -138,6 +150,18 @@
     <ClInclude Include="..\Include\Integrators\whitted.h">
       <Filter>Include\Integrators</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\Core\Integrator.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Core\HSampler.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Samplers\HPixelSampler.h">
+      <Filter>Include\Samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Samplers\HDefaultSampler.h">
+      <Filter>Include\Samplers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SampleVertexShader.hlsl">
@@ -186,6 +210,9 @@
     </Filter>
     <Filter Include="Include\Integrators">
       <UniqueIdentifier>{a2198855-5e23-4999-a3cc-7026ddddf209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Samplers">
+      <UniqueIdentifier>{d50c43c1-ed00-42f1-9ddd-9366bf7815c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

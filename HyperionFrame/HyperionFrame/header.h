@@ -52,3 +52,5 @@ static const float H_1DIVPI		= 0.31830988618379067154f;
 static const float H_1DIV2PI	= 0.15915494309189533577f;
 static const float H_1DIV4PI	= 0.07957747154594766788f;
 static const float H_SQRT2		= 1.41421356237309504880f;
+
+#define H_EPSILON 1e-6f

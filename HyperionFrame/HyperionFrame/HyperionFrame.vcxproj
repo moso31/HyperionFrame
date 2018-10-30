@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Scenes;..\Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
     </ClCompile>
@@ -133,7 +133,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\Core\HSampler.cpp" />
     <ClCompile Include="..\Include\Core\HScene.cpp" />
+    <ClCompile Include="..\Include\Core\Integrator.cpp" />
     <ClCompile Include="..\Include\Core\Interaction.cpp" />
     <ClCompile Include="..\Include\Core\Reflection.cpp" />
     <ClCompile Include="..\Include\Input\HInput.cpp" />
@@ -142,6 +144,8 @@
     <ClCompile Include="..\Include\Lights\HPointLight.cpp" />
     <ClCompile Include="..\Include\Material\HMaterial.cpp" />
     <ClCompile Include="..\Include\Material\HMatteMaterial.cpp" />
+    <ClCompile Include="..\Include\Samplers\HDefaultSampler.cpp" />
+    <ClCompile Include="..\Include\Samplers\HPixelSampler.cpp" />
     <ClCompile Include="..\Include\Scenes\Box.cpp" />
     <ClCompile Include="..\Include\Scenes\Camera.cpp" />
     <ClCompile Include="..\Include\Scenes\Shape.cpp" />
@@ -156,7 +160,9 @@
     <ClCompile Include="SceneRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\Core\HSampler.h" />
     <ClInclude Include="..\Include\Core\HScene.h" />
+    <ClInclude Include="..\Include\Core\Integrator.h" />
     <ClInclude Include="..\Include\Core\Interaction.h" />
     <ClInclude Include="..\Include\Core\Reflection.h" />
     <ClInclude Include="..\Include\Input\HInput.h" />
@@ -165,6 +171,8 @@
     <ClInclude Include="..\Include\Lights\HPointLight.h" />
     <ClInclude Include="..\Include\Material\HMaterial.h" />
     <ClInclude Include="..\Include\Material\HMatteMaterial.h" />
+    <ClInclude Include="..\Include\Samplers\HDefaultSampler.h" />
+    <ClInclude Include="..\Include\Samplers\HPixelSampler.h" />
     <ClInclude Include="..\Include\Scenes\Box.h" />
     <ClInclude Include="..\Include\Scenes\Camera.h" />
     <ClInclude Include="..\Include\Scenes\Shape.h" />

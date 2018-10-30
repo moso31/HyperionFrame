@@ -41,6 +41,12 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, const HScene& scene, int depth)
 				}
 			}
 
+			if (depth + 1 < maxDepth)
+			{
+				LV += SpecularReflect(ray, isect, scene, sampler, arena, depth);
+				LV += SpecularTransmit(ray, isect, scene, sampler, arena, depth);
+			}
+
 			XMCOLOR3 L;
 			XMStoreFloat3(&L, LV);
 			//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);

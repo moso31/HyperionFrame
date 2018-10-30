@@ -1,5 +1,6 @@
 #include "HScene.h"
 #include "whitted.h"
+#include "HDefaultSampler.h"
 
 HScene::HScene()
 {
@@ -165,6 +166,8 @@ HMatteMaterial * HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sig
 
 void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, ImageBMPData* pRGB)
 {
+	HDefaultSampler* sampler = new HDefaultSampler(4, 4, false, 4);
+
 	XMINT2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
 	for (int i = 0; i < tilesize.x; i++)
 	{

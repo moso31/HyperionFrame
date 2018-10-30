@@ -1,10 +1,11 @@
 #pragma once
-#include "HScene.h"
+#include "Integrator.h"
 
-class WhittedIntegrator
+class WhittedIntegrator : public Integrator
 {
 public:
 	XMCOLOR3 Li(const Ray& ray, const HScene& scene, int depth);
 
 private:
+	const int maxDepth = 5;
 };
