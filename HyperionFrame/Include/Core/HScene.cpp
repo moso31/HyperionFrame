@@ -183,7 +183,7 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, ImageBMPData* 
 
 			Ray ray = m_mainCamera->GenerateRay((float)x, (float)y);
 			WhittedIntegrator whi;
-			XMCOLOR3 L = whi.Li(ray, *this, 0);
+			XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0);
 			//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
 
 			XMINT3 resultRGB(L.x > 1.0f ? 255 : (int)(L.x * 255.0f),

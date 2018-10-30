@@ -12,11 +12,11 @@ namespace Reflect
 			cosThetaI = std::abs(cosThetaI);
 		}
 
-		float sinThetaI = sqrtf(max(0, 1 - cosThetaI * cosThetaI));
+		float sinThetaI = sqrtf(max(0.0f, 1 - cosThetaI * cosThetaI));
 		float sinThetaT = etaI / etaT * sinThetaI;
 
 		if (sinThetaT >= 1) return 1;
-		float cosThetaT = sqrtf(max(0, 1 - sinThetaT * sinThetaT));
+		float cosThetaT = sqrtf(max(0.0f, 1 - sinThetaT * sinThetaT));
 
 		float Rparl = ((etaT * cosThetaI) - (etaI * cosThetaT)) / ((etaT * cosThetaI) + (etaI * cosThetaT));
 		float Rperp = ((etaI * cosThetaI) - (etaT * cosThetaT)) / ((etaI * cosThetaI) + (etaT * cosThetaT));
@@ -72,6 +72,14 @@ void BSDF::Add(BxDF * bxdf)
 	m_bxdfs.push_back(bxdf);
 }
 
+int BSDF::NumComponents(BxDFType type)
+{
+	int num = 0;
+	for (int i = 0; i < m_bxdfs.size(); ++i)
+		if (m_bxdfs[i]->MatchesFlags(type)) ++num;
+	return num;
+}
+
 XMCOLOR3 BSDF::f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags)
 {
 	XMFLOAT3 wi = WorldToReflectionCoord(wiW), wo = WorldToReflectionCoord(woW);
@@ -98,6 +106,68 @@ XMCOLOR3 BSDF::f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags)
 	return f;
 }
 
+XMCOLOR3 BSDF::Sample_f(const XMFLOAT3 & woW, XMFLOAT3 * wiW, const XMFLOAT2 & u, float * pdf, BxDFType type/*, BxDFType *sampledType*/)
+{
+	int matchingComps = NumComponents(type);
+	if (matchingComps == 0) {
+		*pdf = 0;
+		//if (sampledType) *sampledType = BxDFType(0);
+		return { 0.0f, 0.0f, 0.0f };
+	}
+
+	int comp = min((int)floorf(u.x * matchingComps), matchingComps - 1);
+	BxDF *bxdf = nullptr;
+	int count = comp;
+	for (int i = 0; i < m_bxdfs.size(); ++i)
+	{
+		if (m_bxdfs[i]->MatchesFlags(type) && count-- == 0)
+		{
+			bxdf = m_bxdfs[i];
+			break;
+		}
+	}
+
+	XMFLOAT2 uRemapped(min(u.x * matchingComps - comp, ONE_MINUS_EPSILON), u.y);
+
+	XMFLOAT3 wi, wo = WorldToReflectionCoord(woW);
+	if (wo.z == 0) return { 0.0f, 0.0f, 0.0f };
+	*pdf = 0.f;
+	//if (sampledType) *sampledType = bxdf->type;
+	XMCOLOR3 f = bxdf->Sample_f(wo, &wi, uRemapped, pdf/*, sampledType*/);
+
+	if (*pdf == 0) 
+	{
+		//if (sampledType) *sampledType = BxDFType(0); 
+		return { 0.0f, 0.0f, 0.0f };
+	}
+	*wiW = ReflectionToWorldCoord(wi);
+
+	//if (!(bxdf->type & BSDF_SPECULAR) && matchingComps > 1)
+	//	for (int i = 0; i < nBxDFs; ++i)
+	//		if (bxdfs[i] != bxdf && bxdfs[i]->MatchesFlags(type))
+	//			*pdf += bxdfs[i]->Pdf(wo, wi);
+	//if (matchingComps > 1) *pdf /= matchingComps;
+
+	XMVECTOR woWV = XMLoadFloat3(&woW);
+	XMVECTOR wiWV = XMLoadFloat3(wiW);
+	XMVECTOR ngV = XMLoadFloat3(&n);
+
+	if (!(bxdf->type & BSDF_SPECULAR)) 
+	{
+		bool reflect = XMVectorGetX(XMVector3Dot(wiWV, ngV) * XMVector3Dot(woWV, ngV)) > 0;
+		XMVECTOR fV = XMVectorZero();
+		for (int i = 0; i < m_bxdfs.size(); ++i)
+			if (m_bxdfs[i]->MatchesFlags(type) &&
+				((reflect && (m_bxdfs[i]->type & BSDF_REFLECTION)) ||
+				(!reflect && (m_bxdfs[i]->type & BSDF_TRANSMISSION))))
+				fV += XMLoadFloat3(&m_bxdfs[i]->f(wo, wi));
+
+		XMStoreFloat3(&f, fV);
+	}
+
+	return f;
+}
+
 XMFLOAT3 BSDF::WorldToReflectionCoord(const XMFLOAT3 & v)
 {
 	return XMFLOAT3(
@@ -114,6 +184,14 @@ XMFLOAT3 BSDF::ReflectionToWorldCoord(const XMFLOAT3 & v)
 		v.x * s.y + v.y * t.y + v.z * n.y,
 		v.x * s.z + v.y * t.z + v.z * n.z
 	);
+}
+
+XMCOLOR3 BxDF::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const XMFLOAT2 & u, float * pdf) const
+{
+	*wi = CosineSampleHemisphere(u);
+	if (wo.z < 0) wi->z *= -1;
+	//*pdf = Pdf(wo, *wi);
+	return f(wo, *wi);
 }
 
 XMCOLOR3 FresnelConductor::Evaluate(float cosThetaI) const

@@ -24,7 +24,10 @@ public:
 	virtual ~BSDF() {}
 
 	void Add(BxDF* bxdf);
+	int NumComponents(BxDFType type);
+
 	XMCOLOR3 f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags = BSDF_ALL);
+	XMCOLOR3 Sample_f(const XMFLOAT3& woW, XMFLOAT3 *wiW, const XMFLOAT2 &u, float *pdf, BxDFType type);
 
 	XMCOLOR3 WorldToReflectionCoord(const XMFLOAT3 &v);
 	XMCOLOR3 ReflectionToWorldCoord(const XMFLOAT3 &v);
@@ -46,7 +49,7 @@ public:
 	bool MatchesFlags(BxDFType t) const { return (type & t) == type; }
 
 	virtual XMCOLOR3 f(const XMFLOAT3 &wo, const XMFLOAT3 &wi) const = 0;
-	//virtual XMCOLOR3 Sample_f(const XMFLOAT3 &wo, XMFLOAT3 *wi, BxDFType type = BSDF_ALL, BxDFType *sampledType = nullptr) const;
+	virtual XMCOLOR3 Sample_f(const XMFLOAT3 &wo, XMFLOAT3 *wi, const XMFLOAT2& sample, float* pdf/*, BxDFType *sampledType = nullptr*/) const;
 
 	const BxDFType type;
 };

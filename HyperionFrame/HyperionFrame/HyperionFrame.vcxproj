@@ -84,6 +84,9 @@
       <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -99,6 +102,9 @@
       <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>

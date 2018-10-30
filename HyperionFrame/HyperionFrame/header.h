@@ -21,6 +21,7 @@
 #include <DirectXColors.h>
 
 #include <pix.h>
+#include "d3dx12.h"
 
 #if _DEBUG
 #include <dxgidebug.h>
@@ -29,8 +30,6 @@
 using namespace std;
 using namespace DirectX;
 using namespace Microsoft::WRL;
-
-#include "d3dx12.h"
 
 class SurfaceInteraction;
 class Shape;
@@ -54,3 +53,4 @@ static const float H_1DIV4PI	= 0.07957747154594766788f;
 static const float H_SQRT2		= 1.41421356237309504880f;
 
 #define H_EPSILON 1e-6f
+#define ONE_MINUS_EPSILON 0.9999994f

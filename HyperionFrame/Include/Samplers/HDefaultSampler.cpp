@@ -9,7 +9,7 @@ void HDefaultSampler::GenerateSampleData(XMINT2 & pixel)
 		for (int j = 0; j < nSamples; ++j)
 		{
 			float delta = 0.5f;
-			samples1D[i][j] = min((j + delta) * invNSamples, 0.999999999999994f);
+			samples1D[i][j] = min((j + delta) * invNSamples, ONE_MINUS_EPSILON);
 		}
 	}
 
@@ -23,8 +23,8 @@ void HDefaultSampler::GenerateSampleData(XMINT2 & pixel)
 			{
 				float deltax = 0.5f;
 				float deltay = 0.5f;
-				samples2D[i][jx * yPixelSamples + jy].x = min((jx + deltax) * invx, 0.999999999999994f);
-				samples2D[i][jx * yPixelSamples + jy].y = min((jy + deltay) * invy, 0.999999999999994f);
+				samples2D[i][jx * yPixelSamples + jy].x = min((jx + deltax) * invx, ONE_MINUS_EPSILON);
+				samples2D[i][jx * yPixelSamples + jy].y = min((jy + deltay) * invy, ONE_MINUS_EPSILON);
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 #include "whitted.h"
 #include "Interaction.h"
 
-XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, const HScene& scene, int depth)
+XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& scene, int depth)
 {
 	bool isHit = false;
 	int shapeCount = (int)scene.shapes.size();
@@ -43,8 +43,8 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, const HScene& scene, int depth)
 
 			if (depth + 1 < maxDepth)
 			{
-				LV += SpecularReflect(ray, isect, scene, sampler, arena, depth);
-				LV += SpecularTransmit(ray, isect, scene, sampler, arena, depth);
+				LV += SpecularReflect(ray, isect, scene, sampler, depth);
+				LV += SpecularTransmit(ray, isect, scene, sampler, depth);
 			}
 
 			XMCOLOR3 L;
@@ -54,4 +54,33 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, const HScene& scene, int depth)
 		}
 	}
 	return XMCOLOR3(0.0f, 0.0f, 0.0f);
+}
+
+XMCOLOR3 WhittedIntegrator::SpecularReflect(const Ray & ray, HSampler& sampler, const SurfaceInteraction & isect, const HScene & scene, int depth)
+{
+	XMFLOAT3 wo = isect.wo, wi;
+	const XMFLOAT3 &p = isect.p;
+	const XMFLOAT3 &ns = isect.n;	// 现阶段没有微表面，不考虑isect.shading
+	BSDF &bsdf = *isect.bsdf;
+
+	float pdf;
+	XMCOLOR3 f = bsdf.Sample_f(wo, &wi, sampler.Get2D(), &pdf, BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
+
+	XMVECTOR fV = XMLoadFloat3(&f);
+	XMVECTOR wiV = XMLoadFloat3(&wi);
+	XMVECTOR nsV = XMLoadFloat3(&ns);
+
+	XMCOLOR3 L(0.0f, 0.0f, 0.0f);
+	if (!f.IsBlack() && XMVectorGetX(XMVectorAbs(XMVector3Dot(wiV, nsV))) > H_EPSILON)
+	{
+		Ray ray = isect.SpawnRay(wi);
+		L = f * Li(ray, scene, depth + 1) * AbsDot(wi, ns) / pdf;
+	}
+
+	return L;
+}
+
+XMCOLOR3 WhittedIntegrator::SpecularTransmit(const Ray & ray, HSampler& sampler, const SurfaceInteraction & isect, const HScene & scene, int depth)
+{
+	return XMCOLOR3();
 }
