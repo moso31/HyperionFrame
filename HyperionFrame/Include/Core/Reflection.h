@@ -95,3 +95,5 @@ private:
 	const XMCOLOR3 R;
 	const Fresnel * fresnel;
 };
+
+XMFLOAT3 CosineSampleHemisphere(const XMFLOAT2 &u);

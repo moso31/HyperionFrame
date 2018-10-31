@@ -79,11 +79,11 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
-	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
-	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
-	WhittedIntegrator whi;
-	XMCOLOR3 L = whi.Li(ray, *this, 0);
-	printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
+	//Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
+	////printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
+	//WhittedIntegrator whi;
+	//XMCOLOR3 L = whi.Li(ray, *this, 0);
+	//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
 }
 
 void HScene::OnKeyDown(WPARAM wParam)
@@ -96,6 +96,7 @@ void HScene::OnKeyDown(WPARAM wParam)
 		int sampleCount = screenSize.x * screenSize.y;
 
 		ImageBMPData* pRGB = new ImageBMPData[sampleCount];
+		memset(pRGB, 0, sizeof(ImageBMPData) * sampleCount);
 
 		printf("Éú³ÉBMPÎ»Í¼...");
 		auto time_st = GetTickCount();
@@ -166,33 +167,43 @@ HMatteMaterial * HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sig
 
 void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, ImageBMPData* pRGB)
 {
-	HDefaultSampler* sampler = new HDefaultSampler(4, 4, false, 4);
+	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 
 	XMINT2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
 	for (int i = 0; i < tilesize.x; i++)
 	{
 		for (int j = 0; j < tilesize.y; j++)
 		{
-			int x = tileX * tilesize.x + i;
-			int y = tileY * tilesize.y + j;
+			XMINT2 pixel(tileX * tilesize.x + i, tileY * tilesize.y + j);
 			
-			if (y >= screenSize.y || x >= screenSize.x)
+			if (pixel.y >= screenSize.y || pixel.x >= screenSize.x)
 				continue;
 
+			unique_ptr<HSampler> tileSampler = sampler->Clone();
+
 			//printf("%d %d\n", x, y);
+			tileSampler->GenerateSampleData(pixel);
 
-			Ray ray = m_mainCamera->GenerateRay((float)x, (float)y);
-			WhittedIntegrator whi;
-			XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0);
-			//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
+			XMCOLORV LV = XMVectorZero();
+			do
+			{
+				Ray ray = m_mainCamera->GenerateRay((float)pixel.x, (float)pixel.y);
+				WhittedIntegrator whi;
+				XMCOLOR3 L = whi.Li(ray, *tileSampler, *this, 0);
+				//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
+				LV += XMLoadFloat3(&L);
+			} while (tileSampler->NextSample());
 
-			XMINT3 resultRGB(L.x > 1.0f ? 255 : (int)(L.x * 255.0f),
-				L.y > 1.0f ? 255 : (int)(L.y * 255.0f),
-				L.z > 1.0f ? 255 : (int)(L.z * 255.0f));
-
-			pRGB[(screenSize.y - y - 1) * screenSize.x + x].r = resultRGB.x;
-			pRGB[(screenSize.y - y - 1) * screenSize.x + x].g = resultRGB.y;
-			pRGB[(screenSize.y - y - 1) * screenSize.x + x].b = resultRGB.z;
+			XMFLOAT3 result;
+			XMStoreFloat3(&result, LV);
+			XMINT3 resultRGB(result.x > 1.0f ? 255 : (int)(result.x * 255.0f),
+				result.y > 1.0f ? 255 : (int)(result.y * 255.0f),
+				result.z > 1.0f ? 255 : (int)(result.z * 255.0f));
+			
+			int rgbIdx = (screenSize.y - pixel.y - 1) * screenSize.x + pixel.x;
+			pRGB[rgbIdx].r += resultRGB.x;
+			pRGB[rgbIdx].g += resultRGB.y;
+			pRGB[rgbIdx].b += resultRGB.z;
 		}
 	}
 }

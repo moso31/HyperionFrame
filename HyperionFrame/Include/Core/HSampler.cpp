@@ -1,5 +1,10 @@
 #include "HSampler.h"
 
+HSampler::HSampler(int64_t samplesPerPixel) :
+	samplesPerPixel(samplesPerPixel)
+{
+}
+
 void HSampler::GenerateSampleData(XMINT2 & pixel)
 {
 	currentPixel = pixel;

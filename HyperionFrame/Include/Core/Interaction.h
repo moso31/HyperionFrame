@@ -11,6 +11,12 @@ public:
 	Interaction(const XMFLOAT3 &p, const XMFLOAT3 &n, const XMFLOAT3 &wo) : p(p), n(n), wo(wo) {}
 	virtual ~Interaction() {};
 
+	Ray SpawnRay(const XMFLOAT3 &d) const 
+	{
+		//OffsetRayOrigin(p, n, d);
+		return Ray(p, d);
+	}
+
 public:
 	XMFLOAT3 p;
 	XMFLOAT3 n;

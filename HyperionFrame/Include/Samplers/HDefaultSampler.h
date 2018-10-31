@@ -4,13 +4,10 @@
 class HDefaultSampler : public HPixelSampler
 {
 public:
-	HDefaultSampler(int xPixelSamples, int yPixelSamples, bool jitterSamples, int nSampledDimensions) : 
-		HPixelSampler(xPixelSamples * yPixelSamples, nSampledDimensions),
-		xPixelSamples(xPixelSamples),
-		yPixelSamples(yPixelSamples),
-		jitterSamples(jitterSamples) {}
+	HDefaultSampler(int xPixelSamples, int yPixelSamples, bool jitterSamples, int nSampledDimensions);
 
 	void GenerateSampleData(XMINT2& pixel);
+	unique_ptr<HSampler> Clone(int seed = 0);
 
 private:
 	const int xPixelSamples, yPixelSamples;

@@ -383,6 +383,6 @@ void DXResource::UpdateRenderTargetSize()
 	//m_outputSize.Height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_effectiveDpi);
 
 	// 防止创建大小为零的 DirectX 内容。
-	m_outputSize.x = max(m_outputSize.x, 1);
-	m_outputSize.y = max(m_outputSize.y, 1);
+	m_outputSize.x = max(m_outputSize.x, (float)1);
+	m_outputSize.y = max(m_outputSize.y, (float)1);
 }

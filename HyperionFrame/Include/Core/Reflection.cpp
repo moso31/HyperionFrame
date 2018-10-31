@@ -75,7 +75,7 @@ void BSDF::Add(BxDF * bxdf)
 int BSDF::NumComponents(BxDFType type)
 {
 	int num = 0;
-	for (int i = 0; i < m_bxdfs.size(); ++i)
+	for (size_t i = 0; i < m_bxdfs.size(); ++i)
 		if (m_bxdfs[i]->MatchesFlags(type)) ++num;
 	return num;
 }
@@ -118,7 +118,7 @@ XMCOLOR3 BSDF::Sample_f(const XMFLOAT3 & woW, XMFLOAT3 * wiW, const XMFLOAT2 & u
 	int comp = min((int)floorf(u.x * matchingComps), matchingComps - 1);
 	BxDF *bxdf = nullptr;
 	int count = comp;
-	for (int i = 0; i < m_bxdfs.size(); ++i)
+	for (size_t i = 0; i < m_bxdfs.size(); ++i)
 	{
 		if (m_bxdfs[i]->MatchesFlags(type) && count-- == 0)
 		{
@@ -156,7 +156,7 @@ XMCOLOR3 BSDF::Sample_f(const XMFLOAT3 & woW, XMFLOAT3 * wiW, const XMFLOAT2 & u
 	{
 		bool reflect = XMVectorGetX(XMVector3Dot(wiWV, ngV) * XMVector3Dot(woWV, ngV)) > 0;
 		XMVECTOR fV = XMVectorZero();
-		for (int i = 0; i < m_bxdfs.size(); ++i)
+		for (size_t i = 0; i < m_bxdfs.size(); ++i)
 			if (m_bxdfs[i]->MatchesFlags(type) &&
 				((reflect && (m_bxdfs[i]->type & BSDF_REFLECTION)) ||
 				(!reflect && (m_bxdfs[i]->type & BSDF_TRANSMISSION))))
@@ -208,4 +208,30 @@ XMCOLOR3 FresnelDielectric::Evaluate(float cosThetaI) const
 XMCOLOR3 LambertianReflection::f(const XMFLOAT3 & wo, const XMFLOAT3 & wi) const
 {
 	return XMCOLOR3(R.x * H_1DIVPI, R.y * H_1DIVPI, R.z * H_1DIVPI);
+}
+
+XMFLOAT3 CosineSampleHemisphere(const XMFLOAT2 & u)
+{
+	XMFLOAT2 d;
+	XMFLOAT2 uOffset(2.0f * u.x - 1.0f, 2.0f * u.y - 1.0f);
+	if (uOffset.x == 0 && uOffset.y == 0)
+	{
+		d = XMFLOAT2(0.0f, 0.0f);
+	}
+	else
+	{
+		float theta, r;
+		if (abs(uOffset.x) > abs(uOffset.y)) {
+			r = uOffset.x;
+			theta = H_PIDIV4 * (uOffset.y / uOffset.x);
+		}
+		else {
+			r = uOffset.y;
+			theta = H_PIDIV2 - H_PIDIV4 * (uOffset.x / uOffset.y);
+		}
+		d = XMFLOAT2(r * cos(theta), r * sin(theta));
+	}
+
+	float z = sqrt(max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
+	return XMFLOAT3(d.x, d.y, z);
 }

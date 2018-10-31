@@ -76,6 +76,9 @@
     <ClCompile Include="..\Include\Samplers\HDefaultSampler.cpp">
       <Filter>Include\Samplers</Filter>
     </ClCompile>
+    <ClCompile Include="..\Math\RandomNumberGenerator.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -161,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\Samplers\HDefaultSampler.h">
       <Filter>Include\Samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\RandomNumberGenerator.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

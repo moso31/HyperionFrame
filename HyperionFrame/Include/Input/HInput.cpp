@@ -2,16 +2,16 @@
 
 void HInput::OnMouseDown(int x, int y)
 {
-	for each (auto listener in m_inputList)
+	for (int i = 0; i < m_inputList.size(); i++)
 	{
-		listener->OnMouseDown(x, y);
+		m_inputList[i]->OnMouseDown(x, y);
 	}
 }
 
 void HInput::OnKeyDown(WPARAM wParam)
 {
-	for each (auto listener in m_inputList)
+	for (int i = 0; i < m_inputList.size(); i++)
 	{
-		listener->OnKeyDown(wParam);
+		m_inputList[i]->OnKeyDown(wParam);
 	}
 }

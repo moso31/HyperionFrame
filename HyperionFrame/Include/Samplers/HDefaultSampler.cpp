@@ -1,9 +1,17 @@
 #include "HDefaultSampler.h"
 
+HDefaultSampler::HDefaultSampler(int xPixelSamples, int yPixelSamples, bool jitterSamples, int nSampledDimensions) :
+	HPixelSampler(xPixelSamples * yPixelSamples, nSampledDimensions),
+	xPixelSamples(xPixelSamples),
+	yPixelSamples(yPixelSamples),
+	jitterSamples(jitterSamples)
+{
+}
+
 void HDefaultSampler::GenerateSampleData(XMINT2 & pixel)
 {
 	int nSamples = xPixelSamples * yPixelSamples;
-	for (int i = 0; i < samples1D.size(); i++)
+	for (size_t i = 0; i < samples1D.size(); i++)
 	{
 		float invNSamples = 1.0f / (float)nSamples;
 		for (int j = 0; j < nSamples; ++j)
@@ -13,7 +21,7 @@ void HDefaultSampler::GenerateSampleData(XMINT2 & pixel)
 		}
 	}
 
-	for (int i = 0; i < samples2D.size(); i++)
+	for (size_t i = 0; i < samples2D.size(); i++)
 	{
 		float invx = 1.0f / (float)xPixelSamples;
 		float invy = 1.0f / (float)yPixelSamples;
@@ -28,4 +36,9 @@ void HDefaultSampler::GenerateSampleData(XMINT2 & pixel)
 			}
 		}
 	}
+}
+
+unique_ptr<HSampler> HDefaultSampler::Clone(int seed)
+{
+	return unique_ptr<HSampler>(new HDefaultSampler(*this));
 }
