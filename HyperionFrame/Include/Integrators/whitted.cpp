@@ -46,16 +46,6 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 				XMCOLORV fRV = XMLoadFloat3(&SpecularReflect(ray, isect, scene, sampler, depth));
 				XMCOLORV fTV = XMLoadFloat3(&SpecularTransmit(ray, isect, scene, sampler, depth));
 				LV += fRV + fTV;
-
-				float test = 0.0f;
-				for (int k = 0; k < 3; k++)
-				{
-					test += fRV.m128_f32[k];
-				}
-				if (test > 0.0f)
-				{
-					int testests = 0;
-				}
 			}
 
 			XMCOLOR3 L;

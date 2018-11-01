@@ -3,6 +3,7 @@
 #include "HPointLight.h"
 #include "ImageGenerator.h"
 #include "HMatteMaterial.h"
+#include "HMirrorMaterial.h"
 
 class HScene : public HListener
 {
@@ -26,6 +27,7 @@ public:
 	Box* CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	HPointLight* CreatePointLight();
 	HMatteMaterial* CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
+	HMirrorMaterial* CreateMirrorMaterial(const XMCOLOR3& kr);
 
 	Camera* GetMainCamera() { return m_mainCamera; }
 	int GetShapeCount() { return (int)shapes.size(); }

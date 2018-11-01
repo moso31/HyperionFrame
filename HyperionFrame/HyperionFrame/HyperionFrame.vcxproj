@@ -150,6 +150,7 @@
     <ClCompile Include="..\Include\Lights\HPointLight.cpp" />
     <ClCompile Include="..\Include\Material\HMaterial.cpp" />
     <ClCompile Include="..\Include\Material\HMatteMaterial.cpp" />
+    <ClCompile Include="..\Include\Material\HMirrorMaterial.cpp" />
     <ClCompile Include="..\Include\Samplers\HDefaultSampler.cpp" />
     <ClCompile Include="..\Include\Samplers\HPixelSampler.cpp" />
     <ClCompile Include="..\Include\Scenes\Box.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="..\Include\Lights\HPointLight.h" />
     <ClInclude Include="..\Include\Material\HMaterial.h" />
     <ClInclude Include="..\Include\Material\HMatteMaterial.h" />
+    <ClInclude Include="..\Include\Material\HMirrorMaterial.h" />
     <ClInclude Include="..\Include\Samplers\HDefaultSampler.h" />
     <ClInclude Include="..\Include\Samplers\HPixelSampler.h" />
     <ClInclude Include="..\Include\Scenes\Box.h" />

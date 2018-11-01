@@ -52,5 +52,8 @@ static const float H_1DIV2PI	= 0.15915494309189533577f;
 static const float H_1DIV4PI	= 0.07957747154594766788f;
 static const float H_SQRT2		= 1.41421356237309504880f;
 
+static const float H_RADTODEG	= 180.0f / H_PI;
+static const float H_DEGTORAD	= H_PI / 180.0f;
+
 #define H_EPSILON 1e-6f
 #define ONE_MINUS_EPSILON 0.9999994f

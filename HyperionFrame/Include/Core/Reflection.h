@@ -14,6 +14,9 @@ namespace Reflect
 {
 	float FrDielectric(float cosThetaI, float etaI, float etaT);
 	XMCOLOR3 FrConductor(float cosThetaI, const XMCOLOR3 &etaI, const XMCOLOR3 &etaT, const XMCOLOR3 &k);
+
+	float CosTheta(const XMFLOAT3 &w);
+	float AbsCosTheta(const XMFLOAT3 &w);
 }
 
 class BSDF
@@ -85,6 +88,26 @@ private:
 	float etaI, etaT;
 };
 
+class FresnelNoOp : public Fresnel
+{
+public:
+	XMCOLOR3 Evaluate(float value) const;
+};
+
+class SpecularReflection : public BxDF
+{
+public:
+	SpecularReflection(const XMCOLOR3 &R, Fresnel* fresnel) : BxDF(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR)), R(R), fresnel(fresnel) {}
+	XMCOLOR3 f(const XMFLOAT3 &wo, const XMFLOAT3 &wi) const;
+	XMCOLOR3 Sample_f(const XMFLOAT3 &wo, XMFLOAT3 *wi, const XMFLOAT2 &sample,
+		float *pdf) const;
+	//float Pdf(const Vector3f &wo, const Vector3f &wi) const { return 0; }
+
+private:
+	const XMCOLOR3 R;
+	const Fresnel * fresnel;
+};
+
 class LambertianReflection : public BxDF
 {
 public:
@@ -93,7 +116,6 @@ public:
 
 private:
 	const XMCOLOR3 R;
-	const Fresnel * fresnel;
 };
 
 XMFLOAT3 CosineSampleHemisphere(const XMFLOAT2 &u);

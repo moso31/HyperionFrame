@@ -23,42 +23,57 @@ void HScene::OnResize()
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	m_mainCamera = CreateCamera(); 
-	m_mainCamera->SetTranslation(0.0f, 2.0f, -4.0f);
+	m_mainCamera->SetTranslation(9.0f, 5.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
+	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
 
-	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f }, green = { 0.0f, 1.0f, 0.0f }, blue = { 0.0f, 0.0f, 1.0f };
+	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f },
+		green = { 0.0f, 1.0f, 0.0f },
+		blue = { 0.0f, 0.0f, 1.0f },
+		white = { 1.0f, 1.0f, 1.0f },
+		mirror_white = { 0.9f, 0.9f, 0.9f },
+		gray = { 0.8f, 0.8f, 0.8f };
 	float sig = 90.0f;
-	HMatteMaterial* mtrl[3] = {
-		CreateMatteMaterial(red, sig),
+	HMaterial* mtrl[4] = {
 		CreateMatteMaterial(green, sig),
-		CreateMatteMaterial(blue, sig)
+		CreateMatteMaterial(red, sig),
+		CreateMirrorMaterial(mirror_white),
+		CreateMatteMaterial(gray, sig)
 	};
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		auto box = CreateBox(pCommandList);
 		box->SetMaterial(mtrl[i]);
 
-		if (i == 0) box->SetTranslation(0.0f, 0.0f, 0.0f);
-		if (i == 1) box->SetTranslation(2.0f, 0.0f, -2.0f);
-		if (i == 2) box->SetTranslation(-2.0f, 0.0f, -2.0f);
+		if (i == 0) box->SetTranslation(5.0f, 0.0f, -2.0f);
+		if (i == 1) box->SetTranslation(1.5f, 0.0f, 0.0f);
+		if (i == 2) box->SetTranslation(-3.0f, 1.5f, -2.0f);
+		if (i == 3) box->SetTranslation(0.0f, -11.0f, 0.0f);
+		if (i == 3) 
+			box->SetScale(20.0f, 20.0f, 20.0f);
+		else if (i == 2)
+			box->SetScale(5.0f, 5.0f, 5.0f);
+		else
+			box->SetScale(2.0f, 2.0f, 2.0f);
 	}
 
 	auto pointLight = CreatePointLight();
-	pointLight->SetTranslation(0.0f, 2.0f, -4.0f);
-	pointLight->SetIntensity(25.0f, 25.0f, 25.0f);
+	pointLight->SetTranslation(9.0f, 5.0f, -4.0f);
+	float brightness = 120.0f;
+	pointLight->SetIntensity(brightness, brightness, brightness);
 }
 
 void HScene::Update(UINT8* pMappedConstantBuffer)
 {
 	static float x = 0;
-	x += 0.01f;
+	x += 0.0f;
 
 	m_mainCamera->Update();
 
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
-		shapes[i]->SetRotation(0.0f, x, 0.0f);
+		if (i < 2) shapes[i]->SetRotation(0.0f, x, 0.0f);
 		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * c_alignedConstantBufferSize);
 		shapes[i]->Update(destination);
 	}
@@ -79,11 +94,12 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
-	//Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
-	////printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
-	//WhittedIntegrator whi;
-	//XMCOLOR3 L = whi.Li(ray, *this, 0);
-	//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
+	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
+	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
+	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
+	WhittedIntegrator whi;
+	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0);
+	printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
 }
 
 void HScene::OnKeyDown(WPARAM wParam)
@@ -161,6 +177,13 @@ HPointLight * HScene::CreatePointLight()
 HMatteMaterial * HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sigma)
 {
 	auto mat = new HMatteMaterial(kd, sigma);
+	materials.push_back(mat);
+	return mat;
+}
+
+HMirrorMaterial * HScene::CreateMirrorMaterial(const XMCOLOR3 & kr)
+{
+	auto mat = new HMirrorMaterial(kr);
 	materials.push_back(mat);
 	return mat;
 }

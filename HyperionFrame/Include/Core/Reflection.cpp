@@ -57,6 +57,16 @@ namespace Reflect
 		XMStoreFloat3(&result, 0.5f * (RpV + RsV));
 		return result;
 	}
+
+	float CosTheta(const XMFLOAT3 & w)
+	{
+		return w.z;
+	}
+
+	float AbsCosTheta(const XMFLOAT3 & w)
+	{
+		return abs(w.z);
+	}
 }
 
 using namespace Reflect;
@@ -234,4 +244,27 @@ XMFLOAT3 CosineSampleHemisphere(const XMFLOAT2 & u)
 
 	float z = sqrt(max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
 	return XMFLOAT3(d.x, d.y, z);
+}
+
+XMCOLOR3 SpecularReflection::f(const XMFLOAT3 & wo, const XMFLOAT3 & wi) const
+{
+	return XMCOLOR3(0.0f, 0.0f, 0.0f);
+}
+
+XMCOLOR3 SpecularReflection::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const XMFLOAT2 & sample, float * pdf) const
+{
+	*wi = XMFLOAT3(-wo.x, -wo.y, wo.z);
+	*pdf = 1;
+
+	XMVECTOR fresV = XMLoadFloat3(&fresnel->Evaluate(CosTheta(*wi)));
+	XMVECTOR rV = XMLoadFloat3(&R);
+
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, fresV * rV / AbsCosTheta(*wi));
+	return result;
+}
+
+XMCOLOR3 FresnelNoOp::Evaluate(float value) const
+{
+	return XMCOLOR3(1.0f, 1.0f, 1.0f);
 }

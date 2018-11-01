@@ -182,10 +182,10 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 	{
 		// isect 转换成世界坐标
 		XMVECTOR pV = XMVector3TransformCoord(XMLoadFloat3(&record.p), mxObject2World);
-		XMVECTOR nV = XMVector3TransformNormal(XMLoadFloat3(&record.n), mxObject2World);
-		XMVECTOR woV = XMVector3TransformNormal(XMLoadFloat3(&record.wo), mxObject2World);
-		XMVECTOR dpduV = XMVector3TransformNormal(XMLoadFloat3(&record.dpdu), mxObject2World);
-		XMVECTOR dpdvV = XMVector3TransformNormal(XMLoadFloat3(&record.dpdv), mxObject2World);
+		XMVECTOR nV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.n), mxObject2World));
+		XMVECTOR woV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.wo), mxObject2World));
+		XMVECTOR dpduV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.dpdu), mxObject2World));
+		XMVECTOR dpdvV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.dpdv), mxObject2World));
 
 		SurfaceInteraction result;
 		XMStoreFloat3(&result.p, pV);
@@ -222,7 +222,7 @@ bool Box::IntersectP(Ray worldRay)
 	float tNear = max(t1.x, max(t1.y, t1.z));
 	float tFar = min(t2.x, min(t2.y, t2.z));
 
-	return tNear < tFar;
+	return tNear > 0 && tNear < tFar;
 }
 
 void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)

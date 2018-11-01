@@ -19,13 +19,15 @@ void HMatteMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
 	si->bsdf = new BSDF(*si);
 	XMCOLOR3 r; /* = Kd->Evaluate(*si).Clamp();*/
-	XMStoreFloat3(&r, XMVectorClamp(XMLoadFloat3(&Kd), XMVectorReplicate(0.0f), XMVectorReplicate(90.0f)));
+	XMCOLORV rV = XMVectorClamp(XMLoadFloat3(&Kd), XMVectorZero(), XMVectorReplicate(1.0f));
 	float sig = Clamp(sigma/*->Evaluate(*si)*/, 0.0f, 90.0f);
-	//if (!r.IsBlack()) {
-	//	if (sig == 0)
-	//		si->bsdf->Add(ARENA_ALLOC(arena, LambertianReflection)(r));
-	//	else
-	//		si->bsdf->Add(ARENA_ALLOC(arena, OrenNayar)(r, sig));
-	//}
-	si->bsdf->Add(new LambertianReflection(r));
+	if (!XMVector3Equal(rV, XMVectorZero()))
+	{
+		XMStoreFloat3(&r, rV);
+
+		//if (sig == 0)
+		si->bsdf->Add(new LambertianReflection(r));
+		//else
+		//	si->bsdf->Add(new OrenNayar(r, sig));
+	}
 }
