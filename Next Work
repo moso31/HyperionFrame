@@ -11,3 +11,6 @@
 	HIF中的Shape只支持单材质，即HIF中的Shape和Material的关系是1-1（一般三维软件都支持n-n）
 	Shape只保留Box，其余全部忽略
 	射线放弃tMax
+
+更远的地方：
+	考虑如何用 GPU 对整个光线追踪流程进行优化，尝试以 ComputeShader 作为切入点

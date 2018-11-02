@@ -10,7 +10,7 @@ enum BxDFType {
 	BSDF_ALL = BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_SPECULAR | BSDF_REFLECTION | BSDF_TRANSMISSION,
 };
 
-namespace Reflect
+namespace Reflection
 {
 	float FrDielectric(float cosThetaI, float etaI, float etaT);
 	XMCOLOR3 FrConductor(float cosThetaI, const XMCOLOR3 &etaI, const XMCOLOR3 &etaT, const XMCOLOR3 &k);
@@ -106,6 +106,21 @@ public:
 private:
 	const XMCOLOR3 R;
 	const Fresnel * fresnel;
+};
+
+class SpecularTransmission : public BxDF {
+public:
+	// SpecularTransmission Public Methods
+	SpecularTransmission(const XMCOLOR3 &T, float etaA, float etaB);
+	XMCOLOR3 f(const XMFLOAT3 &wo, const XMFLOAT3 &wi) const;
+	XMCOLOR3 Sample_f(const XMFLOAT3 &wo, XMFLOAT3 *wi, const XMFLOAT2 &sample,
+		float *pdf) const;
+	//float Pdf(const XMFLOAT3 &wo, const XMFLOAT3 &wi) const { return 0; }
+
+private:
+	const XMCOLOR3 T;
+	const float etaA, etaB;
+	const FresnelDielectric fresnel;
 };
 
 class LambertianReflection : public BxDF

@@ -82,6 +82,12 @@
     <ClCompile Include="..\Include\Material\HMirrorMaterial.cpp">
       <Filter>Include\Material</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Material\HGlassMaterial.cpp">
+      <Filter>Include\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\Sphere.cpp">
+      <Filter>Include\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -173,6 +179,12 @@
     </ClInclude>
     <ClInclude Include="..\Include\Material\HMirrorMaterial.h">
       <Filter>Include\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Material\HGlassMaterial.h">
+      <Filter>Include\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\Sphere.h">
+      <Filter>Include\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -85,5 +85,26 @@ XMCOLOR3 WhittedIntegrator::SpecularReflect(const Ray & ray, const SurfaceIntera
 
 XMCOLOR3 WhittedIntegrator::SpecularTransmit(const Ray & ray, const SurfaceInteraction & isect, const HScene & scene, HSampler& sampler, int depth)
 {
-	return XMCOLOR3();
+	XMFLOAT3 wo = isect.wo, wi;
+	const XMFLOAT3 &p = isect.p;
+	const XMFLOAT3 &ns = isect.n;	// 现阶段没有微表面，不考虑isect.shading
+	BSDF &bsdf = *isect.bsdf;
+
+	float pdf;
+	XMCOLOR3 f = bsdf.Sample_f(wo, &wi, sampler.Get2D(), &pdf, BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
+
+	XMVECTOR fV = XMLoadFloat3(&f);
+	XMVECTOR wiV = XMLoadFloat3(&wi);
+	XMVECTOR nsV = XMLoadFloat3(&ns);
+
+	XMCOLOR3 L(0.0f, 0.0f, 0.0f);
+	if (!XMVector3Equal(fV, XMVectorZero()) && XMVectorGetX(XMVectorAbs(XMVector3Dot(wiV, nsV))) > H_EPSILON)
+	{
+		Ray ray = isect.SpawnRay(wi);
+		XMVECTOR absdotV = XMVectorAbs(XMVector3Dot(wiV, nsV));
+		XMVECTOR LiTempV = XMLoadFloat3(&Li(ray, sampler, scene, depth + 1));
+		XMStoreFloat3(&L, fV * LiTempV * absdotV);// / pdf);
+	}
+
+	return L;
 }

@@ -1,6 +1,6 @@
 #include "Reflection.h"
 
-namespace Reflect
+namespace Reflection
 {
 	float FrDielectric(float cosThetaI, float etaI, float etaT)
 	{
@@ -67,9 +67,48 @@ namespace Reflect
 	{
 		return abs(w.z);
 	}
+
+	XMFLOAT3 Reflect(const XMFLOAT3 &wo, const XMFLOAT3 &n) 
+	{
+		XMVECTOR nV = XMLoadFloat3(&n);
+		XMVECTOR woV = XMLoadFloat3(&wo);
+
+		XMFLOAT3 result;
+		XMStoreFloat3(&result, -woV + XMVectorReplicate(2.0f) * XMVector3Dot(woV, nV) * nV);
+		return result;
+	}
+
+	bool Refract(const XMFLOAT3 &wi, const XMFLOAT3 &n, float eta, XMFLOAT3 *out_wt)
+	{
+		XMVECTOR nV = XMLoadFloat3(&n);
+		XMVECTOR wiV = XMLoadFloat3(&wi);
+		XMVECTOR etaV = XMVectorReplicate(eta);
+		XMVECTOR oneV = XMVectorReplicate(1.0f);
+
+		XMVECTOR cosThetaIV = XMVector3Dot(nV, wiV);
+		XMVECTOR sin2ThetaIV = XMVectorMax(XMVectorZero(), oneV - cosThetaIV * cosThetaIV);
+		XMVECTOR sin2ThetaTV = etaV * etaV * sin2ThetaIV;
+
+		if (XMVector3GreaterOrEqual(sin2ThetaTV, oneV))
+			return false;
+		XMVECTOR cosThetaTV = XMVectorSqrt(oneV - sin2ThetaTV);
+
+		XMVECTOR wtV = etaV * -wiV + (etaV * cosThetaIV * cosThetaTV) * nV;
+		XMStoreFloat3(out_wt, wtV);
+		return true;
+	}
+
+	XMFLOAT3 Faceforward(const XMFLOAT3 &n, const XMFLOAT3 &v) 
+	{
+		XMVECTOR nV = XMLoadFloat3(&n);
+		XMVECTOR vV = XMLoadFloat3(&v);
+		XMFLOAT3 result;
+		XMStoreFloat3(&result, XMVector3Less(XMVector3Dot(nV, vV), XMVectorZero()) ? -nV : nV);
+		return result;
+	}
 }
 
-using namespace Reflect;
+using namespace Reflection;
 
 BSDF::BSDF(const SurfaceInteraction & si, float eta)
 	: n(si.n), s(si.dpdu) 
@@ -267,4 +306,39 @@ XMCOLOR3 SpecularReflection::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const 
 XMCOLOR3 FresnelNoOp::Evaluate(float value) const
 {
 	return XMCOLOR3(1.0f, 1.0f, 1.0f);
+}
+
+SpecularTransmission::SpecularTransmission(const XMCOLOR3 & T, float etaA, float etaB)
+	: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)),
+	T(T),
+	etaA(etaA),
+	etaB(etaB),
+	fresnel(etaA, etaB) 
+{
+}
+
+XMCOLOR3 SpecularTransmission::f(const XMFLOAT3 & wo, const XMFLOAT3 & wi) const
+{
+	return XMCOLOR3(0.0f, 0.0f, 0.0f);
+}
+
+XMCOLOR3 SpecularTransmission::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const XMFLOAT2 & sample, float * pdf) const
+{
+	bool entering = CosTheta(wo) > 0;
+	float etaI = entering ? etaA : etaB;
+	float etaT = entering ? etaB : etaA;
+
+	if (!Refract(wo, Faceforward(XMFLOAT3(0, 0, 1), wo), etaI / etaT, wi))
+		return XMCOLOR3(0.0f, 0.0f, 0.0f);
+	*pdf = 1;
+
+	XMVECTOR TV = XMLoadFloat3(&T);
+	XMVECTOR etaIV = XMVectorReplicate(etaI);
+	XMVECTOR etaTV = XMVectorReplicate(etaT);
+	XMVECTOR ftV = TV * (XMVectorReplicate(1.0f) - XMLoadFloat3(&fresnel.Evaluate(CosTheta(*wi))));
+	if (true) ftV *= (etaIV * etaIV) / (etaTV * etaTV);
+
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, ftV / XMVectorReplicate(AbsCosTheta(*wi)));
+	return result;
 }

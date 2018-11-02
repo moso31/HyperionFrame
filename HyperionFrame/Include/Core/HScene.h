@@ -1,9 +1,12 @@
 #pragma once
 #include "Box.h"
+#include "Sphere.h"
 #include "HPointLight.h"
 #include "ImageGenerator.h"
+
 #include "HMatteMaterial.h"
 #include "HMirrorMaterial.h"
+#include "HGlassMaterial.h"
 
 class HScene : public HListener
 {
@@ -25,9 +28,11 @@ public:
 
 	Camera* CreateCamera();
 	Box* CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+	Sphere* CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	HPointLight* CreatePointLight();
 	HMatteMaterial* CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
 	HMirrorMaterial* CreateMirrorMaterial(const XMCOLOR3& kr);
+	HGlassMaterial* CreateGlassMaterial(const XMCOLOR3& Kr, const XMCOLOR3& Kt, const float eta);
 
 	Camera* GetMainCamera() { return m_mainCamera; }
 	int GetShapeCount() { return (int)shapes.size(); }

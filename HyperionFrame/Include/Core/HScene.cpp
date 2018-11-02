@@ -34,46 +34,66 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		mirror_white = { 0.9f, 0.9f, 0.9f },
 		gray = { 0.8f, 0.8f, 0.8f };
 	float sig = 90.0f;
-	HMaterial* mtrl[4] = {
+	HMaterial* mtrl[5] = {
 		CreateMatteMaterial(green, sig),
+		CreateGlassMaterial(mirror_white, mirror_white, 1.55f),
+		//CreateMirrorMaterial(mirror_white),
 		CreateMatteMaterial(red, sig),
-		CreateMirrorMaterial(mirror_white),
-		CreateMatteMaterial(gray, sig)
+		CreateMatteMaterial(gray, sig),
 	};
 
 	for (int i = 0; i < 4; i++)
 	{
-		auto box = CreateBox(pCommandList);
-		box->SetMaterial(mtrl[i]);
+		Shape* shape;
+		if (i == 1)
+			shape = CreateSphere(pCommandList);
+		else 
+			shape = CreateBox(pCommandList);
+		shape->SetMaterial(mtrl[i]);
 
-		if (i == 0) box->SetTranslation(5.0f, 0.0f, -2.0f);
-		if (i == 1) box->SetTranslation(1.5f, 0.0f, 0.0f);
-		if (i == 2) box->SetTranslation(-3.0f, 1.5f, -2.0f);
-		if (i == 3) box->SetTranslation(0.0f, -11.0f, 0.0f);
-		if (i == 3) 
-			box->SetScale(20.0f, 20.0f, 20.0f);
-		else if (i == 2)
-			box->SetScale(5.0f, 5.0f, 5.0f);
-		else
-			box->SetScale(2.0f, 2.0f, 2.0f);
+		if (i == 0)
+		{
+			shape->SetTranslation(5.0f, 0.0f, -2.0f);
+			shape->SetScale(2.0f, 2.0f, 2.0f);
+		}
+		
+		if (i == 1)
+		{
+			shape->SetTranslation(1.5f, 1.0f, 0.0f);
+			shape->SetScale(2.0f, 2.0f, 2.0f);
+			//shape->SetRotation(0.0f, H_PIDIV4 - 0.4f, 0.0f);
+		}
+
+		if (i == 2)
+		{
+			shape->SetTranslation(-3.0f, 1.5f, -4.0f);
+			shape->SetScale(5.0f, 5.0f, 5.0f);
+		}
+
+		if (i == 3)
+		{
+			shape->SetTranslation(0.0f, -11.0f, 0.0f);
+			shape->SetScale(20.0f, 20.0f, 20.0f);
+		}
 	}
 
 	auto pointLight = CreatePointLight();
-	pointLight->SetTranslation(9.0f, 5.0f, -4.0f);
-	float brightness = 120.0f;
+	auto camPos = m_mainCamera->GetTranslation();
+	pointLight->SetTranslation(camPos.x, camPos.y, camPos.z);
+	float brightness = 500.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
 }
 
 void HScene::Update(UINT8* pMappedConstantBuffer)
 {
 	static float x = 0;
-	x += 0.0f;
+	x += 0.01f;
 
 	m_mainCamera->Update();
 
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
-		if (i < 2) shapes[i]->SetRotation(0.0f, x, 0.0f);
+		//if (i == 1) shapes[i]->SetRotation(0.0f, x, 0.0f);
 		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * c_alignedConstantBufferSize);
 		shapes[i]->Update(destination);
 	}
@@ -166,6 +186,15 @@ Box * HScene::CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	return box;
 }
 
+Sphere * HScene::CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+{
+	auto sphere = new Sphere(m_dxResources, m_mainCamera);
+	transformNodes.push_back(sphere);
+	shapes.push_back(sphere);
+	sphere->Init(pCommandList);
+	return sphere;
+}
+
 HPointLight * HScene::CreatePointLight()
 {
 	auto pointLight = new HPointLight();
@@ -184,6 +213,13 @@ HMatteMaterial * HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sig
 HMirrorMaterial * HScene::CreateMirrorMaterial(const XMCOLOR3 & kr)
 {
 	auto mat = new HMirrorMaterial(kr);
+	materials.push_back(mat);
+	return mat;
+}
+
+HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3 & Kt, const float eta)
+{
+	auto mat = new HGlassMaterial(Kr, Kt, eta);
 	materials.push_back(mat);
 	return mat;
 }

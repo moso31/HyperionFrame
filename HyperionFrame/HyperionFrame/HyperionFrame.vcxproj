@@ -148,6 +148,7 @@
     <ClCompile Include="..\Include\Integrators\whitted.cpp" />
     <ClCompile Include="..\Include\Lights\HLight.cpp" />
     <ClCompile Include="..\Include\Lights\HPointLight.cpp" />
+    <ClCompile Include="..\Include\Material\HGlassMaterial.cpp" />
     <ClCompile Include="..\Include\Material\HMaterial.cpp" />
     <ClCompile Include="..\Include\Material\HMatteMaterial.cpp" />
     <ClCompile Include="..\Include\Material\HMirrorMaterial.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="..\Include\Scenes\Box.cpp" />
     <ClCompile Include="..\Include\Scenes\Camera.cpp" />
     <ClCompile Include="..\Include\Scenes\Shape.cpp" />
+    <ClCompile Include="..\Include\Scenes\Sphere.cpp" />
     <ClCompile Include="..\Include\Scenes\Transform.cpp" />
     <ClCompile Include="..\Math\HMath.cpp" />
     <ClCompile Include="..\Math\RandomNumberGenerator.cpp" />
@@ -177,6 +179,7 @@
     <ClInclude Include="..\Include\Integrators\whitted.h" />
     <ClInclude Include="..\Include\Lights\HLight.h" />
     <ClInclude Include="..\Include\Lights\HPointLight.h" />
+    <ClInclude Include="..\Include\Material\HGlassMaterial.h" />
     <ClInclude Include="..\Include\Material\HMaterial.h" />
     <ClInclude Include="..\Include\Material\HMatteMaterial.h" />
     <ClInclude Include="..\Include\Material\HMirrorMaterial.h" />
@@ -185,6 +188,7 @@
     <ClInclude Include="..\Include\Scenes\Box.h" />
     <ClInclude Include="..\Include\Scenes\Camera.h" />
     <ClInclude Include="..\Include\Scenes\Shape.h" />
+    <ClInclude Include="..\Include\Scenes\Sphere.h" />
     <ClInclude Include="..\Include\Scenes\Transform.h" />
     <ClInclude Include="..\Math\HMath.h" />
     <ClInclude Include="..\Math\RandomNumberGenerator.h" />
