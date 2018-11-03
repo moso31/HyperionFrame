@@ -22,65 +22,108 @@ void HScene::OnResize()
 
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	m_mainCamera = CreateCamera(); 
-	m_mainCamera->SetTranslation(9.0f, 5.0f, -4.0f);
+	m_mainCamera = CreateCamera();
+	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
 
 	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
 		blue = { 0.0f, 0.0f, 1.0f },
+		yellow = { 1.0f, 1.0f, 0.0f },
 		white = { 1.0f, 1.0f, 1.0f },
 		mirror_white = { 0.9f, 0.9f, 0.9f },
 		gray = { 0.8f, 0.8f, 0.8f };
 	float sig = 90.0f;
-	HMaterial* mtrl[5] = {
+	HMaterial* mtrl[7] = {
 		CreateMatteMaterial(green, sig),
-		CreateGlassMaterial(mirror_white, mirror_white, 1.55f),
-		//CreateMirrorMaterial(mirror_white),
 		CreateMatteMaterial(red, sig),
+		CreateMatteMaterial(blue, sig),
+		CreateMatteMaterial(yellow, sig),
+		CreateGlassMaterial(white, white, 1.55f),
 		CreateMatteMaterial(gray, sig),
+		CreateMirrorMaterial(mirror_white),
 	};
 
-	for (int i = 0; i < 4; i++)
-	{
-		Shape* shape;
-		if (i == 1)
-			shape = CreateSphere(pCommandList);
-		else 
-			shape = CreateBox(pCommandList);
-		shape->SetMaterial(mtrl[i]);
+	Shape* shape;
+	shape = CreateBox(pCommandList);
+	shape->SetTranslation(5.0f, 1.0f, -2.0f);
+	shape->SetScale(2.0f, 2.0f, 2.0f);
+	shape->SetMaterial(mtrl[0]);
 
-		if (i == 0)
-		{
-			shape->SetTranslation(5.0f, 0.0f, -2.0f);
-			shape->SetScale(2.0f, 2.0f, 2.0f);
-		}
-		
-		if (i == 1)
-		{
-			shape->SetTranslation(1.5f, 1.0f, 0.0f);
-			shape->SetScale(2.0f, 2.0f, 2.0f);
-			//shape->SetRotation(0.0f, H_PIDIV4 - 0.4f, 0.0f);
-		}
+	shape = CreateSphere(pCommandList, 1.0f, 64, 64);
+	shape->SetTranslation(1.5f, 2.0f, 0.0f);
+	shape->SetScale(2.0f, 2.0f, 2.0f);
+	shape->SetMaterial(mtrl[4]);
 
-		if (i == 2)
-		{
-			shape->SetTranslation(-3.0f, 1.5f, -4.0f);
-			shape->SetScale(5.0f, 5.0f, 5.0f);
-		}
+	shape = CreateBox(pCommandList);
+	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	shape->SetScale(5.0f, 5.0f, 5.0f);
+	shape->SetRotation(0.0f, 0.3f, 0.0f);
+	shape->SetMaterial(mtrl[6]);
 
-		if (i == 3)
-		{
-			shape->SetTranslation(0.0f, -11.0f, 0.0f);
-			shape->SetScale(20.0f, 20.0f, 20.0f);
-		}
-	}
+	//for (int i = -9; i <= 9; i++)
+	//{
+	//	for (int j = -9; j <= 9; j++)
+	//	{
+	//		shape = CreateBox(pCommandList);
+	//		if ((i + j) % 2)
+	//		{
+	//			shape->SetTranslation(-i, -0.7f, j);
+	//			shape->SetMaterial(mtrl[1]);
+	//		}
+	//		else
+	//		{
+	//			shape->SetTranslation(-i, -0.5f, j);
+	//			shape->SetMaterial(mtrl[3]);
+	//		}
+	//	}
+	//}
+
+	shape = CreateBox(pCommandList);
+	shape->SetTranslation(0.0f, -0.5f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 1.0f, 20.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetTranslation(0.0f, 0.0f, 10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetTranslation(0.0f, 0.0f, -10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
 
 	auto pointLight = CreatePointLight();
-	auto camPos = m_mainCamera->GetTranslation();
-	pointLight->SetTranslation(camPos.x, camPos.y, camPos.z);
-	float brightness = 500.0f;
+	XMFLOAT3 lightPos = { 0.0f, 10.0f, 5.0f };
+	pointLight->SetTranslation(lightPos.x, lightPos.y, lightPos.z);
+	float brightness = 100.0f;
+	pointLight->SetIntensity(brightness, brightness, brightness);
+
+	pointLight = CreatePointLight();
+	pointLight->SetTranslation(-lightPos.x, lightPos.y, -lightPos.z);
+	brightness = 100.0f;
+	pointLight->SetIntensity(brightness, brightness, brightness);
+
+	pointLight = CreatePointLight();
+	pointLight->SetTranslation(lightPos.z, lightPos.y, lightPos.x);
+	brightness = 100.0f;
+	pointLight->SetIntensity(brightness, brightness, brightness);
+
+	pointLight = CreatePointLight();
+	pointLight->SetTranslation(-lightPos.z, lightPos.y, -lightPos.x);
+	brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
 }
 
@@ -95,6 +138,8 @@ void HScene::Update(UINT8* pMappedConstantBuffer)
 	{
 		//if (i == 1) shapes[i]->SetRotation(0.0f, x, 0.0f);
 		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * c_alignedConstantBufferSize);
+
+		shapes[i]->UpdateTransformData();
 		shapes[i]->Update(destination);
 	}
 }
@@ -114,12 +159,13 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
+	x = 288, y = 28;
 	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;
 	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0);
-	printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
+	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", x, y, L.x, L.y, L.z);
 }
 
 void HScene::OnKeyDown(WPARAM wParam)
@@ -186,12 +232,12 @@ Box * HScene::CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	return box;
 }
 
-Sphere * HScene::CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+Sphere * HScene::CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList, float radius, int segmentVertical, int segmentHorizontal)
 {
 	auto sphere = new Sphere(m_dxResources, m_mainCamera);
 	transformNodes.push_back(sphere);
 	shapes.push_back(sphere);
-	sphere->Init(pCommandList);
+	sphere->Init(pCommandList, radius, segmentVertical, segmentHorizontal);
 	return sphere;
 }
 

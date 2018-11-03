@@ -7,6 +7,18 @@ Transform::Transform(XMFLOAT3 _translation, XMFLOAT3 _rotation, XMFLOAT3 _scale)
 {
 }
 
+void Transform::UpdateTransformData()
+{
+	XMVECTOR vTran = XMLoadFloat3(&translation);
+	XMVECTOR vRota = XMLoadFloat3(&rotation);
+	XMVECTOR vScal = XMLoadFloat3(&scale);
+
+	XMMATRIX mxObject2World = XMMatrixScalingFromVector(vScal) * XMMatrixRotationRollPitchYawFromVector(vRota) * XMMatrixTranslationFromVector(vTran);
+
+	XMStoreFloat4x4(&worldMatrix, mxObject2World);
+	XMStoreFloat4x4(&worldMatrixInv, XMMatrixInverse(&XMMatrixDeterminant(mxObject2World), mxObject2World));
+}
+
 XMFLOAT3 Transform::GetTranslation()
 {
 	return translation;
@@ -42,14 +54,12 @@ Transform Transform::GetTransform()
 	return Transform(*this);
 }
 
-XMFLOAT4X4 Transform::GetWorldMatrix()
+XMFLOAT4X4 Transform::GetObject2World()
 {
-	XMVECTOR vTran = XMLoadFloat3(&translation);
-	XMVECTOR vRota = XMLoadFloat3(&rotation);
-	XMVECTOR vScal = XMLoadFloat3(&scale);
+	return worldMatrix;
+}
 
-	XMFLOAT4X4 result;
-	XMStoreFloat4x4(&result, XMMatrixScalingFromVector(vScal) * XMMatrixRotationRollPitchYawFromVector(vRota) * XMMatrixTranslationFromVector(vTran));
-
-	return result;
+XMFLOAT4X4 Transform::GetWorld2Object()
+{
+	return worldMatrixInv;
 }

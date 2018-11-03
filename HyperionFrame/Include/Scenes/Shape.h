@@ -13,7 +13,6 @@ public:
 	// 重新计算整个模型的AABB。
 	AABB GenerateAABB();
 
-	virtual void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 	virtual void Update(UINT8 * destination) = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
@@ -24,15 +23,11 @@ public:
 	HMaterial* GetMaterial() { return m_material; }
 	void SetMaterial(HMaterial* mat) { m_material = mat; }
 
-	virtual void Intersect(Ray worldRay, int& out_hitIndex, SurfaceInteraction* out_isect) = 0;
+	virtual void Intersect(Ray worldRay, SurfaceInteraction* out_isect) = 0;
 	virtual bool IntersectP(Ray worldRay) = 0;
 
 private:
-	// 初始化缓存
 	virtual void _initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
-
-	// 初始化数据（AABB、长宽高、半径等）
-	virtual void _initParameters() = 0;
 
 protected:
 	Camera*		m_camera;

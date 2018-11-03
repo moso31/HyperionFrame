@@ -12,11 +12,9 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 		{
 			SurfaceInteraction isect;
 			//printf("Object %d intersected.\n", i);
-			int index;
-			shapeList[i]->Intersect(ray, index, &isect);
+
+			shapeList[i]->Intersect(ray, &isect);
 			//printf("hit: %f, %f, %f\n", isect.p.x, isect.p.y, isect.p.z);
-			if (index == -1)
-				continue;
 
 			XMFLOAT3 wo = isect.wo;
 

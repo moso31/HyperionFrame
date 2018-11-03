@@ -93,7 +93,7 @@ namespace Reflection
 			return false;
 		XMVECTOR cosThetaTV = XMVectorSqrt(oneV - sin2ThetaTV);
 
-		XMVECTOR wtV = etaV * -wiV + (etaV * cosThetaIV * cosThetaTV) * nV;
+		XMVECTOR wtV = etaV * -wiV + (etaV * cosThetaIV - cosThetaTV) * nV;
 		XMStoreFloat3(out_wt, wtV);
 		return true;
 	}
@@ -270,11 +270,13 @@ XMFLOAT3 CosineSampleHemisphere(const XMFLOAT2 & u)
 	else
 	{
 		float theta, r;
-		if (abs(uOffset.x) > abs(uOffset.y)) {
+		if (abs(uOffset.x) > abs(uOffset.y)) 
+		{
 			r = uOffset.x;
 			theta = H_PIDIV4 * (uOffset.y / uOffset.x);
 		}
-		else {
+		else 
+		{
 			r = uOffset.y;
 			theta = H_PIDIV2 - H_PIDIV4 * (uOffset.x / uOffset.y);
 		}

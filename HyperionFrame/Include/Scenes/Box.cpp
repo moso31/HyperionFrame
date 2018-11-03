@@ -15,16 +15,16 @@ Box::~Box()
 {
 }
 
-void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList, float length, float width, float height)
 {
+	_initParameters(length, width, height);
 	_initBufferData(pCommandList);
-	_initParameters();
 }
 
 void Box::Update(UINT8* destination)
 {
 	// 准备将更新的模型矩阵传递到着色器。
-	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(XMLoadFloat4x4(&GetWorldMatrix())));
+	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(XMLoadFloat4x4(&GetObject2World())));
 
 	memcpy(destination, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
 }
@@ -38,12 +38,12 @@ void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
 }
 
-void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_isect)
+void Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
 
-	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetWorldMatrix());
+	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetObject2World());
 	XMMATRIX mxWorld2Object = XMMatrixInverse(&XMMatrixDeterminant(mxObject2World), mxObject2World);
 	XMVECTOR vRayOrig = XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), mxWorld2Object);
 	XMVECTOR vRayDir = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), mxWorld2Object));
@@ -61,7 +61,6 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 	
 	SurfaceInteraction record;
 	float tNearest = FLT_MAX;
-	out_hitIndex = -1;
 	if (tNear < tFar)
 	{
 		for (UINT i = 0; i < GetFaceCount(); i++)
@@ -169,7 +168,6 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 			if (tNearest > t)
 			{
 				tNearest = t;
-				out_hitIndex = i;
 				XMFLOAT3 hitPos, wo;
 				XMStoreFloat3(&hitPos, (vRayOrig + t * vRayDir));
 				XMStoreFloat3(&wo, -vRayDir);
@@ -178,7 +176,7 @@ void Box::Intersect(Ray worldRay, int & out_hitIndex, SurfaceInteraction* out_is
 		}
 	}
 
-	if (out_hitIndex != -1)
+	if (record.shape == this)
 	{
 		// isect 转换成世界坐标
 		XMVECTOR pV = XMVector3TransformCoord(XMLoadFloat3(&record.p), mxObject2World);
@@ -206,7 +204,7 @@ bool Box::IntersectP(Ray worldRay)
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
 
-	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetWorldMatrix());
+	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetObject2World());
 	XMMATRIX mxWorld2Object = XMMatrixInverse(&XMMatrixDeterminant(mxObject2World), mxObject2World);
 	XMVECTOR vRayOrig = XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), mxWorld2Object);
 	XMVECTOR vRayDir = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), mxWorld2Object));
@@ -228,48 +226,6 @@ bool Box::IntersectP(Ray worldRay)
 void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	auto d3dDevice = m_dxResources->GetD3DDevice();
-
-	// 创建立方体几何图形资源并上载到 GPU。
-
-	// 立方体顶点。每个顶点都有一个位置和一个颜色。
-	m_vertices =
-	{
-		// -X
-		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-		
-		// +X
-		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		// -Y
-		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-		
-		// +Y
-		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-		
-		// -Z
-		{ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-		
-		// +Z
-		{ XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 0.0f) },
-	};
 
 	const UINT vertexBufferSize = UINT(sizeof(VertexPCT) * m_vertices.size());
 
@@ -308,30 +264,6 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 			CD3DX12_RESOURCE_BARRIER::Transition(m_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 		pCommandList->ResourceBarrier(1, &vertexBufferResourceBarrier);
 	}
-
-	// 加载网格索引。每三个索引表示要在屏幕上呈现的三角形。
-	// 例如: 0,2,1 表示顶点缓冲区中的索引为 0、2 和 1 的顶点构成
-	// 此网格的第一个三角形。
-	m_indices =
-	{
-		0, 2, 1,
-		0, 3, 2,
-
-		4, 6, 5,
-		4, 7, 6,
-
-		8, 10, 9,
-		8, 11, 10,
-
-		12, 14, 13,
-		12, 15, 14,
-
-		16, 18, 17,
-		16, 19, 18,
-
-		20, 22, 21,
-		20, 23, 22
-	};
 
 	const UINT indexBufferSize = UINT(sizeof(unsigned short) * m_indices.size());
 
@@ -379,7 +311,70 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 }
 
-void Box::_initParameters()
+void Box::_initParameters(float x, float y, float z)
 {
-	m_aabb = AABB(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.5f, 0.5f, 0.5f));
+	x *= 0.5f;
+	y *= 0.5f;
+	z *= 0.5f;
+	m_vertices =
+	{
+		// -X
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// +X
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// -Y
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// +Y
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// -Z
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// +Z
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 0.0f) },
+	};
+
+	m_indices =
+	{
+		0, 2, 1,
+		0, 3, 2,
+
+		4, 6, 5,
+		4, 7, 6,
+
+		8, 10, 9,
+		8, 11, 10,
+
+		12, 14, 13,
+		12, 15, 14,
+
+		16, 18, 17,
+		16, 19, 18,
+
+		20, 22, 21,
+		20, 23, 22
+	};
+
+	m_aabb = AABB(XMFLOAT3(-x, -y, -z), XMFLOAT3(x, y, z));
 }

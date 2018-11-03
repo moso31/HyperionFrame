@@ -28,7 +28,7 @@ public:
 
 	Camera* CreateCamera();
 	Box* CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList);
-	Sphere* CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+	Sphere* CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList, float radius = 1.0f, int segmentVertical = 16.0f, int segmentHorizontal = 16.0f);
 	HPointLight* CreatePointLight();
 	HMatteMaterial* CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
 	HMirrorMaterial* CreateMirrorMaterial(const XMCOLOR3& kr);

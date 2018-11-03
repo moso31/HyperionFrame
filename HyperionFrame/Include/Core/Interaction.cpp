@@ -11,7 +11,7 @@ SurfaceInteraction::SurfaceInteraction(const XMFLOAT3 & p, const XMFLOAT2 & uv, 
 	dpdv(dpdv),
 	shape(shape)
 {
-	XMVECTOR vn = XMVector3Cross(XMLoadFloat3(&dpdv), XMLoadFloat3(&dpdu));
+	XMVECTOR vn = XMVector3Normalize(XMVector3Cross(XMLoadFloat3(&dpdv), XMLoadFloat3(&dpdu)));
 	XMStoreFloat3(&n, vn);
 
 	this->p = p;

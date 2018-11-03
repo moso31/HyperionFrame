@@ -16,6 +16,7 @@ public:
 
 	XMFLOAT3 GetOrigin();
 	XMFLOAT3 GetDirection();
+	XMFLOAT3 GetT(float t);
 
 private:
 	XMFLOAT3 origin;
@@ -39,5 +40,7 @@ private:
 	XMFLOAT3 min;
 	XMFLOAT3 max;
 };
+
+bool Quadratic(float a, float b, float c, float& out_t0, float& out_t1);
 
 bool RayIntersectP(Ray ray, AABB aabb);

@@ -10,15 +10,15 @@ public:
 	Box(const shared_ptr<DXResource>& dxResources, Camera* camera);
 	~Box();
 
-	void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+	void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList, float length = 1.0f, float width = 1.0f, float height = 1.0f);
 
 	void Update(UINT8 * destination);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	void Intersect(Ray worldRay, int& out_hitIndex, SurfaceInteraction* out_isect);
+	void Intersect(Ray worldRay, SurfaceInteraction* out_isect);
 	bool IntersectP(Ray worldRay);
 
 private:
 	void _initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
-	void _initParameters();
+	void _initParameters(float length = 1.0f, float width = 1.0f, float height = 1.0f);
 };

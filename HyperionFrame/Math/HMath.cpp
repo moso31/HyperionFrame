@@ -16,6 +16,16 @@ XMFLOAT3 Ray::GetDirection()
 	return direction;
 }
 
+XMFLOAT3 Ray::GetT(float t)
+{
+	XMVECTOR oV = XMLoadFloat3(&origin);
+	XMVECTOR dV = XMLoadFloat3(&direction);
+	XMVECTOR pV = oV + t * dV;
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, pV);
+	return result;
+}
+
 AABB::AABB(XMFLOAT3 _min, XMFLOAT3 _max)
 {
 	min = _min;
@@ -52,6 +62,29 @@ void AABB::Merge(XMFLOAT3 point)
 	XMVECTOR vMin = XMVectorMin(XMLoadFloat3(&min), XMLoadFloat3(&point));
 	XMStoreFloat3(&max, vMax);
 	XMStoreFloat3(&min, vMin);
+}
+
+bool Quadratic(float a, float b, float c, float& out_t0, float& out_t1)
+{
+	if (abs(a) < H_EPSILON) a = 0.0f;
+	if (abs(b) < H_EPSILON) b = 0.0f;
+	if (abs(c) < H_EPSILON) c = 0.0f;
+
+	float dt = (b * b - 4 * a * c);
+	if (dt < 0.0f)
+		return false;
+
+	float sqrtdt = sqrt(dt);
+	float q0 = b + sqrtdt, q1 = b - sqrtdt;
+
+	float onediv2a = -0.5f / a;
+
+	out_t0 = q0 * onediv2a;
+	out_t1 = q1 * onediv2a;
+
+	if (out_t0 > out_t1) 
+		swap(out_t0, out_t1);
+	return true;
 }
 
 bool RayIntersectP(Ray ray, AABB aabb)
