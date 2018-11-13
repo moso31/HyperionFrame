@@ -19,6 +19,7 @@ public:
 
 	void OnResize();
 	void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+	void InitSceneData();
 	void Update(UINT8* pMappedConstantBuffer);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize);
 	void Release() {}
@@ -35,19 +36,25 @@ public:
 	HGlassMaterial* CreateGlassMaterial(const XMCOLOR3& Kr, const XMCOLOR3& Kt, const float eta);
 
 	Camera* GetMainCamera() { return m_mainCamera; }
-	int GetShapeCount() { return (int)shapes.size(); }
+	int GetShapeCount()		{ return (int)shapes.size(); }
+	AABB GetAABB()			{ return m_aabb; }
 
-	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, ImageBMPData* pRGB);
+	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
 
 public:
-	vector<Transform*> transformNodes;
-	vector<Camera*> cameras;
-	vector<HLight*> lights;
-	vector<Shape*> shapes;
+	vector<Transform*>	transformNodes;
+	vector<Camera*>		cameras;
+	vector<HLight*>		lights;
+	vector<Shape*>		shapes;
+	vector<HMaterial*>	materials;
 
-	vector<HMaterial*> materials;
+private:
+	void UpdateAABB();
 
 private:
 	std::shared_ptr<DXResource> m_dxResources;
 	Camera* m_mainCamera;
+	AABB	m_aabb;
+
+	int m_makingProcessIndex;
 };

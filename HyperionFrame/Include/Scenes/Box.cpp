@@ -65,12 +65,11 @@ void Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 	{
 		for (UINT i = 0; i < GetFaceCount(); i++)
 		{
-			XMFLOAT3 triData[3];
-			GetFace(i, triData);
+			Triangle tri = GetFace(i);
 
-			XMVECTOR p0 = XMLoadFloat3(&triData[0]);
-			XMVECTOR p1 = XMLoadFloat3(&triData[1]);
-			XMVECTOR p2 = XMLoadFloat3(&triData[2]);
+			XMVECTOR p0 = XMLoadFloat3(&tri.p[0]);
+			XMVECTOR p1 = XMLoadFloat3(&tri.p[1]);
+			XMVECTOR p2 = XMLoadFloat3(&tri.p[2]);
 
 			XMVECTOR p0t = p0 - vRayOrig;
 			XMVECTOR p1t = p1 - vRayOrig;
@@ -145,13 +144,12 @@ void Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 			float b2 = e2 * invDet;
 			float t = tScaled * invDet;
 
-			XMFLOAT2 uv[3];
-			GetUVs(i, uv);
+			TriangleUV uv = GetUVs(i);
 
-			float du02 = uv[0].x - uv[2].x;
-			float du12 = uv[1].x - uv[2].x;
-			float dv02 = uv[0].y - uv[2].y;
-			float dv12 = uv[1].y - uv[2].y;
+			float du02 = uv.p[0].x - uv.p[2].x;
+			float du12 = uv.p[1].x - uv.p[2].x;
+			float dv02 = uv.p[0].y - uv.p[2].y;
+			float dv12 = uv.p[1].y - uv.p[2].y;
 			XMVECTOR dp02 = p0 - p2, dp12 = p1 - p2;
 			float detUV = du02 * dv12 - dv02 * du12;
 			float invdetUV = 1.0f / det;
@@ -163,7 +161,7 @@ void Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 			XMFLOAT3 pHit;
 			XMStoreFloat3(&pHit, b0 * p0 + b1 * p1 + b2 * p2);
 			XMFLOAT2 uvHit;
-			XMStoreFloat2(&uvHit, b0 * XMLoadFloat2(&uv[0]) + b1 * XMLoadFloat2(&uv[1]) + b2 * XMLoadFloat2(&uv[2]));
+			XMStoreFloat2(&uvHit, b0 * XMLoadFloat2(&uv.p[0]) + b1 * XMLoadFloat2(&uv.p[1]) + b2 * XMLoadFloat2(&uv.p[2]));
 
 			if (tNearest > t)
 			{

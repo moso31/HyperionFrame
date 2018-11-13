@@ -56,12 +56,33 @@ XMFLOAT3 AABB::GetVecMax()
 	return max;
 }
 
+void AABB::Merge(AABB aabb)
+{
+	XMVECTOR vMax = XMVectorMax(XMLoadFloat3(&max), XMLoadFloat3(&aabb.max));
+	XMVECTOR vMin = XMVectorMin(XMLoadFloat3(&min), XMLoadFloat3(&aabb.min));
+	XMStoreFloat3(&max, vMax);
+	XMStoreFloat3(&min, vMin);
+}
+
 void AABB::Merge(XMFLOAT3 point)
 {
 	XMVECTOR vMax = XMVectorMax(XMLoadFloat3(&max), XMLoadFloat3(&point));
 	XMVECTOR vMin = XMVectorMin(XMLoadFloat3(&min), XMLoadFloat3(&point));
 	XMStoreFloat3(&max, vMax);
 	XMStoreFloat3(&min, vMin);
+}
+
+int AABB::GetMaximumExtent()
+{
+	XMFLOAT3 dim = GetExtent();
+	if (dim.x > dim.y)
+	{
+		return dim.x > dim.z ? 0 : 2;
+	}
+	else
+	{
+		return dim.y > dim.z ? 1 : 2;
+	}
 }
 
 bool Quadratic(float a, float b, float c, float& out_t0, float& out_t1)

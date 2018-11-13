@@ -34,7 +34,10 @@ public:
 	XMFLOAT3 GetVecMin();
 	XMFLOAT3 GetVecMax();
 
+	void Merge(AABB aabb);
 	void Merge(XMFLOAT3 point);
+
+	int GetMaximumExtent();
 
 private:
 	XMFLOAT3 min;

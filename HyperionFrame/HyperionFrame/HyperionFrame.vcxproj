@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\Accelerators\HBVH.cpp" />
     <ClCompile Include="..\Include\Core\HSampler.cpp" />
     <ClCompile Include="..\Include\Core\HScene.cpp" />
     <ClCompile Include="..\Include\Core\Integrator.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="SceneRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\Accelerators\HBVH.h" />
     <ClInclude Include="..\Include\Core\HSampler.h" />
     <ClInclude Include="..\Include\Core\HScene.h" />
     <ClInclude Include="..\Include\Core\Integrator.h" />

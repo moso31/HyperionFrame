@@ -59,7 +59,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape = CreateBox(pCommandList);
 	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	shape->SetScale(5.0f, 5.0f, 5.0f);
-	shape->SetRotation(0.0f, 0.3f, 0.0f);
+	shape->SetRotation(0.0f, -0.2f, 0.0f);
 	shape->SetMaterial(mtrl[6]);
 
 	//for (int i = -9; i <= 9; i++)
@@ -125,6 +125,13 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pointLight->SetTranslation(-lightPos.z, lightPos.y, -lightPos.x);
 	brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
+
+	InitSceneData();
+}
+
+void HScene::InitSceneData()
+{
+	UpdateAABB();
 }
 
 void HScene::Update(UINT8* pMappedConstantBuffer)
@@ -173,8 +180,9 @@ void HScene::OnKeyDown(WPARAM wParam)
 	if (wParam == 'G')
 	{
 		XMINT2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
-		XMINT2 tileSize(32, 32);
-		XMINT2 tileCount(screenSize.x / tileSize.x + 1, screenSize.y / tileSize.y + 1);
+		XMINT2 tileSingleSize(32, 32);
+		XMINT2 tileCount(screenSize.x / tileSingleSize.x + 1, screenSize.y / tileSingleSize.y + 1);
+		int tileSampleCount = tileCount.x * tileCount.y;
 		int sampleCount = screenSize.x * screenSize.y;
 
 		ImageBMPData* pRGB = new ImageBMPData[sampleCount];
@@ -185,12 +193,13 @@ void HScene::OnKeyDown(WPARAM wParam)
 
 		thread* threads = new thread[tileCount.x * tileCount.y];
 
+		m_makingProcessIndex = 0;
 		for (int i = 0; i < tileCount.x; i++)
 		{
 			for (int j = 0; j < tileCount.y; j++)
 			{
 				int count = i * tileCount.y + j;
-				threads[count] = thread(&HScene::MakeImageTile, this, i, j, tileSize, pRGB);
+				threads[count] = thread(&HScene::MakeImageTile, this, i, j, tileSingleSize, tileSampleCount, pRGB);
 			}
 		}
 
@@ -270,7 +279,7 @@ HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3
 	return mat;
 }
 
-void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, ImageBMPData* pRGB)
+void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSampleCount, ImageBMPData* pRGB)
 {
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 
@@ -310,5 +319,20 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, ImageBMPData* 
 			pRGB[rgbIdx].g += resultRGB.y;
 			pRGB[rgbIdx].b += resultRGB.z;
 		}
+	}
+
+	m_makingProcessIndex++;
+	if (m_makingProcessIndex % (tileSampleCount / 10) == 0)
+	{
+		printf("%d%%..", (m_makingProcessIndex * 10 / tileSampleCount + 1) * 10);
+	}
+}
+
+void HScene::UpdateAABB()
+{
+	for (int i = 0; i < shapes.size(); i++)
+	{
+		AABB aabb = shapes[i]->GetAABB();
+		m_aabb.Merge(aabb);
 	}
 }

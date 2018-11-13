@@ -23,16 +23,16 @@
       <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Scenes\Box.cpp">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Scenes\Camera.cpp">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Scenes\Shape.cpp">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Scenes\Transform.cpp">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Material\HMaterial.cpp">
       <Filter>Include\Material</Filter>
@@ -47,10 +47,10 @@
       <Filter>Include\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Lights\HPointLight.cpp">
-      <Filter>Include\Light</Filter>
+      <Filter>Include\Lights</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Lights\HLight.cpp">
-      <Filter>Include\Light</Filter>
+      <Filter>Include\Lights</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Core\Reflection.cpp">
       <Filter>Include\Core</Filter>
@@ -86,7 +86,10 @@
       <Filter>Include\Material</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\Scenes\Sphere.cpp">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Accelerators\HBVH.cpp">
+      <Filter>Include\Accelerators</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,16 +124,16 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Box.h">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Camera.h">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Shape.h">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Transform.h">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Material\HMaterial.h">
       <Filter>Include\Material</Filter>
@@ -145,10 +148,10 @@
       <Filter>Include\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Lights\HPointLight.h">
-      <Filter>Include\Light</Filter>
+      <Filter>Include\Lights</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Lights\HLight.h">
-      <Filter>Include\Light</Filter>
+      <Filter>Include\Lights</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Core\Reflection.h">
       <Filter>Include\Core</Filter>
@@ -184,7 +187,10 @@
       <Filter>Include\Material</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Sphere.h">
-      <Filter>Include\Scene</Filter>
+      <Filter>Include\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Accelerators\HBVH.h">
+      <Filter>Include\Accelerators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -217,17 +223,11 @@
     <Filter Include="Math">
       <UniqueIdentifier>{f56d8c1d-88ae-4b32-81ea-a8c56eee1645}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Scene">
-      <UniqueIdentifier>{6e6e21e0-a4fa-46ca-9a57-a7a45c85fd9b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\Material">
       <UniqueIdentifier>{d3d794de-09b8-4a5c-9b73-582a19754177}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include\Core">
       <UniqueIdentifier>{aa99ae3f-61fe-426a-9231-f2a22fac6909}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include\Light">
-      <UniqueIdentifier>{cd5e98a5-fcf3-47c9-90f1-5ff6f9192591}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include\Input">
       <UniqueIdentifier>{acd8700f-52da-4512-96bb-08319f1e9739}</UniqueIdentifier>
@@ -237,6 +237,15 @@
     </Filter>
     <Filter Include="Include\Samplers">
       <UniqueIdentifier>{d50c43c1-ed00-42f1-9ddd-9366bf7815c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Accelerators">
+      <UniqueIdentifier>{95d55625-79fb-417a-bc6a-25d490a34ecd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Scenes">
+      <UniqueIdentifier>{6e6e21e0-a4fa-46ca-9a57-a7a45c85fd9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Lights">
+      <UniqueIdentifier>{cd5e98a5-fcf3-47c9-90f1-5ff6f9192591}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

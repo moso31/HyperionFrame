@@ -1,6 +1,30 @@
 #pragma once
 #include "Camera.h"
 
+struct Triangle
+{
+	union
+	{
+		struct
+		{
+			XMFLOAT3 A, B, C;
+		};
+		XMFLOAT3 p[3];
+	};
+};
+
+struct TriangleUV
+{
+	union
+	{
+		struct
+		{
+			XMFLOAT2 A, B, C;
+		};
+		XMFLOAT2 p[3];
+	};
+};
+
 class Shape : public Transform
 {
 public:
@@ -17,8 +41,8 @@ public:
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
 	UINT GetFaceCount();
-	void GetFace(UINT faceIndex, XMFLOAT3 out_face[3]);
-	void GetUVs(UINT faceIndex, XMFLOAT2 out_uv[3]);
+	Triangle GetFace(UINT faceIndex);
+	TriangleUV GetUVs(UINT faceIndex);
 
 	HMaterial* GetMaterial() { return m_material; }
 	void SetMaterial(HMaterial* mat) { m_material = mat; }

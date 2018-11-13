@@ -32,18 +32,22 @@ UINT Shape::GetFaceCount()
 	return (UINT)m_indices.size() / 3;
 }
 
-void Shape::GetFace(UINT faceIndex, XMFLOAT3 out_face[3])
+Triangle Shape::GetFace(UINT faceIndex)
 {
 	int index = faceIndex * 3;
-	out_face[0] = m_vertices[m_indices[index]].pos;
-	out_face[1] = m_vertices[m_indices[index + 1]].pos;
-	out_face[2] = m_vertices[m_indices[index + 2]].pos;
+	Triangle tri;
+	tri.p[0] = m_vertices[m_indices[index]].pos;
+	tri.p[1] = m_vertices[m_indices[index + 1]].pos;
+	tri.p[2] = m_vertices[m_indices[index + 2]].pos;
+	return tri;
 }
 
-void Shape::GetUVs(UINT faceIndex, XMFLOAT2 out_uv[3])
+TriangleUV Shape::GetUVs(UINT faceIndex)
 {
 	int index = faceIndex * 3;
-	out_uv[0] = m_vertices[m_indices[index]].uv;
-	out_uv[1] = m_vertices[m_indices[index + 1]].uv;
-	out_uv[2] = m_vertices[m_indices[index + 2]].uv;
+	TriangleUV triUV;
+	triUV.p[0] = m_vertices[m_indices[index]].uv;
+	triUV.p[1] = m_vertices[m_indices[index + 1]].uv;
+	triUV.p[2] = m_vertices[m_indices[index + 2]].uv;
+	return triUV;
 }
