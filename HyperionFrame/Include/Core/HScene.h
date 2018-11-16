@@ -38,7 +38,7 @@ public:
 	int GetShapeCount()		{ return (int)shapes.size(); }
 	AABB GetAABB()			{ return m_aabb; }
 
-	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect);
+	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, int* out_hitShapeIndex) const;
 
 	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
 
