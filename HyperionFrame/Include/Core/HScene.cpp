@@ -2,6 +2,13 @@
 #include "whitted.h"
 #include "HDefaultSampler.h"
 
+#include "Box.h"
+#include "Sphere.h"
+#include "HPointLight.h"
+#include "HMatteMaterial.h"
+#include "HGlassMaterial.h"
+#include "HMirrorMaterial.h"
+
 HScene::HScene()
 {
 }
@@ -132,6 +139,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 void HScene::InitSceneData()
 {
 	UpdateAABB();
+	UpdateAccelerateStructure();
 }
 
 void HScene::Update(UINT8* pMappedConstantBuffer)
@@ -234,7 +242,7 @@ Camera * HScene::CreateCamera()
 
 Box * HScene::CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	auto box = new Box(m_dxResources, m_mainCamera);
+	auto box = new Box(m_dxResources);
 	transformNodes.push_back(box);
 	shapes.push_back(box);
 	box->Init(pCommandList);
@@ -243,7 +251,7 @@ Box * HScene::CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 Sphere * HScene::CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList, float radius, int segmentVertical, int segmentHorizontal)
 {
-	auto sphere = new Sphere(m_dxResources, m_mainCamera);
+	auto sphere = new Sphere(m_dxResources);
 	transformNodes.push_back(sphere);
 	shapes.push_back(sphere);
 	sphere->Init(pCommandList, radius, segmentVertical, segmentHorizontal);
@@ -277,6 +285,17 @@ HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3
 	auto mat = new HGlassMaterial(Kr, Kt, eta);
 	materials.push_back(mat);
 	return mat;
+}
+
+bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect)
+{
+	int hitShapeIndex = -1;
+	if (m_bvhTree->Intersect(worldRay, &hitShapeIndex))
+	{
+		shapes[hitShapeIndex]->Intersect(worldRay, out_isect);
+		return true;
+	}
+	return false;
 }
 
 void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSampleCount, ImageBMPData* pRGB)
@@ -335,4 +354,10 @@ void HScene::UpdateAABB()
 		AABB aabb = shapes[i]->GetAABB();
 		m_aabb.Merge(aabb);
 	}
+}
+
+void HScene::UpdateAccelerateStructure()
+{
+	m_bvhTree = new HBVHTree();
+	m_bvhTree->BuildTreesWithScene(this);
 }

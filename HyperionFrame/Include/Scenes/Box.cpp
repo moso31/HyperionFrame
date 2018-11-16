@@ -6,8 +6,8 @@ Box::Box()
 {
 }
 
-Box::Box(const shared_ptr<DXResource>& dxResources, Camera* camera) :
-	Shape(dxResources, camera)
+Box::Box(const shared_ptr<DXResource>& dxResources) :
+	Shape(dxResources)
 {
 }
 

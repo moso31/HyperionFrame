@@ -1,6 +1,6 @@
 #include "SceneRenderer.h"
-#include "HMath.h"
-#include "Interaction.h"
+#include "FileReader.h"
+#include "Camera.h"
 
 SceneRenderer::SceneRenderer()
 {

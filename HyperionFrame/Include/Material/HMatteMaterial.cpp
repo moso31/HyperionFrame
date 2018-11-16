@@ -1,5 +1,4 @@
 #include "HMatteMaterial.h"
-#include "Reflection.h"
 
 HMatteMaterial::HMatteMaterial()
 {

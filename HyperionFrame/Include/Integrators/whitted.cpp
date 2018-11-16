@@ -1,5 +1,7 @@
 #include "whitted.h"
+#include "HScene.h"
 #include "Interaction.h"
+#include "Reflection.h"
 
 XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& scene, int depth)
 {

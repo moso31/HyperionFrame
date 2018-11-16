@@ -1,5 +1,5 @@
 #pragma once
-#include "HScene.h"
+#include "HMath.h"
 #include "HSampler.h"
 
 class Integrator

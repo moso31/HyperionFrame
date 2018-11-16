@@ -1,5 +1,5 @@
 #pragma once
-#include "Interaction.h"
+#include "HMath.h"
 
 enum BxDFType {
 	BSDF_REFLECTION = 1 << 0,

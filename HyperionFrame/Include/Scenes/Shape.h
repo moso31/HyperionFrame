@@ -1,5 +1,9 @@
 #pragma once
-#include "Camera.h"
+#include "DXResource.h"
+#include "DirectXHelper.h"
+#include "ShaderStructures.h"
+
+#include "Transform.h"
 
 struct Triangle
 {
@@ -29,7 +33,7 @@ class Shape : public Transform
 {
 public:
 	Shape();
-	Shape(const shared_ptr<DXResource>& dxResources, Camera* camera);
+	Shape(const shared_ptr<DXResource>& dxResources);
 	virtual ~Shape();
 
 	AABB GetAABB();

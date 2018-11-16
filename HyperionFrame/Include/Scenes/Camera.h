@@ -1,8 +1,6 @@
 #pragma once
 #include "DXResource.h"
 #include "DirectXHelper.h"
-#include "FileReader.h"
-#include "ShaderStructures.h"
 
 #include "Transform.h"
 
@@ -33,7 +31,7 @@ public:
 private:
 	shared_ptr<DXResource> m_dxResources;
 
-	D3D12_RECT											m_scissorRect;
+	D3D12_RECT m_scissorRect;
 
 	XMFLOAT4X4 m_projectionMatrix;
 	XMFLOAT4X4 m_viewMatrix;

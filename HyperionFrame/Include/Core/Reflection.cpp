@@ -1,4 +1,5 @@
 #include "Reflection.h"
+#include "Interaction.h"
 
 namespace Reflection
 {

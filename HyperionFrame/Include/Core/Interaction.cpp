@@ -1,5 +1,7 @@
 #include "Interaction.h"
 #include "Shape.h"
+#include "HMaterial.h"
+#include "Reflection.h"
 
 SurfaceInteraction::SurfaceInteraction()
 {

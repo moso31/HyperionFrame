@@ -1,12 +1,11 @@
 #pragma once
-#include "Box.h"
-#include "Sphere.h"
-#include "HPointLight.h"
 #include "ImageGenerator.h"
 
-#include "HMatteMaterial.h"
-#include "HMirrorMaterial.h"
-#include "HGlassMaterial.h"
+#include "HBVH.h"
+#include "Shape.h"
+#include "Camera.h"
+#include "HMaterial.h"
+#include "HLight.h"
 
 class HScene : public HListener
 {
@@ -39,6 +38,8 @@ public:
 	int GetShapeCount()		{ return (int)shapes.size(); }
 	AABB GetAABB()			{ return m_aabb; }
 
+	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect);
+
 	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
 
 public:
@@ -50,11 +51,13 @@ public:
 
 private:
 	void UpdateAABB();
+	void UpdateAccelerateStructure();
 
 private:
 	std::shared_ptr<DXResource> m_dxResources;
 	Camera* m_mainCamera;
 	AABB	m_aabb;
+	HBVHTree* m_bvhTree;
 
 	int m_makingProcessIndex;
 };

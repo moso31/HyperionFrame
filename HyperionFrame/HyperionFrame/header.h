@@ -32,11 +32,25 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 class SurfaceInteraction;
-class Shape;
-class HMaterial;
 class VisibilityTester;
 class BSDF;
 class BxDF;
+class HScene;
+class HBVHTree;
+
+class Shape;
+class Transform;
+class Camera;
+class Box;
+class Sphere;
+
+class HMaterial;
+class HMatteMaterial;
+class HGlassMaterial;
+class HMirrorMaterial;
+
+class HLight;
+class HPointLight;
 
 typedef XMFLOAT3 XMCOLOR3;
 typedef XMFLOAT4 XMCOLOR4;

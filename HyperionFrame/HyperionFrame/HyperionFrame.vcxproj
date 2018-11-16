@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -99,7 +99,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>

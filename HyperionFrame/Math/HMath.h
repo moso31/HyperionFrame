@@ -37,6 +37,8 @@ public:
 	void Merge(AABB aabb);
 	void Merge(XMFLOAT3 point);
 
+	bool IntersectP(Ray ray, float* hit0, float* hit1);
+
 	int GetMaximumExtent();
 
 private:

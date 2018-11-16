@@ -1,5 +1,4 @@
 #include "HMirrorMaterial.h"
-#include "Reflection.h"
 
 HMirrorMaterial::HMirrorMaterial()
 {

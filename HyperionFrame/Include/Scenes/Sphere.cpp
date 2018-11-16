@@ -6,8 +6,8 @@ Sphere::Sphere()
 {
 }
 
-Sphere::Sphere(const shared_ptr<DXResource>& dxResources, Camera* camera) :
-	Shape(dxResources, camera)
+Sphere::Sphere(const shared_ptr<DXResource>& dxResources) :
+	Shape(dxResources)
 {
 }
 

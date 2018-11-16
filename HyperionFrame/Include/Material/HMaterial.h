@@ -1,5 +1,6 @@
 #pragma once
-#include "HMath.h"
+#include "Interaction.h"
+#include "Reflection.h"
 
 class HMaterial
 {

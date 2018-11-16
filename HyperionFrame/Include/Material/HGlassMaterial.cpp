@@ -1,5 +1,4 @@
 #include "HGlassMaterial.h"
-#include "Reflection.h"
 
 HGlassMaterial::HGlassMaterial()
 {
