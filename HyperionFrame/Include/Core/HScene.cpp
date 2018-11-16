@@ -287,12 +287,12 @@ HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3
 	return mat;
 }
 
-bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect)
+bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex) const
 {
-	int hitShapeIndex = -1;
-	if (m_bvhTree->Intersect(worldRay, &hitShapeIndex))
+	*out_hitShapeIndex = -1;
+	if (m_bvhTree->Intersect(worldRay, out_hitShapeIndex))
 	{
-		shapes[hitShapeIndex]->Intersect(worldRay, out_isect);
+		shapes[*out_hitShapeIndex]->Intersect(worldRay, out_isect);
 		return true;
 	}
 	return false;

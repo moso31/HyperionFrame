@@ -2,9 +2,9 @@
 #include <Windows.h>
 #include <pshpack2.h>
 #include <io.h>
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct ImageBMPData
 {

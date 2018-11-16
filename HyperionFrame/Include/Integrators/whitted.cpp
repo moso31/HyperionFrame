@@ -7,6 +7,15 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 {
 	bool isHit = false;
 	int shapeCount = (int)scene.shapes.size();
+
+	SurfaceInteraction* si = nullptr;
+	int idx;
+	if (scene.Intersect(ray, si, &idx))
+	{
+		printf("hit: %d\n", idx);
+	}
+	return XMFLOAT3(0.0f, 0.0f, 0.0f);
+
 	for (int i = 0; i < shapeCount; i++)
 	{
 		auto shapeList = scene.shapes;

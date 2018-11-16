@@ -1,4 +1,10 @@
 #pragma once
+#include <Windows.h>
+#include <wincodec.h>
+#include <wrl.h>
+#include <time.h>
+#include <io.h>
+
 #include <map>
 #include <list>
 #include <string>
@@ -7,11 +13,6 @@
 #include <algorithm>
 #include <functional>
 #include <thread>
-
-#include <Windows.h>
-#include <wincodec.h>
-#include <wrl.h>
-#include <time.h>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
