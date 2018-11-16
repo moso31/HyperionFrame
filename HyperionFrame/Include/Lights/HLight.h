@@ -20,7 +20,7 @@ public:
 	VisibilityTester() {};
 	VisibilityTester(const Interaction& p0, const Interaction& p1) :
 		p0(p0), p1(p1) {};
-	bool Unoccluded(const HScene &scene) const;
+	//bool Unoccluded(const Scene &scene) const;
 
 public:
 	Interaction p0, p1;

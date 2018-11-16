@@ -180,7 +180,7 @@ void HScene::OnMouseDown(int x, int y)
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;
 	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0);
-	//printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", x, y, L.x, L.y, L.z);
+	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", x, y, L.x, L.y, L.z);
 }
 
 void HScene::OnKeyDown(WPARAM wParam)
@@ -287,12 +287,12 @@ HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3
 	return mat;
 }
 
-bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex) const
+bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect)
 {
-	*out_hitShapeIndex = -1;
-	if (m_bvhTree->Intersect(worldRay, out_hitShapeIndex))
+	int hitShapeIndex = -1;
+	if (m_bvhTree->Intersect(worldRay, &hitShapeIndex))
 	{
-		shapes[*out_hitShapeIndex]->Intersect(worldRay, out_isect);
+		shapes[hitShapeIndex]->Intersect(worldRay, out_isect);
 		return true;
 	}
 	return false;
