@@ -38,7 +38,7 @@ void Sphere::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced((UINT)m_indices.size(), 1, 0, 0, 0);
 }
 
-void Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
+bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 {
 	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetObject2World());
 	XMMATRIX mxWorld2Object = XMLoadFloat4x4(&GetWorld2Object());
@@ -54,10 +54,10 @@ void Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 
 	float t0, t1;
 	if (!Quadratic(a, b, c, t0, t1)) 
-		return;
+		return false;
 
 	if (t1 < H_EPSILON)
-		return;
+		return false;
 	float tShapeHit = t0;
 	if (tShapeHit <= 0.0f) 
 		tShapeHit = t1;
@@ -99,6 +99,7 @@ void Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 
 		*out_isect = isect;
 	}
+	return true;
 }
 
 bool Sphere::IntersectP(Ray worldRay)
@@ -126,7 +127,7 @@ void Sphere::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&defaultHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&vertexBufferDesc,
@@ -135,7 +136,7 @@ void Sphere::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		IID_PPV_ARGS(&m_vertexBuffer)));
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&vertexBufferDesc,
@@ -143,8 +144,8 @@ void Sphere::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		nullptr,
 		IID_PPV_ARGS(&m_vertexBufferUpload)));
 
-	NAME_D3D12_OBJECT(m_vertexBuffer);
-	NAME_D3D12_OBJECT(m_vertexBufferUpload);
+	DX::NAME_D3D12_OBJECT(m_vertexBuffer);
+	DX::NAME_D3D12_OBJECT(m_vertexBufferUpload);
 
 	// 将顶点缓冲区上载到 GPU。
 	{
@@ -163,7 +164,7 @@ void Sphere::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	const UINT indexBufferSize = UINT(sizeof(unsigned short) * m_indices.size());
 
 	CD3DX12_RESOURCE_DESC indexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&defaultHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&indexBufferDesc,
@@ -171,7 +172,7 @@ void Sphere::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		nullptr,
 		IID_PPV_ARGS(&m_indexBuffer)));
 
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&indexBufferDesc,
@@ -179,8 +180,8 @@ void Sphere::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		nullptr,
 		IID_PPV_ARGS(&m_indexBufferUpload)));
 
-	NAME_D3D12_OBJECT(m_indexBuffer);
-	NAME_D3D12_OBJECT(m_indexBufferUpload);
+	DX::NAME_D3D12_OBJECT(m_indexBuffer);
+	DX::NAME_D3D12_OBJECT(m_indexBufferUpload);
 
 	// 将索引缓冲区上载到 GPU。
 	{

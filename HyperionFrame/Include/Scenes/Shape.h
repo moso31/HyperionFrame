@@ -39,7 +39,7 @@ public:
 	AABB GetAABB();
 
 	// 重新计算整个模型的AABB。
-	AABB GenerateAABB();
+	AABB GetAABBWorld();
 
 	virtual void Update(UINT8 * destination) = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
@@ -51,7 +51,7 @@ public:
 	HMaterial* GetMaterial() { return m_material; }
 	void SetMaterial(HMaterial* mat) { m_material = mat; }
 
-	virtual void Intersect(Ray worldRay, SurfaceInteraction* out_isect) = 0;
+	virtual bool Intersect(Ray worldRay, SurfaceInteraction* out_isect) = 0;
 	virtual bool IntersectP(Ray worldRay) = 0;
 
 private:

@@ -43,9 +43,9 @@ void SceneRenderer::CreateSceneResources()
 
 		ComPtr<ID3DBlob> pSignature;
 		ComPtr<ID3DBlob> pError;
-		ThrowIfFailed(D3D12SerializeRootSignature(&descRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, pSignature.GetAddressOf(), pError.GetAddressOf()));
-		ThrowIfFailed(d3dDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
-		NAME_D3D12_OBJECT(m_rootSignature);
+		DX::ThrowIfFailed(D3D12SerializeRootSignature(&descRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, pSignature.GetAddressOf(), pError.GetAddressOf()));
+		DX::ThrowIfFailed(d3dDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
+		DX::NAME_D3D12_OBJECT(m_rootSignature);
 	}
 
 	// 1. 加载着色器。
@@ -75,15 +75,15 @@ void SceneRenderer::CreateSceneResources()
 	state.DSVFormat = m_dxResources->GetDepthBufferFormat();
 	state.SampleDesc.Count = 1;
 
-	ThrowIfFailed(m_dxResources->GetD3DDevice()->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&m_pipelineState)));
+	DX::ThrowIfFailed(m_dxResources->GetD3DDevice()->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&m_pipelineState)));
 
 	// 3. 创建管道状态之后可以删除着色器数据。
 	m_vertexShader.clear();
 	m_pixelShader.clear();
 
 	// 创建命令列表。
-	ThrowIfFailed(d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_dxResources->GetCommandAllocator(), m_pipelineState.Get(), IID_PPV_ARGS(&m_commandList)));
-	NAME_D3D12_OBJECT(m_commandList);
+	DX::ThrowIfFailed(d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_dxResources->GetCommandAllocator(), m_pipelineState.Get(), IID_PPV_ARGS(&m_commandList)));
+	DX::NAME_D3D12_OBJECT(m_commandList);
 
 	// 创建场景资源
 	m_test_scene->Init(m_commandList);
@@ -97,14 +97,14 @@ void SceneRenderer::CreateSceneResources()
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		ThrowIfFailed(d3dDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvHeap)));
+		DX::ThrowIfFailed(d3dDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvHeap)));
 
-		NAME_D3D12_OBJECT(m_cbvHeap);
+		DX::NAME_D3D12_OBJECT(m_cbvHeap);
 	}
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
 	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * c_alignedConstantBufferSize * boxCount);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&constantBufferDesc,
@@ -112,11 +112,11 @@ void SceneRenderer::CreateSceneResources()
 		nullptr,
 		IID_PPV_ARGS(&m_constantBuffer)));
 
-	NAME_D3D12_OBJECT(m_constantBuffer);
+	DX::NAME_D3D12_OBJECT(m_constantBuffer);
 
 	// 映射常量缓冲区。
 	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
-	ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
+	DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
 	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * c_alignedConstantBufferSize * boxCount);
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 
@@ -143,7 +143,7 @@ void SceneRenderer::CreateSceneResources()
 	}
 
 	// 关闭命令列表并执行它，以开始将顶点/索引缓冲区复制到 GPU 的默认堆中。
-	ThrowIfFailed(m_commandList->Close());
+	DX::ThrowIfFailed(m_commandList->Close());
 	ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };
 	m_dxResources->GetCommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
@@ -163,10 +163,10 @@ void SceneRenderer::Update()
 
 bool SceneRenderer::Render()
 {
-	ThrowIfFailed(m_dxResources->GetCommandAllocator()->Reset());
+	DX::ThrowIfFailed(m_dxResources->GetCommandAllocator()->Reset());
 
 	// 调用 ExecuteCommandList() 后可随时重置命令列表。
-	ThrowIfFailed(m_commandList->Reset(m_dxResources->GetCommandAllocator(), m_pipelineState.Get()));
+	DX::ThrowIfFailed(m_commandList->Reset(m_dxResources->GetCommandAllocator(), m_pipelineState.Get()));
 
 	PIXBeginEvent(m_commandList.Get(), 0, L"Draw the cube");
 	{
@@ -205,7 +205,7 @@ bool SceneRenderer::Render()
 	}
 	PIXEndEvent(m_commandList.Get());
 
-	ThrowIfFailed(m_commandList->Close());
+	DX::ThrowIfFailed(m_commandList->Close());
 
 	// 执行命令列表。
 	ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };

@@ -8,60 +8,45 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 	bool isHit = false;
 	int shapeCount = (int)scene.shapes.size();
 
-	SurfaceInteraction* si = nullptr;
-	int idx;
-	if (scene.Intersect(ray, si, &idx))
+	SurfaceInteraction isect;
+	int hitShapeIndex = -1;
+	if (scene.Intersect(ray, &isect, &hitShapeIndex))
 	{
-		printf("hit: %d\n", idx);
-	}
-	return XMFLOAT3(0.0f, 0.0f, 0.0f);
+		printf("hit: %s\n", scene.shapes[hitShapeIndex]->GetName().data());
+		XMFLOAT3 wo = isect.wo;
 
-	for (int i = 0; i < shapeCount; i++)
-	{
-		auto shapeList = scene.shapes;
-		if (shapeList[i]->IntersectP(ray))
+		isect.ComputeScatterFunctions();
+
+		XMCOLORV LV = XMVectorZero();
+		for (UINT j = 0; j < scene.lights.size(); j++)
 		{
-			SurfaceInteraction isect;
-			//printf("Object %d intersected.\n", i);
+			XMFLOAT3 wi;
+			VisibilityTester vis;
+			XMCOLOR3 Li = scene.lights[j]->Sample_Li(isect, wi, &vis);
+			XMCOLOR3 f = isect.bsdf->f(wo, wi);
 
-			shapeList[i]->Intersect(ray, &isect);
-			//printf("hit: %f, %f, %f\n", isect.p.x, isect.p.y, isect.p.z);
-
-			XMFLOAT3 wo = isect.wo;
-
-			isect.ComputeScatterFunctions();
-
-			XMCOLORV LV = XMVectorZero();
-			for (UINT j = 0; j < scene.lights.size(); j++)
+			XMCOLORV fV = XMLoadFloat3(&f);
+			if (!XMVector3Equal(fV, XMVectorZero()/* && vis.Unoccluded(scene)*/))
 			{
-				XMFLOAT3 wi;
-				VisibilityTester vis;
-				XMCOLOR3 Li = scene.lights[j]->Sample_Li(isect, wi, &vis);
-				XMCOLOR3 f = isect.bsdf->f(wo, wi);
+				XMCOLORV LiV = XMLoadFloat3(&Li);
+				XMVECTOR wiV = XMLoadFloat3(&wi);
+				XMVECTOR nV = XMLoadFloat3(&isect.n);
 
-				XMCOLORV fV = XMLoadFloat3(&f);
-				if (!XMVector3Equal(fV, XMVectorZero()))// && vis.Unoccluded(scene))
-				{
-					XMCOLORV LiV = XMLoadFloat3(&Li);
-					XMVECTOR wiV = XMLoadFloat3(&wi);
-					XMVECTOR nV = XMLoadFloat3(&isect.n);
-
-					LV += fV * LiV * XMVectorAbs(XMVector3Dot(wiV, nV));
-				}
+				LV += fV * LiV * XMVectorAbs(XMVector3Dot(wiV, nV));
 			}
-
-			if (depth + 1 < maxDepth)
-			{
-				XMCOLORV fRV = XMLoadFloat3(&SpecularReflect(ray, isect, scene, sampler, depth));
-				XMCOLORV fTV = XMLoadFloat3(&SpecularTransmit(ray, isect, scene, sampler, depth));
-				LV += fRV + fTV;
-			}
-
-			XMCOLOR3 L;
-			XMStoreFloat3(&L, LV);
-			//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
-			return L;
 		}
+
+		if (depth + 1 < maxDepth)
+		{
+			XMCOLORV fRV = XMLoadFloat3(&SpecularReflect(ray, isect, scene, sampler, depth));
+			XMCOLORV fTV = XMLoadFloat3(&SpecularTransmit(ray, isect, scene, sampler, depth));
+			LV += fRV + fTV;
+		}
+
+		XMCOLOR3 L;
+		XMStoreFloat3(&L, LV);
+		//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
+		return L;
 	}
 	return XMCOLOR3(0.0f, 0.0f, 0.0f);
 }

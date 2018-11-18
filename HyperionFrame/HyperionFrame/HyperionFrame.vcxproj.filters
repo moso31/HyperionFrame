@@ -91,6 +91,9 @@
     <ClCompile Include="..\Include\Accelerators\HBVH.cpp">
       <Filter>Include\Accelerators</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\Core\HObject.cpp">
+      <Filter>Include\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneRenderer.h">
@@ -191,6 +194,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\Accelerators\HBVH.h">
       <Filter>Include\Accelerators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Core\HObject.h">
+      <Filter>Include\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

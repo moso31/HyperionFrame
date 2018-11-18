@@ -38,7 +38,7 @@ void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
 }
 
-void Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
+bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
@@ -194,7 +194,9 @@ void Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 		result.shape = record.shape;
 
 		*out_isect = result;
+		return true;
 	}
+	return false;
 }
 
 bool Box::IntersectP(Ray worldRay)
@@ -229,7 +231,7 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&defaultHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&vertexBufferDesc,
@@ -238,7 +240,7 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		IID_PPV_ARGS(&m_vertexBuffer)));
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&vertexBufferDesc,
@@ -246,8 +248,8 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		nullptr,
 		IID_PPV_ARGS(&m_vertexBufferUpload)));
 
-	NAME_D3D12_OBJECT(m_vertexBuffer);
-	NAME_D3D12_OBJECT(m_vertexBufferUpload);
+	DX::NAME_D3D12_OBJECT(m_vertexBuffer);
+	DX::NAME_D3D12_OBJECT(m_vertexBufferUpload);
 
 	// 将顶点缓冲区上载到 GPU。
 	{
@@ -266,7 +268,7 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	const UINT indexBufferSize = UINT(sizeof(unsigned short) * m_indices.size());
 
 	CD3DX12_RESOURCE_DESC indexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&defaultHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&indexBufferDesc,
@@ -274,7 +276,7 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		nullptr,
 		IID_PPV_ARGS(&m_indexBuffer)));
 
-	ThrowIfFailed(d3dDevice->CreateCommittedResource(
+	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&indexBufferDesc,
@@ -282,8 +284,8 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		nullptr,
 		IID_PPV_ARGS(&m_indexBufferUpload)));
 
-	NAME_D3D12_OBJECT(m_indexBuffer);
-	NAME_D3D12_OBJECT(m_indexBufferUpload);
+	DX::NAME_D3D12_OBJECT(m_indexBuffer);
+	DX::NAME_D3D12_OBJECT(m_indexBufferUpload);
 
 	// 将索引缓冲区上载到 GPU。
 	{

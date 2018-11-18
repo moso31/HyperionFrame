@@ -53,21 +53,55 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	};
 
 	Shape* shape;
+
 	shape = CreateBox(pCommandList);
-	shape->SetTranslation(5.0f, 1.0f, -2.0f);
-	shape->SetScale(2.0f, 2.0f, 2.0f);
-	shape->SetMaterial(mtrl[0]);
+	shape->SetName("floor");
+	shape->SetTranslation(0.0f, -0.5f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 1.0f, 20.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall x-");
+	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall x+");
+	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall y-");
+	shape->SetTranslation(0.0f, 0.0f, 10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall y+");
+	shape->SetTranslation(0.0f, 0.0f, -10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
+
+	shape = CreateBox(pCommandList);
+	shape->SetName("box big");
+	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	shape->SetScale(5.0f, 5.0f, 5.0f);
+	shape->SetRotation(0.0f, -0.2f, 0.0f);
+	shape->SetMaterial(mtrl[6]);
 
 	shape = CreateSphere(pCommandList, 1.0f, 64, 64);
+	shape->SetName("sphere");
 	shape->SetTranslation(1.5f, 2.0f, 0.0f);
 	shape->SetScale(2.0f, 2.0f, 2.0f);
 	shape->SetMaterial(mtrl[4]);
 
 	shape = CreateBox(pCommandList);
-	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	shape->SetScale(5.0f, 5.0f, 5.0f);
-	shape->SetRotation(0.0f, -0.2f, 0.0f);
-	shape->SetMaterial(mtrl[6]);
+	shape->SetName("box small");
+	shape->SetTranslation(5.0f, 1.0f, -2.0f);
+	shape->SetScale(2.0f, 2.0f, 2.0f);
+	shape->SetMaterial(mtrl[0]);
 
 	//for (int i = -9; i <= 9; i++)
 	//{
@@ -86,31 +120,6 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//		}
 	//	}
 	//}
-
-	shape = CreateBox(pCommandList);
-	shape->SetTranslation(0.0f, -0.5f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 1.0f, 20.0f);
-
-	shape = CreateBox(pCommandList);
-	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
-
-	shape = CreateBox(pCommandList);
-	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
-
-	shape = CreateBox(pCommandList);
-	shape->SetTranslation(0.0f, 0.0f, 10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
-
-	shape = CreateBox(pCommandList);
-	shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
 
 	auto pointLight = CreatePointLight();
 	XMFLOAT3 lightPos = { 0.0f, 10.0f, 5.0f };
@@ -138,7 +147,11 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 void HScene::InitSceneData()
 {
-	UpdateAABB();
+	for (int i = 0; i < shapes.size(); i++)
+	{
+		shapes[i]->UpdateTransformData();
+		m_aabb.Merge(shapes[i]->GetAABBWorld());
+	}
 	UpdateAccelerateStructure();
 }
 
@@ -174,7 +187,6 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
-	x = 288, y = 28;
 	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
@@ -292,9 +304,14 @@ bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hi
 	*out_hitShapeIndex = -1;
 	if (m_bvhTree->Intersect(worldRay, out_hitShapeIndex))
 	{
-		shapes[*out_hitShapeIndex]->Intersect(worldRay, out_isect);
-		return true;
+		return shapes[*out_hitShapeIndex]->Intersect(worldRay, out_isect);
 	}
+	return false;
+}
+
+bool HScene::IntersectP(Ray worldRay) const
+{
+	//m_bvhTree->Intersect(worldRay);
 	return false;
 }
 
@@ -344,15 +361,6 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSample
 	if (m_makingProcessIndex % (tileSampleCount / 10) == 0)
 	{
 		printf("%d%%..", (m_makingProcessIndex * 10 / tileSampleCount + 1) * 10);
-	}
-}
-
-void HScene::UpdateAABB()
-{
-	for (int i = 0; i < shapes.size(); i++)
-	{
-		AABB aabb = shapes[i]->GetAABB();
-		m_aabb.Merge(aabb);
 	}
 }
 

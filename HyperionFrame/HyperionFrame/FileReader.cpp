@@ -13,15 +13,15 @@ vector<byte> FileReader::ReadData(LPCWSTR fileName)
 {
 	HANDLE hFile = CreateFileW(fileName, GENERIC_READ, FILE_SHARE_READ,
 		nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);			// 创建文件
-	ThrowIfFailed(hFile == INVALID_HANDLE_VALUE);							// 判断文件句柄是否有效
+	DX::ThrowIfFailed(hFile == INVALID_HANDLE_VALUE);							// 判断文件句柄是否有效
 
 	FILE_STANDARD_INFO fileInfo = { 0 };
-	ThrowIfFailed(!GetFileInformationByHandleEx(hFile,
+	DX::ThrowIfFailed(!GetFileInformationByHandleEx(hFile,
 		FileStandardInfo, &fileInfo, sizeof(fileInfo)));					// 通过文件句柄hFile获得文件信息
-	ThrowIfFailed(fileInfo.EndOfFile.HighPart != 0);
+	DX::ThrowIfFailed(fileInfo.EndOfFile.HighPart != 0);
 
 	vector<byte> fileData(fileInfo.EndOfFile.LowPart);
-	ThrowIfFailed(!ReadFile(hFile, fileData.data(), static_cast<DWORD>(fileData.size()),
+	DX::ThrowIfFailed(!ReadFile(hFile, fileData.data(), static_cast<DWORD>(fileData.size()),
 		nullptr, nullptr));													// 读取文件数据到fileData
 	return fileData;
 }

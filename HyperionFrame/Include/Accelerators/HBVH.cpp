@@ -9,7 +9,7 @@ bool HBVHTree::BuildTreesWithScene(HScene * scene)
 	for (vector<Shape*>::iterator it = scene->shapes.begin(); it != scene->shapes.end(); it++)
 	{
 		HBVHInfoAABB info;
-		info.data = (*it)->GetAABB();
+		info.data = (*it)->GetAABBWorld();
 		info.index = count++;
 		m_boundInfo.push_back(info);
 		node->aabb.Merge(info.data);
@@ -39,23 +39,27 @@ void HBVHTree::BuildRecursive(HBVHTreeNodeAABB* node, vector<HBVHInfoAABB>::iter
 			return boundPos < midPos;
 		});
 
-		node->index = -1;
-		node->offset = -1;
 		if (split == itBegin || split == itEnd)
 		{
 			// bad result, so leaf
 			node->child[0] = node->child[1] = nullptr;
+			node->index = (int)(itBegin - m_boundInfo.begin());
+			node->offset = (int)(itEnd - itBegin);
 		}
 		else
 		{
 			// interior
-			BuildRecursive(node, itBegin, split);
-			BuildRecursive(node, split, itEnd);
+			node->child[0] = new HBVHTreeNodeAABB();
+			node->child[1] = new HBVHTreeNodeAABB();
+			BuildRecursive(node->child[0], itBegin, split);
+			BuildRecursive(node->child[1], split, itEnd);
+			node->index = -1;
+			node->offset = -1;
 		}
 	}
 }
 
-bool HBVHTree::Intersect(Ray& worldRay, int * out_hitShapeIndex)
+bool HBVHTree::Intersect(Ray& worldRay, int * out_hitShapeIndex) 
 {
 	float dist = FLT_MAX;
 	RecursiveIntersect(worldRay, node, &dist, out_hitShapeIndex);
@@ -74,7 +78,8 @@ void HBVHTree::RecursiveIntersect(Ray & worldRay, HBVHTreeNodeAABB * node, float
 				if (*out_dist > t0 && t0 > 0.0f)
 				{
 					*out_dist = t0;
-					*out_hitShapeIndex = m_boundInfo[i].index;
+					if (out_hitShapeIndex)
+						*out_hitShapeIndex = m_boundInfo[i].index;
 				}
 			}
 		}

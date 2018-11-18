@@ -1,10 +1,11 @@
 #pragma once
 #include "HMath.h"
 #include "HInput.h"
+#include "HObject.h"
 
 using namespace DirectX;
 
-class Transform
+class Transform : public HObject
 {
 public:
 	Transform(XMFLOAT3 _translation = XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3 _rotation = XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3 _scale = XMFLOAT3(1.0f, 1.0f, 1.0f));

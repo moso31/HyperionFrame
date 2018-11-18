@@ -18,12 +18,15 @@ AABB Shape::GetAABB()
 	return m_aabb;
 }
 
-AABB Shape::GenerateAABB()
+AABB Shape::GetAABBWorld()
 {
-	AABB result;
-	for (size_t i = 0; i < m_vertices.size(); i++)
-		result.Merge(m_vertices[i].pos);
-	return result;
+	XMVECTOR maxV = XMLoadFloat3(&m_aabb.GetVecMax());
+	XMVECTOR minV = XMLoadFloat3(&m_aabb.GetVecMin());
+	XMMATRIX mxObject2World = XMLoadFloat4x4(&worldMatrix);
+	XMFLOAT3 max, min;
+	XMStoreFloat3(&max, XMVector3TransformCoord(maxV, mxObject2World));
+	XMStoreFloat3(&min, XMVector3TransformCoord(minV, mxObject2World));
+	return AABB(min, max);
 }
 
 UINT Shape::GetFaceCount()

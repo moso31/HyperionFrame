@@ -39,6 +39,7 @@ public:
 	AABB GetAABB()			{ return m_aabb; }
 
 	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, int* out_hitShapeIndex) const;
+	bool IntersectP(Ray worldRay) const;
 
 	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
 
@@ -50,7 +51,6 @@ public:
 	vector<HMaterial*>	materials;
 
 private:
-	void UpdateAABB();
 	void UpdateAccelerateStructure();
 
 private:

@@ -46,13 +46,13 @@ void DXResource::CreateDeviceResources()
 	}
 #endif
 
-	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
+	DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
 
 	ComPtr<IDXGIAdapter1> adapter;
 	GetHardWareAdapter(&adapter);
 
 	// 创建 Direct3D 12 API 设备对象
-	ThrowIfFailed(D3D12CreateDevice(
+	DX::ThrowIfFailed(D3D12CreateDevice(
 		adapter.Get(),					// 硬件适配器。
 		D3D_FEATURE_LEVEL_11_0,			// 此应用可以支持的最低功能级别。
 		IID_PPV_ARGS(&m_d3dDevice)		// 返回创建的 Direct3D 设备。
@@ -63,16 +63,16 @@ void DXResource::CreateDeviceResources()
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-	ThrowIfFailed(m_d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
-	NAME_D3D12_OBJECT(m_commandQueue);
+	DX::ThrowIfFailed(m_d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
+	DX::NAME_D3D12_OBJECT(m_commandQueue);
 
 	// 为呈现器目标视图和深度模具视图创建描述符堆。
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
 	rtvHeapDesc.NumDescriptors = c_frameCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
-	NAME_D3D12_OBJECT(m_rtvHeap);
+	DX::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
+	DX::NAME_D3D12_OBJECT(m_rtvHeap);
 
 	m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
@@ -80,22 +80,22 @@ void DXResource::CreateDeviceResources()
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
-	NAME_D3D12_OBJECT(m_dsvHeap);
+	DX::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
+	DX::NAME_D3D12_OBJECT(m_dsvHeap);
 
 	for (UINT n = 0; n < c_frameCount; n++)
 	{
-		ThrowIfFailed(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocators[n])));
+		DX::ThrowIfFailed(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocators[n])));
 	}
 
 	// 创建同步对象。
-	ThrowIfFailed(m_d3dDevice->CreateFence(m_fenceValues[m_currentFrame], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+	DX::ThrowIfFailed(m_d3dDevice->CreateFence(m_fenceValues[m_currentFrame], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
 	m_fenceValues[m_currentFrame]++;
 
 	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	if (m_fenceEvent == nullptr)
 	{
-		ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+		DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
 	}
 }
 
@@ -143,7 +143,7 @@ void DXResource::CreateWindowSizeDependentResources()
 		}
 		else
 		{
-			ThrowIfFailed(hr);
+			DX::ThrowIfFailed(hr);
 		}
 	}
 	else
@@ -177,7 +177,7 @@ void DXResource::CreateWindowSizeDependentResources()
 		swapChainFullScreenDesc.Windowed = false;
 
 		ComPtr<IDXGISwapChain1> swapChain;
-		ThrowIfFailed(
+		DX::ThrowIfFailed(
 			m_dxgiFactory->CreateSwapChainForHwnd(
 				m_commandQueue.Get(),
 				m_hwnd,
@@ -188,7 +188,7 @@ void DXResource::CreateWindowSizeDependentResources()
 			)
 		);
 
-		ThrowIfFailed(swapChain.As(&m_swapChain));
+		DX::ThrowIfFailed(swapChain.As(&m_swapChain));
 	}
 
 	//// 为交换链设置正确方向，并生成
@@ -217,7 +217,7 @@ void DXResource::CreateWindowSizeDependentResources()
 	//	throw ref new FailureException();
 	//}
 
-	//ThrowIfFailed(
+	//DX::ThrowIfFailed(
 	//	m_swapChain->SetRotation(displayRotation)
 	//);
 
@@ -227,14 +227,14 @@ void DXResource::CreateWindowSizeDependentResources()
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 		for (UINT n = 0; n < c_frameCount; n++)
 		{
-			ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
+			DX::ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
 			m_d3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), nullptr, rtvDescriptor);
 			rtvDescriptor.Offset(m_rtvDescriptorSize);
 
 			WCHAR name[25];
 			if (swprintf_s(name, L"m_renderTargets[%u]", n) > 0)
 			{
-				SetName(m_renderTargets[n].Get(), name);
+				DX::SetName(m_renderTargets[n].Get(), name);
 			}
 		}
 	}
@@ -248,7 +248,7 @@ void DXResource::CreateWindowSizeDependentResources()
 
 		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(m_depthBufferFormat, 1.0f, 0);
 
-		ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
+		DX::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
 			&depthHeapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&depthResourceDesc,
@@ -257,7 +257,7 @@ void DXResource::CreateWindowSizeDependentResources()
 			IID_PPV_ARGS(&m_depthStencil)
 		));
 
-		NAME_D3D12_OBJECT(m_depthStencil);
+		DX::NAME_D3D12_OBJECT(m_depthStencil);
 
 		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 		dsvDesc.Format = m_depthBufferFormat;
@@ -303,10 +303,10 @@ void DXResource::GetHardWareAdapter(IDXGIAdapter1 ** out_ppAdapter)
 void DXResource::WaitForGpu()
 {
 	// 在队列中安排信号命令。
-	ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), m_fenceValues[m_currentFrame]));
+	DX::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), m_fenceValues[m_currentFrame]));
 
 	// 等待跨越围栏。
-	ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
+	DX::ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
 	WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
 
 	// 对当前帧递增围栏值。
@@ -329,7 +329,7 @@ void DXResource::Present()
 	//}
 	//else
 	{
-		ThrowIfFailed(hr);
+		DX::ThrowIfFailed(hr);
 
 		MoveToNextFrame();
 	}
@@ -340,7 +340,7 @@ void DXResource::MoveToNextFrame()
 {
 	// 在队列中安排信号命令。
 	const UINT64 currentFenceValue = m_fenceValues[m_currentFrame];
-	ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
+	DX::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
 
 	// 提高帧索引。
 	m_currentFrame = m_swapChain->GetCurrentBackBufferIndex();
@@ -348,7 +348,7 @@ void DXResource::MoveToNextFrame()
 	// 检查下一帧是否准备好启动。
 	if (m_fence->GetCompletedValue() < m_fenceValues[m_currentFrame])
 	{
-		ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
+		DX::ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
 		WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
 	}
 
