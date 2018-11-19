@@ -30,7 +30,7 @@ void HScene::OnResize()
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	m_mainCamera = CreateCamera();
-	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
+	m_mainCamera->SetTranslation(9.0f, 5.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
 
@@ -54,41 +54,41 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	Shape* shape;
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("floor");
-	shape->SetTranslation(0.0f, -0.5f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 1.0f, 20.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("floor");
+	//shape->SetTranslation(0.0f, -0.5f, 0.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(20.0f, 1.0f, 20.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall x-");
-	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall x-");
+	//shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall x+");
-	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall x+");
+	//shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall y-");
-	shape->SetTranslation(0.0f, 0.0f, 10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall y-");
+	//shape->SetTranslation(0.0f, 0.0f, 10.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(20.0f, 20.0f, 1.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall y+");
-	shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall y+");
+	//shape->SetTranslation(0.0f, 0.0f, -10.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(20.0f, 20.0f, 1.0f);
 
 	shape = CreateBox(pCommandList);
 	shape->SetName("box big");
 	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	shape->SetScale(5.0f, 5.0f, 5.0f);
-	shape->SetRotation(0.0f, -0.2f, 0.0f);
+	shape->SetRotation(0.0f, -0.0f, 0.0f);
 	shape->SetMaterial(mtrl[6]);
 
 	shape = CreateSphere(pCommandList, 1.0f, 64, 64);
@@ -103,23 +103,23 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape->SetScale(2.0f, 2.0f, 2.0f);
 	shape->SetMaterial(mtrl[0]);
 
-	//for (int i = -9; i <= 9; i++)
-	//{
-	//	for (int j = -9; j <= 9; j++)
-	//	{
-	//		shape = CreateBox(pCommandList);
-	//		if ((i + j) % 2)
-	//		{
-	//			shape->SetTranslation(-i, -0.7f, j);
-	//			shape->SetMaterial(mtrl[1]);
-	//		}
-	//		else
-	//		{
-	//			shape->SetTranslation(-i, -0.5f, j);
-	//			shape->SetMaterial(mtrl[3]);
-	//		}
-	//	}
-	//}
+	for (int i = -9; i <= 9; i++)
+	{
+		for (int j = -9; j <= 9; j++)
+		{
+			shape = CreateBox(pCommandList);
+			if ((i + j) % 2)
+			{
+				shape->SetTranslation(-i, -0.7f, j);
+				shape->SetMaterial(mtrl[1]);
+			}
+			else
+			{
+				shape->SetTranslation(-i, -0.5f, j);
+				shape->SetMaterial(mtrl[3]);
+			}
+		}
+	}
 
 	auto pointLight = CreatePointLight();
 	XMFLOAT3 lightPos = { 0.0f, 10.0f, 5.0f };
@@ -187,6 +187,8 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
+	x = 540;
+	y = 207;
 	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
@@ -208,7 +210,7 @@ void HScene::OnKeyDown(WPARAM wParam)
 		ImageBMPData* pRGB = new ImageBMPData[sampleCount];
 		memset(pRGB, 0, sizeof(ImageBMPData) * sampleCount);
 
-		printf("生成BMP位图...");
+		printf("生成BMP位图...\n");
 		auto time_st = GetTickCount();
 
 		thread* threads = new thread[tileCount.x * tileCount.y];
@@ -302,7 +304,7 @@ HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3
 bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex) const
 {
 	*out_hitShapeIndex = -1;
-	if (m_bvhTree->Intersect(worldRay, out_hitShapeIndex))
+	if (m_bvhTree->Intersect(worldRay, *this, out_hitShapeIndex))
 	{
 		return shapes[*out_hitShapeIndex]->Intersect(worldRay, out_isect);
 	}
@@ -358,10 +360,8 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSample
 	}
 
 	m_makingProcessIndex++;
-	if (m_makingProcessIndex % (tileSampleCount / 10) == 0)
-	{
-		printf("%d%%..", (m_makingProcessIndex * 10 / tileSampleCount + 1) * 10);
-	}
+	float percent = ((float)m_makingProcessIndex / (float)tileSampleCount) * 100.0f;
+	printf("\r%.2f%%..", percent < 100.0f ? percent : 100.0f);
 }
 
 void HScene::UpdateAccelerateStructure()

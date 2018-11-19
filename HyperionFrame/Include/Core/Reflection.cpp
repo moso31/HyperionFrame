@@ -13,15 +13,15 @@ namespace Reflection
 			cosThetaI = std::abs(cosThetaI);
 		}
 
-		float sinThetaI = sqrtf(max(0.0f, 1 - cosThetaI * cosThetaI));
+		float sinThetaI = sqrtf(max(0.0f, 1.0f - cosThetaI * cosThetaI));
 		float sinThetaT = etaI / etaT * sinThetaI;
 
-		if (sinThetaT >= 1) return 1;
-		float cosThetaT = sqrtf(max(0.0f, 1 - sinThetaT * sinThetaT));
+		if (sinThetaT >= 1.0f) return 1.0f;
+		float cosThetaT = sqrtf(max(0.0f, 1.0f - sinThetaT * sinThetaT));
 
 		float Rparl = ((etaT * cosThetaI) - (etaI * cosThetaT)) / ((etaT * cosThetaI) + (etaI * cosThetaT));
 		float Rperp = ((etaI * cosThetaI) - (etaT * cosThetaT)) / ((etaI * cosThetaI) + (etaT * cosThetaT));
-		return (Rparl * Rparl + Rperp * Rperp) / 2;
+		return (Rparl * Rparl + Rperp * Rperp) / 2.0f;
 	}
 
 	XMCOLOR3 FrConductor(float cosThetaI, const XMCOLOR3 & etaI, const XMCOLOR3 & etaT, const XMCOLOR3 & k)
@@ -134,7 +134,6 @@ XMCOLOR3 BSDF::f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags)
 {
 	XMFLOAT3 wi = WorldToReflectionCoord(wiW), wo = WorldToReflectionCoord(woW);
 	//printf("wi: %f, %f, %f   wo: %f, %f, %f\n", wiW.x, wiW.y, wiW.z, woW.x, woW.y, woW.z);
-	//printf("wi: %f, %f, %f   wo: %f, %f, %f\n", wi.x, wi.y, wi.z, wo.x, wo.y, wo.z);
 	if (wo.z == 0)
 		return { 0.0f, 0.0f, 0.0f };
 

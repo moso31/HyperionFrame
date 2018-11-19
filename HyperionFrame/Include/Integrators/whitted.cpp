@@ -12,7 +12,7 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 	int hitShapeIndex = -1;
 	if (scene.Intersect(ray, &isect, &hitShapeIndex))
 	{
-		printf("hit: %s\n", scene.shapes[hitShapeIndex]->GetName().data());
+		//printf("hit: name: %s, ID: %d\n", scene.shapes[hitShapeIndex]->GetName().data(), hitShapeIndex);
 		XMFLOAT3 wo = isect.wo;
 
 		isect.ComputeScatterFunctions();

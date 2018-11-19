@@ -93,7 +93,7 @@ bool AABB::IntersectP(Ray ray, float* hit0, float* hit1)
 
 	*hit0 = tNear;
 	*hit1 = tFar;
-	return tNear > 0 && tNear < tFar;
+	return tFar > 0 && tNear < tFar;
 }
 
 int AABB::GetMaximumExtent()

@@ -26,7 +26,7 @@ private:
 class AABB
 {
 public:
-	AABB(XMFLOAT3 _min = { 0.0f, 0.0f, 0.0f }, XMFLOAT3 _max = { 0.0f, 0.0f, 0.0f });
+	AABB(XMFLOAT3 _min = { FLT_MAX, FLT_MAX, FLT_MAX }, XMFLOAT3 _max = { -FLT_MAX, -FLT_MAX, -FLT_MAX });
 	~AABB() {}
 
 	XMFLOAT3 GetCenter();

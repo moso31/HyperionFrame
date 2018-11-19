@@ -9,5 +9,5 @@ public:
 	XMCOLOR3 SpecularTransmit(const Ray& ray, const SurfaceInteraction& isect, const HScene& scene, HSampler& sampler, int depth);
 
 private:
-	const int maxDepth = 5;
+	const static int maxDepth = 5;
 };
