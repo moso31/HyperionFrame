@@ -87,13 +87,14 @@ void HBVHTree::RecursiveIntersect(Ray & worldRay, const HScene& scene, HBVHTreeN
 		for (int i = node->index; i < node->index + node->offset; i++)
 		{
 			auto str = scene.shapes[m_boundInfo[i].index]->GetName();
+
 			if (m_boundInfo[i].data.IntersectP(worldRay, &t0, &t1))
 			{
-				if ((*out_dist > t0 && t0 > H_EPSILON) || (*out_dist > t1 && t1 > H_EPSILON))
+				if ((*out_dist > t0 && t0 > 1e-5f) || (*out_dist > t1 && t1 > 1e-5f))
 				{
 					if (scene.shapes[m_boundInfo[i].index]->Intersect(worldRay, &SurfaceInteraction()))
 					{
-						*out_dist = t0 > H_EPSILON ? t0 : t1;
+						*out_dist = t0 > 1e-5f ? t0 : t1;
 						if (out_hitShapeIndex)
 							*out_hitShapeIndex = m_boundInfo[i].index;
 					}
