@@ -30,7 +30,7 @@ void HScene::OnResize()
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	m_mainCamera = CreateCamera();
-	m_mainCamera->SetTranslation(9.0f, 5.0f, -4.0f);
+	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
 
@@ -63,13 +63,13 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape = CreateBox(pCommandList);
 	shape->SetName("wall x-");
 	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
+	shape->SetMaterial(mtrl[2]);
 	shape->SetScale(1.0f, 20.0f, 20.0f);
 
 	shape = CreateBox(pCommandList);
 	shape->SetName("wall x+");
 	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[5]);
+	shape->SetMaterial(mtrl[2]);
 	shape->SetScale(1.0f, 20.0f, 20.0f);
 
 	shape = CreateBox(pCommandList);
@@ -88,7 +88,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape->SetName("box big");
 	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	shape->SetScale(5.0f, 5.0f, 5.0f);
-	shape->SetRotation(0.0f, -0.0f, 0.0f);
+	shape->SetRotation(0.0f, -0.3f, 0.0f);
 	shape->SetMaterial(mtrl[6]);
 
 	shape = CreateSphere(pCommandList, 1.0f, 64, 64);
@@ -187,6 +187,9 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
+	x = 772;
+	y = 118
+		;
 	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);

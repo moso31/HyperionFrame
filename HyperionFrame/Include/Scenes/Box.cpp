@@ -61,7 +61,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 	
 	SurfaceInteraction record;
 	float tNearest = FLT_MAX;
-	if (tNear < tFar)
+	if (tNear < tFar && tNear > H_EPSILON)
 	{
 		for (UINT i = 0; i < GetFaceCount(); i++)
 		{
@@ -172,29 +172,29 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 				record = SurfaceInteraction(hitPos, uvHit, wo, dpdu, dpdv, this);
 			}
 		}
-	}
 
-	if (record.shape == this)
-	{
-		// isect 转换成世界坐标
-		XMVECTOR pV = XMVector3TransformCoord(XMLoadFloat3(&record.p), mxObject2World);
-		XMVECTOR nV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.n), mxObject2World));
-		XMVECTOR woV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.wo), mxObject2World));
-		XMVECTOR dpduV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.dpdu), mxObject2World));
-		XMVECTOR dpdvV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.dpdv), mxObject2World));
+		if (record.shape == this)
+		{
+			// isect 转换成世界坐标
+			XMVECTOR pV = XMVector3TransformCoord(XMLoadFloat3(&record.p), mxObject2World);
+			XMVECTOR nV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.n), mxObject2World));
+			XMVECTOR woV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.wo), mxObject2World));
+			XMVECTOR dpduV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.dpdu), mxObject2World));
+			XMVECTOR dpdvV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&record.dpdv), mxObject2World));
 
-		SurfaceInteraction result;
-		XMStoreFloat3(&result.p, pV);
-		XMStoreFloat3(&result.n, nV);
-		XMStoreFloat3(&result.wo, woV);
-		XMStoreFloat3(&result.dpdu, dpduV);
-		XMStoreFloat3(&result.dpdv, dpdvV);
-		result.uv = record.uv;
-		result.bsdf = record.bsdf;
-		result.shape = record.shape;
+			SurfaceInteraction result;
+			XMStoreFloat3(&result.p, pV);
+			XMStoreFloat3(&result.n, nV);
+			XMStoreFloat3(&result.wo, woV);
+			XMStoreFloat3(&result.dpdu, dpduV);
+			XMStoreFloat3(&result.dpdv, dpdvV);
+			result.uv = record.uv;
+			result.bsdf = record.bsdf;
+			result.shape = record.shape;
 
-		*out_isect = result;
-		return true;
+			*out_isect = result;
+			return true;
+		}
 	}
 	return false;
 }
