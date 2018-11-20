@@ -31,3 +31,23 @@ void SurfaceInteraction::ComputeScatterFunctions()
 	if (material)
 		material->ComputeScatterFunction(this);
 }
+
+Ray Interaction::SpawnRay(const XMFLOAT3 & d) const
+{
+	//OffsetRayOrigin(p, n, d);
+	return Ray(p, d);
+}
+
+Ray Interaction::SpawnRayTo(const XMFLOAT3 & p1) const
+{
+	XMFLOAT3 d;
+	XMStoreFloat3(&d, XMLoadFloat3(&p1) - XMLoadFloat3(&p));
+	return Ray(p, d);
+}
+
+Ray Interaction::SpawnRayTo(const Interaction & it) const
+{
+	XMFLOAT3 d;
+	XMStoreFloat3(&d, XMLoadFloat3(&it.p) - XMLoadFloat3(&p));
+	return Ray(p, d);
+}

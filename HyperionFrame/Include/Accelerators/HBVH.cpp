@@ -90,7 +90,7 @@ void HBVHTree::RecursiveIntersect(Ray & worldRay, const HScene& scene, HBVHTreeN
 
 			if (m_boundInfo[i].data.IntersectP(worldRay, &t0, &t1))
 			{
-				if ((*out_dist > t0 && t0 > 1e-5f) || (*out_dist > t1 && t1 > 1e-5f))
+				if ((*out_dist >= t0 && t0 > 1e-5f) || (*out_dist >= t1 && t1 > 1e-5f))
 				{
 					if (scene.shapes[m_boundInfo[i].index]->Intersect(worldRay, &SurfaceInteraction()))
 					{

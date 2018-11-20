@@ -11,6 +11,6 @@ HLight::~HLight()
 
 bool VisibilityTester::Unoccluded(const HScene & scene) const
 {
-	//return !scene.Intersect(p0.SpawnRayTo(p1));
-	return false;
+	int ignore;
+	return !scene.Intersect(p0.SpawnRayTo(p1), &SurfaceInteraction(), &ignore);
 }

@@ -12,7 +12,9 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 	int hitShapeIndex = -1;
 	if (scene.Intersect(ray, &isect, &hitShapeIndex))
 	{
-		//printf("hit: name: %s, ID: %d\n", scene.shapes[hitShapeIndex]->GetName().data(), hitShapeIndex);
+#if _DEBUG
+		printf("hit: name: %s, ID: %d\n", scene.shapes[hitShapeIndex]->GetName().data(), hitShapeIndex);
+#endif
 		XMFLOAT3 wo = isect.wo;
 
 		isect.ComputeScatterFunctions();
@@ -26,7 +28,7 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 			XMCOLOR3 f = isect.bsdf->f(wo, wi);
 
 			XMCOLORV fV = XMLoadFloat3(&f);
-			if (!XMVector3Equal(fV, XMVectorZero()/* && vis.Unoccluded(scene)*/))
+			if (!XMVector3Equal(fV, XMVectorZero()) && vis.Unoccluded(scene))
 			{
 				XMCOLORV LiV = XMLoadFloat3(&Li);
 				XMVECTOR wiV = XMLoadFloat3(&wi);
@@ -38,7 +40,13 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 
 		if (depth + 1 < maxDepth)
 		{
+#if _DEBUG
+			printf("R %d...\n", depth);
+#endif
 			XMCOLORV fRV = XMLoadFloat3(&SpecularReflect(ray, isect, scene, sampler, depth));
+#if _DEBUG
+			printf("T %d...\n", depth);
+#endif
 			XMCOLORV fTV = XMLoadFloat3(&SpecularTransmit(ray, isect, scene, sampler, depth));
 			LV += fRV + fTV;
 		}

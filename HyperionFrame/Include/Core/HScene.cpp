@@ -60,29 +60,29 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//shape->SetMaterial(mtrl[5]);
 	//shape->SetScale(20.0f, 1.0f, 20.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall x-");
-	//shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(1.0f, 20.0f, 20.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall x-");
+	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall x+");
-	//shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(1.0f, 20.0f, 20.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall x+");
+	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall y-");
-	//shape->SetTranslation(0.0f, 0.0f, 10.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(20.0f, 20.0f, 1.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall y-");
+	shape->SetTranslation(0.0f, 0.0f, 10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall y+");
-	//shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(20.0f, 20.0f, 1.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall y+");
+	shape->SetTranslation(0.0f, 0.0f, -10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
 
 	shape = CreateBox(pCommandList);
 	shape->SetName("box big");
@@ -187,8 +187,6 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
-	x = 573;
-	y = 216;
 	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
