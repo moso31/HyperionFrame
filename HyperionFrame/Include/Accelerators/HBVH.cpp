@@ -35,6 +35,132 @@ void HBVHTree::BuildRecursive(HBVHTreeNodeAABB* node, const vector<HBVHInfoAABB>
 	}
 	else
 	{
+		vector<XMFLOAT3> testVec;
+		for (auto it = itBegin; it != itEnd; it++)
+		{
+			testVec.push_back(it->data.GetCenter());
+		}
+
+		int dim = node->aabb.GetMaximumExtent();
+		float midPos = XMVectorGetByIndex(XMLoadFloat3(&node->aabb.GetCenter()), dim);
+		//auto itSplit = partition(itBegin, itEnd, [dim, midPos](HBVHInfoAABB& info)
+		//{
+		//	auto boundPos = XMVectorGetByIndex(XMLoadFloat3(&info.data.GetCenter()), dim);
+		//	return boundPos < midPos;
+		//});
+
+		//auto itSplit = itBegin + (itEnd - itBegin) / 2;
+		//nth_element(itBegin, itSplit, itEnd, [dim](HBVHInfoAABB& a, HBVHInfoAABB& b) 
+		//{
+		//	auto aPos = XMVectorGetByIndex(XMLoadFloat3(&a.data.GetCenter()), dim);
+		//	auto bPos = XMVectorGetByIndex(XMLoadFloat3(&b.data.GetCenter()), dim);
+		//	return aPos < bPos;
+		//});
+
+		const int nBucket = 12;
+		HBVHBucketInfo bucket[nBucket];
+		for (auto it = itBegin; it != itEnd; it++)
+		{
+			int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&node->aabb.Offset(it->data.GetCenter())), dim));
+			bucketPos = Clamp(bucketPos, 0, nBucket - 1);
+			bucket[bucketPos].aabb.Merge(it->data);
+			bucket[bucketPos].count++;
+		}
+
+		float s = node->aabb.GetSurfaceArea();
+		float cost[nBucket - 1];
+		for (int i = 0; i < nBucket - 1; i++)
+		{
+			AABB abLeft, abRight;
+			int nA = 0;
+			int nB = 0;
+			for (int j = 0; j < i + 1; j++)
+			{
+				abLeft.Merge(bucket[j].aabb);
+				nA += bucket[j].count;
+			}
+
+			for (int j = i + 1; j < nBucket; j++)
+			{
+				abRight.Merge(bucket[j].aabb);
+				nB += bucket[j].count;
+			}
+
+			float sA = abLeft.GetSurfaceArea();
+			float sB = abRight.GetSurfaceArea();
+			cost[i] = 1.0f + (sA * nA + sB * nB) / s;
+		}
+
+		float minCost = cost[0];
+		int minCostBucket = 0;
+		for (int i = 1; i < nBucket; i++)
+		{
+			if (minCost > cost[i])
+			{
+				minCost = cost[i];
+				minCostBucket = i;
+			}
+		}
+
+		if (true)
+		{
+			auto itSplit = partition(itBegin, itEnd, [=](HBVHInfoAABB& info)
+			{
+				int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&info.data.GetCenter()), dim));
+				return bucketPos <= minCostBucket;
+			});
+
+			if (itSplit == itBegin || itSplit == itEnd)
+			{
+				// bad result, so leaf
+				node->child[0] = node->child[1] = nullptr;
+				node->isLeaf = true;
+			}
+			else
+			{
+				// interior
+				node->child[0] = new HBVHTreeNodeAABB();
+				node->child[1] = new HBVHTreeNodeAABB();
+				BuildRecursive(node->child[0], itBegin, itSplit);
+				BuildRecursive(node->child[1], itSplit, itEnd);
+				node->isLeaf = false;
+			}
+		}
+
+		//if (itSplit == itBegin || itSplit == itEnd)
+		//{
+		//	// bad result, so leaf
+		//	node->child[0] = node->child[1] = nullptr;
+		//	node->isLeaf = true;
+		//}
+		//else
+		//{
+		//	// interior
+		//	node->child[0] = new HBVHTreeNodeAABB();
+		//	node->child[1] = new HBVHTreeNodeAABB();
+		//	BuildRecursive(node->child[0], itBegin, itSplit);
+		//	BuildRecursive(node->child[1], itSplit, itEnd);
+		//	node->isLeaf = false;
+		//}
+	}
+}
+
+void HBVHTree::BuildRecursiveSAH(HBVHTreeNodeAABB * node, const vector<HBVHInfoAABB>::iterator & itBegin, const vector<HBVHInfoAABB>::iterator & itEnd)
+{
+	node->aabb = AABB();
+	for (auto it = itBegin; it != itEnd; it++)
+		node->aabb.Merge(it->data);
+	node->index = (int)(itBegin - m_boundInfo.begin());
+	node->offset = (int)(itEnd - itBegin);
+
+	if (itBegin + 1 == itEnd)
+	{
+		// leaf
+		node->child[0] = node->child[1] = nullptr;
+		node->isLeaf = true;
+	}
+	else
+	{
 		int dim = node->aabb.GetMaximumExtent();
 		float midPos = XMVectorGetByIndex(XMLoadFloat3(&node->aabb.GetCenter()), dim);
 		auto split = partition(itBegin, itEnd, [dim, midPos](HBVHInfoAABB& info)
@@ -42,6 +168,14 @@ void HBVHTree::BuildRecursive(HBVHTreeNodeAABB* node, const vector<HBVHInfoAABB>
 			auto boundPos = XMVectorGetByIndex(XMLoadFloat3(&info.data.GetCenter()), dim);
 			return boundPos < midPos;
 		});
+
+		//auto itMid = m_boundInfo.begin() + (itEnd - itBegin) / 2;
+		//nth_element(itBegin, itMid, itEnd, [dim](HBVHInfoAABB& a, HBVHInfoAABB& b) 
+		//{
+		//	auto aPos = XMVectorGetByIndex(XMLoadFloat3(&a.data.GetCenter()), dim);
+		//	auto bPos = XMVectorGetByIndex(XMLoadFloat3(&b.data.GetCenter()), dim);
+		//	return aPos < bPos;
+		//});
 
 		vector<XMFLOAT3> testVec;
 		for (auto it = itBegin; it != itEnd; it++)

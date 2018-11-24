@@ -56,6 +56,14 @@ XMFLOAT3 AABB::GetVecMax()
 	return max;
 }
 
+XMFLOAT3 AABB::Offset(XMFLOAT3 & p) const
+{
+	XMVECTOR resultV = (XMLoadFloat3(&p) - XMLoadFloat3(&min)) / XMLoadFloat3(&max) - XMLoadFloat3(&min);
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, resultV);
+	return result;
+}
+
 void AABB::Merge(AABB aabb)
 {
 	XMVECTOR vMax = XMVectorMax(XMLoadFloat3(&max), XMLoadFloat3(&aabb.max));
@@ -94,6 +102,13 @@ bool AABB::IntersectP(Ray ray, float* hit0, float* hit1)
 	*hit0 = tNear;
 	*hit1 = tFar;
 	return tFar > 0 && tNear < tFar;
+}
+
+float AABB::GetSurfaceArea() 
+{
+	XMFLOAT3 v = GetExtent();
+	XMLoadFloat3(&max) - XMLoadFloat3(&min);
+	return (v.x * v.y + v.y * v.z + v.x * v.z) * 2.0f;
 }
 
 int AABB::GetMaximumExtent()

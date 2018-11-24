@@ -34,10 +34,17 @@ public:
 	XMFLOAT3 GetVecMin();
 	XMFLOAT3 GetVecMax();
 
+	// 获取指定点在当前AABB中的相对位置。
+	// 点最小角时将表示为(0, 0, 0)，最大角是(1, 1, 1)
+	XMFLOAT3 Offset(XMFLOAT3& p) const;
+
 	void Merge(AABB aabb);
 	void Merge(XMFLOAT3 point);
 
 	bool IntersectP(Ray ray, float* hit0, float* hit1);
+
+	// 获取当前包围盒的表面积
+	float GetSurfaceArea();
 
 	int GetMaximumExtent();
 
