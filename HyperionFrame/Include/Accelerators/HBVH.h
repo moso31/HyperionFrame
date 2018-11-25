@@ -26,7 +26,6 @@ class HBVHTree
 public:
 	bool BuildTreesWithScene(HScene* scene);
 	void BuildRecursive(HBVHTreeNodeAABB* node, const vector<HBVHInfoAABB>::iterator &itBegin, const vector<HBVHInfoAABB>::iterator &itEnd);
-	void BuildRecursiveSAH(HBVHTreeNodeAABB* node, const vector<HBVHInfoAABB>::iterator &itBegin, const vector<HBVHInfoAABB>::iterator &itEnd);
 
 	// HBVHTree结构没有快速判断方法IntersectP，因为效率几乎和Intersect差不多，没有必要重写一个。
 	// 不过快速判断的时候无需记录out_hitShapeIndex，因此允许该参数设置空值。
