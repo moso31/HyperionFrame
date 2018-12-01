@@ -32,33 +32,33 @@ AABB::AABB(XMFLOAT3 _min, XMFLOAT3 _max)
 	max = _max;
 }
 
-XMFLOAT3 AABB::GetCenter()
+XMFLOAT3 AABB::GetCenter() const
 {
 	XMFLOAT3 result;
 	XMStoreFloat3(&result, (XMLoadFloat3(&min) + XMLoadFloat3(&max)) * 0.5f);
 	return result;
 }
 
-XMFLOAT3 AABB::GetExtent()
+XMFLOAT3 AABB::GetExtent() const
 {
 	XMFLOAT3 result;
 	XMStoreFloat3(&result, (XMLoadFloat3(&max) - XMLoadFloat3(&min)));
 	return result;
 }
 
-XMFLOAT3 AABB::GetVecMin()
+XMFLOAT3 AABB::GetVecMin() const
 {
 	return min;
 }
 
-XMFLOAT3 AABB::GetVecMax()
+XMFLOAT3 AABB::GetVecMax() const
 {
 	return max;
 }
 
 XMFLOAT3 AABB::Offset(XMFLOAT3 & p) const
 {
-	XMVECTOR resultV = (XMLoadFloat3(&p) - XMLoadFloat3(&min)) / XMLoadFloat3(&max) - XMLoadFloat3(&min);
+	XMVECTOR resultV = (XMLoadFloat3(&p) - XMLoadFloat3(&min)) / (XMLoadFloat3(&max) - XMLoadFloat3(&min));
 	XMFLOAT3 result;
 	XMStoreFloat3(&result, resultV);
 	return result;

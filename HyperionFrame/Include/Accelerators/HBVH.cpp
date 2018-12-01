@@ -1,241 +1,227 @@
 #include "HBVH.h"
 #include "HScene.h"
 
-bool HBVHTree::BuildTreesWithScene(HScene * scene)
+HBVHTree::HBVHTree(HScene* scene)
 {
-	node = new HBVHTreeNodeAABB();
+	m_scene = scene;
+}
+
+void HBVHTree::BuildTreesWithScene()
+{
+	if (!m_scene)
+	{
+		printf("WARNING: Can not create BVH trees. scene has pointed to nullptr.\n");
+		return;
+	}
+
+	m_primitiveInfo.reserve(m_scene->shapes.size());
 
 	int count = 0;
-	for (vector<Shape*>::iterator it = scene->shapes.begin(); it != scene->shapes.end(); it++)
+	for (auto it = m_scene->shapes.begin(); it < m_scene->shapes.end(); it++)
 	{
-		HBVHInfoAABB info;
-		info.data = (*it)->GetAABBWorld();
-		info.index = count++;
-		m_boundInfo.push_back(info);
-		node->aabb.Merge(info.data);
+		HBVHPrimitiveInfo shapeInfo;
+		shapeInfo.index = count++;
+		shapeInfo.aabb = (*it)->GetAABBWorld();
+		m_primitiveInfo.push_back(shapeInfo);
 	}
 
-	BuildRecursive(node, m_boundInfo.begin(), m_boundInfo.end(), SAH);
-	return false;
+	root = new HBVHTreeNode();
+	RecursiveBuild(root, 0, count, SAH);
 }
 
-void HBVHTree::BuildRecursive(HBVHTreeNodeAABB* node, const vector<HBVHInfoAABB>::iterator &itBegin, const vector<HBVHInfoAABB>::iterator &itEnd, HBVHBuildMode buildMode)
+void HBVHTree::Intersect(const Ray & worldRay, SurfaceInteraction* si, int* out_hitIndex)
 {
-	node->aabb = AABB();
-	for (auto it = itBegin; it != itEnd; it++)
-		node->aabb.Merge(it->data);
-	node->index = (int)(itBegin - m_boundInfo.begin());
-	node->offset = (int)(itEnd - itBegin);
+	float tResult = FLT_MAX;
+	RecursiveIntersect(root, worldRay, si, &tResult, out_hitIndex);
+}
 
-	if (itBegin + 1 == itEnd)
+void HBVHTree::RecursiveBuild(HBVHTreeNode * node, int stIndex, int edIndex, HBVHSplitMode mode)
+{
+	//	递归建树
+	//	如果node下只有一个节点就构建子树。
+	//	如果当前node下，遍历所有节点的开销少于进一步分割的开销，也构建子树。
+	//	如果分割以后分不开也构建子树。
+	//	其他情况下构建中间树。
+
+	for (int i = stIndex; i < edIndex; i++)
 	{
-		// leaf
-		node->child[0] = node->child[1] = nullptr;
-		node->isLeaf = true;
+		node->aabb.Merge(m_primitiveInfo[i].aabb);
 	}
-	else
+	node->index = stIndex;
+	node->offset = edIndex - stIndex;
+
+	if (edIndex - stIndex == 1)
 	{
-		vector<XMFLOAT3> testVec;
-		for (auto it = itBegin; it != itEnd; it++)
+		// isLeaf
+		node->child[0] = nullptr;
+		node->child[1] = nullptr;
+		return;
+	}
+
+	if (edIndex - stIndex < SPLIT_COST)
+	{
+		// isLeaf
+		node->child[0] = nullptr;
+		node->child[1] = nullptr;
+		return;
+	}
+
+	vector<HBVHPrimitiveInfo>::iterator itSplit;
+
+	int dim = node->aabb.GetMaximumExtent();
+	switch (mode)
+	{
+	case SplitPosition:
+	{
+		float midPos = XMVectorGetByIndex(XMLoadFloat3(&node->aabb.GetCenter()), dim);
+		itSplit = partition(m_primitiveInfo.begin() + stIndex, m_primitiveInfo.begin() + edIndex, [dim, midPos](HBVHPrimitiveInfo& info)
 		{
-			testVec.push_back(it->data.GetCenter());
+			auto boundPos = XMVectorGetByIndex(XMLoadFloat3(&info.aabb.GetCenter()), dim);
+			return boundPos < midPos;
+		});
+		break;
+	}
+	case SplitCount:
+	{
+		int midIndex = (stIndex + edIndex) / 2;
+		itSplit = m_primitiveInfo.begin() + midIndex;
+		nth_element(m_primitiveInfo.begin() + stIndex, itSplit, m_primitiveInfo.begin() + edIndex, [dim](HBVHPrimitiveInfo& a, HBVHPrimitiveInfo& b) {
+			auto aPos = XMVectorGetByIndex(XMLoadFloat3(&a.aabb.GetCenter()), dim);
+			auto bPos = XMVectorGetByIndex(XMLoadFloat3(&b.aabb.GetCenter()), dim);
+			return aPos < bPos;
+		});
+		break;
+	}
+	case SAH:
+	{
+		// SAH 建树。
+		// 将当前节点沿dim方向分成12份。然后从中间的11种分割方式里取一个最优秀的。
+		// 可以通过将子节点表面积比例的方法计入权重的方式，来判断哪个最优秀。
+
+		const int nBucket = 12;
+		HBVHBucketInfo bucket[nBucket];
+		for (auto it = m_primitiveInfo.begin() + stIndex; it != m_primitiveInfo.begin() + edIndex; it++)
+		{
+			int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&node->aabb.Offset(it->aabb.GetCenter())), dim));
+			bucketPos = Clamp(bucketPos, 0, nBucket - 1);
+			bucket[bucketPos].aabb.Merge(it->aabb);
+			bucket[bucketPos].nPrimitive++;
 		}
 
-		int dim = node->aabb.GetMaximumExtent();
-		switch (buildMode)
+		float s = node->aabb.GetSurfaceArea();
+		float cost[nBucket - 1];
+		for (int i = 0; i < nBucket - 1; i++)
 		{
-		case SplitPosition:
-		{
-			float midPos = XMVectorGetByIndex(XMLoadFloat3(&node->aabb.GetCenter()), dim);
-			auto itSplit = partition(itBegin, itEnd, [dim, midPos](HBVHInfoAABB& info)
+			AABB abLeft, abRight;
+			int nA = 0;
+			int nB = 0;
+			for (int j = 0; j < i + 1; j++)
 			{
-				auto boundPos = XMVectorGetByIndex(XMLoadFloat3(&info.data.GetCenter()), dim);
-				return boundPos < midPos;
+				abLeft.Merge(bucket[j].aabb);
+				nA += bucket[j].nPrimitive;
+			}
+
+			for (int j = i + 1; j < nBucket; j++)
+			{
+				abRight.Merge(bucket[j].aabb);
+				nB += bucket[j].nPrimitive;
+			}
+
+			float sA = abLeft.GetSurfaceArea();
+			float sB = abRight.GetSurfaceArea();
+			float costValue = 1.0f + (sA * nA + sB * nB) / s;
+			cost[i] = isnan(costValue) ? FLT_MAX : costValue;
+		}
+
+		// 从11个分割方案中取最优秀的。
+		float minCost = cost[0];
+		int minCostBucket = 0;
+		for (int i = 1; i < nBucket - 1; i++)
+		{
+			if (minCost > cost[i])
+			{
+				minCost = cost[i];
+				minCostBucket = i;
+			}
+		}
+
+		// 如果最优秀的方案的花费值依然比当前node的图元数量还多，那还不如直接遍历创建图元。
+		if (minCost < node->offset * 10)
+		{
+			itSplit = partition(m_primitiveInfo.begin() + stIndex, m_primitiveInfo.begin() + edIndex, [=](HBVHPrimitiveInfo& info)
+			{
+				int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&node->aabb.Offset(info.aabb.GetCenter())), dim));
+				return bucketPos <= minCostBucket;
 			});
-
-			if (itSplit == itBegin || itSplit == itEnd)
-			{
-				// bad result, so leaf
-				node->child[0] = node->child[1] = nullptr;
-				node->isLeaf = true;
-			}
-			else
-			{
-				// interior
-				node->child[0] = new HBVHTreeNodeAABB();
-				node->child[1] = new HBVHTreeNodeAABB();
-				BuildRecursive(node->child[0], itBegin, itSplit);
-				BuildRecursive(node->child[1], itSplit, itEnd);
-				node->isLeaf = false;
-			}
 		}
-			break;
-		case SplitCount:
+		else
 		{
-			auto itSplit = itBegin + (itEnd - itBegin) / 2;
-			nth_element(itBegin, itSplit, itEnd, [dim](HBVHInfoAABB& a, HBVHInfoAABB& b) 
-			{
-				auto aPos = XMVectorGetByIndex(XMLoadFloat3(&a.data.GetCenter()), dim);
-				auto bPos = XMVectorGetByIndex(XMLoadFloat3(&b.data.GetCenter()), dim);
-				return aPos < bPos;
-			});
-
-			if (itSplit == itBegin || itSplit == itEnd)
-			{
-				// bad result, so leaf
-				node->child[0] = node->child[1] = nullptr;
-				node->isLeaf = true;
-			}
-			else
-			{
-				// interior
-				node->child[0] = new HBVHTreeNodeAABB();
-				node->child[1] = new HBVHTreeNodeAABB();
-				BuildRecursive(node->child[0], itBegin, itSplit);
-				BuildRecursive(node->child[1], itSplit, itEnd);
-				node->isLeaf = false;
-			}
+			// isLeaf
+			node->child[0] = nullptr;
+			node->child[1] = nullptr;
+			return;
 		}
-			break;
-		case SAH:
-		{
-			int nPrimitives = (int)(itEnd - itBegin);
-			if (nPrimitives <= 2)
-			{
-				auto itSplit = itBegin + (itEnd - itBegin) / 2;
-				nth_element(itBegin, itSplit, itEnd, [dim](HBVHInfoAABB& a, HBVHInfoAABB& b)
-				{
-					auto aPos = XMVectorGetByIndex(XMLoadFloat3(&a.data.GetCenter()), dim);
-					auto bPos = XMVectorGetByIndex(XMLoadFloat3(&b.data.GetCenter()), dim);
-					return aPos < bPos;
-				});
-			}
-			else
-			{
-				const int nBucket = 12;
-				HBVHBucketInfo bucket[nBucket];
-				for (auto it = itBegin; it != itEnd; it++)
-				{
-					int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&node->aabb.Offset(it->data.GetCenter())), dim));
-					bucketPos = Clamp(bucketPos, 0, nBucket - 1);
-					bucket[bucketPos].aabb.Merge(it->data);
-					bucket[bucketPos].count++;
-				}
 
-				float s = node->aabb.GetSurfaceArea();
-				float cost[nBucket - 1];
-				for (int i = 0; i < nBucket - 1; i++)
-				{
-					AABB abLeft, abRight;
-					int nA = 0;
-					int nB = 0;
-					for (int j = 0; j < i + 1; j++)
-					{
-						abLeft.Merge(bucket[j].aabb);
-						nA += bucket[j].count;
-					}
-
-					for (int j = i + 1; j < nBucket; j++)
-					{
-						abRight.Merge(bucket[j].aabb);
-						nB += bucket[j].count;
-					}
-
-					float sA = abLeft.GetSurfaceArea();
-					float sB = abRight.GetSurfaceArea();
-					cost[i] = 1.0f + (sA * nA + sB * nB) / s;
-				}
-
-				float minCost = cost[0];
-				int minCostBucket = 0;
-				for (int i = 1; i < nBucket; i++)
-				{
-					if (minCost > cost[i])
-					{
-						minCost = cost[i];
-						minCostBucket = i;
-					}
-				}
-
-				float leafCost = (float)(nPrimitives);
-				if (minCost < leafCost)
-				{
-					auto itSplit = partition(itBegin, itEnd, [=](HBVHInfoAABB& info)
-					{
-						int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&info.data.GetCenter()), dim));
-						return bucketPos <= minCostBucket;
-					});
-
-					if (itSplit == itBegin || itSplit == itEnd)
-					{
-						// bad result, so leaf
-						node->child[0] = node->child[1] = nullptr;
-						node->isLeaf = true;
-					}
-					else
-					{
-						// interior
-						node->child[0] = new HBVHTreeNodeAABB();
-						node->child[1] = new HBVHTreeNodeAABB();
-						BuildRecursive(node->child[0], itBegin, itSplit);
-						BuildRecursive(node->child[1], itSplit, itEnd);
-						node->isLeaf = false;
-					}
-				}
-				else
-				{
-					// bad result, so leaf
-					node->child[0] = node->child[1] = nullptr;
-					node->isLeaf = true;
-				}
-			}
-		}
-			break;
-		default:
-			break;
-		}
+		break;
 	}
-}
+	default:
+		break;
+	}
 
-bool HBVHTree::Intersect(Ray& worldRay, const HScene& scene, int * out_hitShapeIndex) 
-{
-	float dist = FLT_MAX;
-	RecursiveIntersect(worldRay, scene, node, &dist, out_hitShapeIndex);
-	return dist != FLT_MAX;
-}
-
-// BVH 递归求交检测
-// 对BVH树进行前序搜索，发现合适的leaf节点就记录下来，并不断迭代求出最小的记录值。
-// 当发现到合适的leaf值时，先对AABB进行一次intersectP的简易判断，通过简易判断后，再进行精确判断。
-// 算法只会记录并更新精确判断的值，直到求出最小解。
-void HBVHTree::RecursiveIntersect(Ray & worldRay, const HScene& scene, HBVHTreeNodeAABB * node, float * out_dist, int * out_hitShapeIndex)
-{
-	if (node->isLeaf)
+	int splitPos = (int)(itSplit - m_primitiveInfo.begin());
+	if (splitPos == stIndex || splitPos == edIndex)
 	{
-		// is leaf
-		float t0, t1;
-		for (int i = node->index; i < node->index + node->offset; i++)
-		{
-			auto str = scene.shapes[m_boundInfo[i].index]->GetName();
+		// isLeaf
+		node->child[0] = nullptr;
+		node->child[1] = nullptr;
+		return;
+	}
 
-			if (m_boundInfo[i].data.IntersectP(worldRay, &t0, &t1))
+	// isInterior
+	node->child[0] = new HBVHTreeNode();
+	node->child[1] = new HBVHTreeNode();
+	RecursiveBuild(node->child[0], stIndex, splitPos, mode);
+	RecursiveBuild(node->child[1], splitPos, edIndex, mode);
+}
+
+void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, SurfaceInteraction* si, float* out_tResult, int* out_hitIndex)
+{
+	float t0, t1;
+	if (node->aabb.IntersectP(worldRay, &t0, &t1))
+	{
+		float tNodeHit = t0;
+		if (tNodeHit < 1e-5f) tNodeHit = t1;
+		if (tNodeHit < 1e-5f)
+			return;
+
+		if (node->child[0] == nullptr && node->child[1] == nullptr)
+		{
+			// leaf
+			for (int i = node->index; i < node->index + node->offset; i++)
 			{
-				if ((*out_dist >= t0 && t0 > 1e-5f) || (*out_dist >= t1 && t1 > 1e-5f))
+				auto str = m_scene->shapes[m_primitiveInfo[i].index]->GetName();
+
+				if (m_primitiveInfo[i].aabb.IntersectP(worldRay, &t0, &t1))
 				{
-					if (scene.shapes[m_boundInfo[i].index]->Intersect(worldRay, &SurfaceInteraction()))
+					float tHit;
+					SurfaceInteraction temp_si;
+					if (m_scene->shapes[m_primitiveInfo[i].index]->Intersect(worldRay, &temp_si, &tHit)) 
 					{
-						*out_dist = t0 > 1e-5f ? t0 : t1;
-						if (out_hitShapeIndex)
-							*out_hitShapeIndex = m_boundInfo[i].index;
+						if (*out_tResult > tHit)
+						{
+							*out_tResult = tHit;
+							*si = temp_si;
+							*out_hitIndex = m_primitiveInfo[i].index;
+						}
 					}
 				}
 			}
 		}
-	}
-	else
-	{
-		RecursiveIntersect(worldRay, scene, node->child[0], out_dist, out_hitShapeIndex);
-		RecursiveIntersect(worldRay, scene, node->child[1], out_dist, out_hitShapeIndex);
+		else
+		{
+			// interior
+			RecursiveIntersect(node->child[0], worldRay, si, out_tResult, out_hitIndex);
+			RecursiveIntersect(node->child[1], worldRay, si, out_tResult, out_hitIndex);
+		}
 	}
 }
-

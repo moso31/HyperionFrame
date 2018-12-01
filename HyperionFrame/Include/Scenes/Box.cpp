@@ -38,7 +38,7 @@ void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
 }
 
-bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
+bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
@@ -60,7 +60,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 	float tFar = min(t2.x, min(t2.y, t2.z));
 	
 	SurfaceInteraction record;
-	float tNearest = FLT_MAX;
+	*out_tHit = FLT_MAX;
 	if (tNear < tFar && tNear > H_EPSILON)
 	{
 		for (UINT i = 0; i < GetFaceCount(); i++)
@@ -163,9 +163,9 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 			XMFLOAT2 uvHit;
 			XMStoreFloat2(&uvHit, b0 * XMLoadFloat2(&uv.p[0]) + b1 * XMLoadFloat2(&uv.p[1]) + b2 * XMLoadFloat2(&uv.p[2]));
 
-			if (tNearest > t)
+			if (*out_tHit > t && t > 1e-5f)
 			{
-				tNearest = t;
+				*out_tHit = t;
 				XMFLOAT3 hitPos, wo;
 				XMStoreFloat3(&hitPos, (vRayOrig + t * vRayDir));
 				XMStoreFloat3(&wo, -vRayDir);
@@ -192,6 +192,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 			result.bsdf = record.bsdf;
 			result.shape = record.shape;
 
+			*out_tHit = XMVectorGetX(XMVector3Length(pV - XMLoadFloat3(&worldRay.GetOrigin())));
 			*out_isect = result;
 			return true;
 		}
@@ -199,7 +200,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect)
 	return false;
 }
 
-bool Box::IntersectP(Ray worldRay)
+bool Box::IntersectP(Ray worldRay, float* out_t0, float* out_t1)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
@@ -220,6 +221,8 @@ bool Box::IntersectP(Ray worldRay)
 	float tNear = max(t1.x, max(t1.y, t1.z));
 	float tFar = min(t2.x, min(t2.y, t2.z));
 
+	*out_t0 = tNear;
+	*out_t1 = tFar;
 	return tNear > 0 && tNear < tFar;
 }
 

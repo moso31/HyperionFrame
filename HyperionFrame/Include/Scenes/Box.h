@@ -15,8 +15,8 @@ public:
 	void Update(UINT8 * destination);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect);
-	bool IntersectP(Ray worldRay);
+	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit);
+	bool IntersectP(Ray worldRay, float* out_t0, float* out_t1);
 
 private:
 	void _initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList);

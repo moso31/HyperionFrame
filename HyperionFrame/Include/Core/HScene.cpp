@@ -69,7 +69,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape = CreateBox(pCommandList);
 	shape->SetName("wall x+");
 	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[2]);
+	shape->SetMaterial(mtrl[0]);
 	shape->SetScale(1.0f, 20.0f, 20.0f);
 
 	shape = CreateBox(pCommandList);
@@ -89,7 +89,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	shape->SetScale(5.0f, 5.0f, 5.0f);
 	shape->SetRotation(0.0f, -0.3f, 0.0f);
-	shape->SetMaterial(mtrl[6]);
+	shape->SetMaterial(mtrl[4]);
 
 	shape = CreateSphere(pCommandList, 1.0f, 64, 64);
 	shape->SetName("sphere");
@@ -101,7 +101,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape->SetName("box small");
 	shape->SetTranslation(5.0f, 1.0f, -2.0f);
 	shape->SetScale(2.0f, 2.0f, 2.0f);
-	shape->SetMaterial(mtrl[0]);
+	shape->SetMaterial(mtrl[4]);
 
 	for (int i = -9; i <= 9; i++)
 	{
@@ -187,8 +187,6 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 
 void HScene::OnMouseDown(int x, int y)
 {
-	x = 772;
-	y = 118;
 	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
@@ -304,11 +302,8 @@ HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3
 bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex) const
 {
 	*out_hitShapeIndex = -1;
-	if (m_bvhTree->Intersect(worldRay, *this, out_hitShapeIndex))
-	{
-		return shapes[*out_hitShapeIndex]->Intersect(worldRay, out_isect);
-	}
-	return false;
+	m_bvhTree->Intersect(worldRay, out_isect, out_hitShapeIndex);
+	return *out_hitShapeIndex != -1;
 }
 
 bool HScene::IntersectP(Ray worldRay) const
@@ -366,6 +361,6 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSample
 
 void HScene::UpdateAccelerateStructure()
 {
-	m_bvhTree = new HBVHTree();
-	m_bvhTree->BuildTreesWithScene(this);
+	m_bvhTree = new HBVHTree(this);
+	m_bvhTree->BuildTreesWithScene();
 }

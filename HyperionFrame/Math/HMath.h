@@ -29,10 +29,10 @@ public:
 	AABB(XMFLOAT3 _min = { FLT_MAX, FLT_MAX, FLT_MAX }, XMFLOAT3 _max = { -FLT_MAX, -FLT_MAX, -FLT_MAX });
 	~AABB() {}
 
-	XMFLOAT3 GetCenter();
-	XMFLOAT3 GetExtent();
-	XMFLOAT3 GetVecMin();
-	XMFLOAT3 GetVecMax();
+	XMFLOAT3 GetCenter() const;
+	XMFLOAT3 GetExtent() const;
+	XMFLOAT3 GetVecMin() const;
+	XMFLOAT3 GetVecMax() const;
 
 	// 获取指定点在当前AABB中的相对位置。
 	// 点最小角时将表示为(0, 0, 0)，最大角是(1, 1, 1)

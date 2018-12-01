@@ -1,50 +1,54 @@
 #pragma once
 #include "HMath.h"
 
-struct HBVHInfoAABB
-{
-	int index;
-	AABB data;
-};
-
-struct HBVHTreeNodeAABB
-{
-	HBVHTreeNodeAABB* child[2];
-	bool isLeaf;
-	int index, offset;
-	AABB aabb;
-};
-
-struct HBVHBucketInfo
-{
-	AABB aabb;
-	int count = 0;
-};
-
-enum HBVHBuildMode
+enum HBVHSplitMode
 {
 	SplitPosition,
 	SplitCount,
 	SAH
 };
 
+struct HBVHPrimitiveInfo
+{
+	AABB aabb;
+	int index;
+};
+
+struct HBVHBucketInfo
+{
+	AABB aabb;
+	int nPrimitive = 0;
+};
+
+struct HBVHTreeNode
+{
+	HBVHTreeNode* child[2];
+	AABB aabb;
+	int index;
+	int offset;
+};
+
 class HBVHTree
 {
 public:
-	bool BuildTreesWithScene(HScene* scene);
-	void BuildRecursive(HBVHTreeNodeAABB* node, const vector<HBVHInfoAABB>::iterator &itBegin, const vector<HBVHInfoAABB>::iterator &itEnd, HBVHBuildMode buildMode = SAH);
+	HBVHTree(HScene* scene);
+	~HBVHTree() {}
 
-	// HBVHTree结构没有快速判断方法IntersectP，因为效率几乎和Intersect差不多，没有必要重写一个。
-	// 不过快速判断的时候无需记录out_hitShapeIndex，因此允许该参数设置空值。
-	bool Intersect(Ray& worldRay, const HScene& scene, int * out_hitShapeIndex = nullptr);
+	// 根据场景信息，生成构建BVH树所需要的信息。
+	void BuildTreesWithScene();
 
-private:
-	// 递归求交判断方法。
-	// out_dist参数用来存储当前递归状态下的最优解，因此永远不能为空。
-	// 但out_hitShapeIndex在做快速判断的时候不需要记录，因此可以为空。
-	void RecursiveIntersect(Ray& worldRay, const HScene& scene, HBVHTreeNodeAABB* node, float* out_dist, int* out_hitShapeIndex = nullptr);
+	// BVH碰撞检测。
+	// 给定世界坐标射线，输出SurfaceInteraction和对象的索引号hitIndex，
+	void Intersect(const Ray& worldRay, SurfaceInteraction* si, int* out_hitIndex);
 
 private:
-	vector<HBVHInfoAABB> m_boundInfo;
-	HBVHTreeNodeAABB* node;
+	void RecursiveBuild(HBVHTreeNode* node, int stIndex, int edIndex, HBVHSplitMode mode = SplitPosition);
+	void RecursiveIntersect(HBVHTreeNode* node, const Ray& worldRay, SurfaceInteraction* si, float* out_tResult, int* out_hitIndex);
+
+private:
+	const int SPLIT_COST = 4;
+
+	HBVHTreeNode* root;
+	HScene* m_scene;
+	vector<HBVHPrimitiveInfo> m_primitiveInfo;
 };
