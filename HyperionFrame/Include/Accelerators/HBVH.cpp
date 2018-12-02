@@ -1,12 +1,25 @@
 #include "HBVH.h"
 #include "HScene.h"
 
+inline int LeftShift3(int x) {
+	if (x == (1 << 10)) --x;
+	x = (x | (x << 16)) & 0x30000ff;
+	x = (x | (x << 8)) & 0x300f00f;
+	x = (x | (x << 4)) & 0x30c30c3;
+	x = (x | (x << 2)) & 0x9249249;
+	return x;
+}
+
+inline int EncodeMorton3(const XMFLOAT3 &v) {
+	return (LeftShift3(v.z) << 2) | (LeftShift3(v.y) << 1) | LeftShift3(v.x);
+}
+
 HBVHTree::HBVHTree(HScene* scene)
 {
 	m_scene = scene;
 }
 
-void HBVHTree::BuildTreesWithScene()
+void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 {
 	if (!m_scene)
 	{
@@ -14,19 +27,49 @@ void HBVHTree::BuildTreesWithScene()
 		return;
 	}
 
-	m_primitiveInfo.reserve(m_scene->shapes.size());
-
-	int count = 0;
-	for (auto it = m_scene->shapes.begin(); it < m_scene->shapes.end(); it++)
-	{
-		HBVHPrimitiveInfo shapeInfo;
-		shapeInfo.index = count++;
-		shapeInfo.aabb = (*it)->GetAABBWorld();
-		m_primitiveInfo.push_back(shapeInfo);
-	}
-
 	root = new HBVHTreeNode();
-	RecursiveBuild(root, 0, count, SAH);
+	int count = 0;
+	if (mode != HLBVH)
+	{
+		m_primitiveInfo.reserve(m_scene->shapes.size());
+		for (auto it = m_scene->shapes.begin(); it < m_scene->shapes.end(); it++)
+		{
+			HBVHPrimitiveInfo shapeInfo;
+			shapeInfo.index = count++;
+			shapeInfo.aabb = (*it)->GetAABBWorld();
+			m_primitiveInfo.push_back(shapeInfo);
+		}
+
+		BuildTree(root, 0, count, mode);
+	}
+	else
+	{
+		m_mortonPrimitiveInfo.reserve(m_scene->shapes.size());
+		for (auto it = m_scene->shapes.begin(); it < m_scene->shapes.end(); it++)
+		{
+			HBVHMortonPrimitiveInfo shapeInfo;
+			shapeInfo.index = count++;
+			shapeInfo.aabb = (*it)->GetAABBWorld();
+			shapeInfo.mortonCode = EncodeMorton3(m_scene->GetAABB().Offset(shapeInfo.aabb.GetCenter()));
+			m_mortonPrimitiveInfo.push_back(shapeInfo);
+		}
+
+		sort(m_mortonPrimitiveInfo.begin(), m_mortonPrimitiveInfo.end(), [](const HBVHMortonPrimitiveInfo& a, const HBVHMortonPrimitiveInfo& b) {
+			return a.mortonCode < b.mortonCode;
+		});
+
+
+		for (int i = 0; i < (1 << 12); i++)
+		{
+
+		}
+		int start = 0;
+		int end = 0;
+		for (int i = 0; i < count; i++)
+		{
+
+		}
+	}
 }
 
 void HBVHTree::Intersect(const Ray & worldRay, SurfaceInteraction* si, int* out_hitIndex)
@@ -35,7 +78,7 @@ void HBVHTree::Intersect(const Ray & worldRay, SurfaceInteraction* si, int* out_
 	RecursiveIntersect(root, worldRay, si, &tResult, out_hitIndex);
 }
 
-void HBVHTree::RecursiveBuild(HBVHTreeNode * node, int stIndex, int edIndex, HBVHSplitMode mode)
+void HBVHTree::BuildTree(HBVHTreeNode * node, int stIndex, int edIndex, HBVHSplitMode mode)
 {
 	//	递归建树
 	//	如果node下只有一个节点就构建子树。
@@ -180,8 +223,8 @@ void HBVHTree::RecursiveBuild(HBVHTreeNode * node, int stIndex, int edIndex, HBV
 	// isInterior
 	node->child[0] = new HBVHTreeNode();
 	node->child[1] = new HBVHTreeNode();
-	RecursiveBuild(node->child[0], stIndex, splitPos, mode);
-	RecursiveBuild(node->child[1], splitPos, edIndex, mode);
+	BuildTree(node->child[0], stIndex, splitPos, mode);
+	BuildTree(node->child[1], splitPos, edIndex, mode);
 }
 
 void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, SurfaceInteraction* si, float* out_tResult, int* out_hitIndex)

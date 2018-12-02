@@ -5,7 +5,8 @@ enum HBVHSplitMode
 {
 	SplitPosition,
 	SplitCount,
-	SAH
+	SAH,
+	HLBVH
 };
 
 struct HBVHPrimitiveInfo
@@ -28,6 +29,18 @@ struct HBVHTreeNode
 	int offset;
 };
 
+struct HBVHMortonPrimitiveInfo
+{
+	int mortonCode;
+	int index;
+	AABB aabb;
+};
+
+struct HBVHTreeletInfo
+{
+	int startIndex, int endIndex;
+};
+
 class HBVHTree
 {
 public:
@@ -35,14 +48,14 @@ public:
 	~HBVHTree() {}
 
 	// 根据场景信息，生成构建BVH树所需要的信息。
-	void BuildTreesWithScene();
+	void BuildTreesWithScene(HBVHSplitMode mode);
 
 	// BVH碰撞检测。
 	// 给定世界坐标射线，输出SurfaceInteraction和对象的索引号hitIndex，
 	void Intersect(const Ray& worldRay, SurfaceInteraction* si, int* out_hitIndex);
 
 private:
-	void RecursiveBuild(HBVHTreeNode* node, int stIndex, int edIndex, HBVHSplitMode mode = SplitPosition);
+	void BuildTree(HBVHTreeNode* node, int stIndex, int edIndex, HBVHSplitMode mode);
 	void RecursiveIntersect(HBVHTreeNode* node, const Ray& worldRay, SurfaceInteraction* si, float* out_tResult, int* out_hitIndex);
 
 private:
@@ -51,4 +64,5 @@ private:
 	HBVHTreeNode* root;
 	HScene* m_scene;
 	vector<HBVHPrimitiveInfo> m_primitiveInfo;
+	vector<HBVHMortonPrimitiveInfo> m_mortonPrimitiveInfo;
 };
