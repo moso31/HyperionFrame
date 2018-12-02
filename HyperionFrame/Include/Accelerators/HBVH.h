@@ -38,7 +38,9 @@ struct HBVHMortonPrimitiveInfo
 
 struct HBVHTreeletInfo
 {
-	int startIndex, int endIndex;
+	int startIndex;
+	int nPrimitive;
+	HBVHTreeNode* node;
 };
 
 class HBVHTree
@@ -58,6 +60,12 @@ private:
 	void BuildTree(HBVHTreeNode* node, int stIndex, int edIndex, HBVHSplitMode mode);
 	void RecursiveIntersect(HBVHTreeNode* node, const Ray& worldRay, SurfaceInteraction* si, float* out_tResult, int* out_hitIndex);
 
+	// 构建HLBVH所需要用到的treelet。一次构建一个。
+	HBVHTreeNode* BuildTreelet(int stIndex, int edIndex, int bitIndex);
+
+	// 构建上层总树。
+	void BuildUpperTree();
+
 private:
 	const int SPLIT_COST = 4;
 
@@ -65,4 +73,5 @@ private:
 	HScene* m_scene;
 	vector<HBVHPrimitiveInfo> m_primitiveInfo;
 	vector<HBVHMortonPrimitiveInfo> m_mortonPrimitiveInfo;
+	vector<HBVHTreeletInfo> m_treeletInfo;
 };

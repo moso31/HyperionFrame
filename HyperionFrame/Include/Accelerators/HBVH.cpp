@@ -28,7 +28,7 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 	}
 
 	root = new HBVHTreeNode();
-	int count = 0;
+	int count = 0;	// 场景中的primitive总数
 	if (mode != HLBVH)
 	{
 		m_primitiveInfo.reserve(m_scene->shapes.size());
@@ -58,17 +58,34 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 			return a.mortonCode < b.mortonCode;
 		});
 
-
-		for (int i = 0; i < (1 << 12); i++)
-		{
-
-		}
+		int mask = 0x3FFC0000;
 		int start = 0;
-		int end = 0;
-		for (int i = 0; i < count; i++)
+		int lastMaskPos = m_mortonPrimitiveInfo[0].mortonCode & mask;
+		int nPrimitiveLimit = 1000;
+		for (int i = 1; i < count; i++)
 		{
+			int currentMaskPos = m_mortonPrimitiveInfo[i].mortonCode & mask;
+			int nPrimitive = i - start;
+			if (currentMaskPos != lastMaskPos || nPrimitive > nPrimitiveLimit)
+			{
+				HBVHTreeletInfo treelet;
+				treelet.startIndex = start;
+				treelet.nPrimitive = nPrimitive;
+				m_treeletInfo.push_back(treelet);
 
+				lastMaskPos = currentMaskPos;
+				start = i;
+			}
 		}
+
+		// 多线程构建所有treelet
+		for (int i = 0; i < m_treeletInfo.size(); i++)
+		{
+			m_treeletInfo[i].node = BuildTreelet(m_treeletInfo[i].startIndex, m_treeletInfo[i].nPrimitive, 29 - 12);
+		}
+
+		// 所有treelet构建完毕后构建上层总树。
+		BuildUpperTree();
 	}
 }
 
@@ -267,4 +284,53 @@ void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, Sur
 			RecursiveIntersect(node->child[1], worldRay, si, out_tResult, out_hitIndex);
 		}
 	}
+}
+
+HBVHTreeNode* HBVHTree::BuildTreelet(int stIndex, int edIndex, int bitIndex)
+{
+	// 如果已经没有递归位分割，直接创建一个包括stIndex到edIndex所有primitive的子节点，并停止分割
+	// 一般分到这么细（十亿分之一）基本上不会剩下什么重复的东西了，对性能的影响不大。
+	if (bitIndex == -1)
+	{
+		HBVHTreeNode* result = new HBVHTreeNode();
+		for (int i = stIndex; i < edIndex; i++)
+		{
+			result->aabb.Merge(m_scene->shapes[m_mortonPrimitiveInfo[i].index]->GetAABBWorld());
+		}
+		result->index = stIndex;
+		result->offset = edIndex - stIndex;
+		result->child[0] = result->child[1] = nullptr;
+	}
+
+	// 否则，计算中间位
+	int startMorton = m_mortonPrimitiveInfo[stIndex].mortonCode & bitIndex;
+	int splitIndex = stIndex;
+	for (int i = stIndex; i < edIndex; i++)
+	{
+		if (m_mortonPrimitiveInfo[i].mortonCode & bitIndex != startMorton)
+		{
+			splitIndex = i;
+		}
+	}
+
+	// 如果中间位没能分割出东西来，就交由下一级分割
+	if (splitIndex != stIndex && splitIndex != edIndex)
+	{
+		return BuildTreelet(stIndex, edIndex, bitIndex - 1);
+	}
+
+	// 能分割出东西，就创建出当前节点，并递归创建两个子树
+	HBVHTreeNode* result = new HBVHTreeNode();
+	for (int i = stIndex; i < edIndex; i++)
+	{
+		result->aabb.Merge(m_scene->shapes[m_mortonPrimitiveInfo[i].index]->GetAABBWorld());
+	}
+	result->index = stIndex;
+	result->offset = edIndex - stIndex;
+	result->child[0] = BuildTreelet(stIndex, splitIndex, bitIndex - 1);
+	result->child[1] = BuildTreelet(splitIndex, edIndex, bitIndex - 1);
+}
+
+void HBVHTree::BuildUpperTree()
+{
 }
