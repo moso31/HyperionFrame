@@ -60,29 +60,29 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//shape->SetMaterial(mtrl[5]);
 	//shape->SetScale(20.0f, 1.0f, 20.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall x-");
-	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[2]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall x-");
+	//shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	//shape->SetMaterial(mtrl[2]);
+	//shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall x+");
-	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[0]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall x+");
+	//shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	//shape->SetMaterial(mtrl[0]);
+	//shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall y-");
-	shape->SetTranslation(0.0f, 0.0f, 10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall z-");
+	//shape->SetTranslation(0.0f, 0.0f, -10.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(20.0f, 20.0f, 1.0f);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall y+");
-	shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
+	//shape = CreateBox(pCommandList);
+	//shape->SetName("wall z+");
+	//shape->SetTranslation(0.0f, 0.0f, +10.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(20.0f, 20.0f, 1.0f);
 
 	shape = CreateBox(pCommandList);
 	shape->SetName("box big");
@@ -103,9 +103,10 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape->SetScale(2.0f, 2.0f, 2.0f);
 	shape->SetMaterial(mtrl[4]);
 
-	for (int i = -9; i <= 9; i++)
+	int chessSize = 50;
+	for (int i = -chessSize; i <= chessSize; i++)
 	{
-		for (int j = -9; j <= 9; j++)
+		for (int j = -chessSize; j <= chessSize; j++)
 		{
 			shape = CreateBox(pCommandList);
 			if ((i + j) % 2)
@@ -362,5 +363,5 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSample
 void HScene::UpdateAccelerateStructure()
 {
 	m_bvhTree = new HBVHTree(this);
-	m_bvhTree->BuildTreesWithScene();
+	m_bvhTree->BuildTreesWithScene(HBVHSplitMode::HLBVH);
 }

@@ -10,7 +10,7 @@ inline int LeftShift3(int x) {
 	return x;
 }
 
-inline int EncodeMorton3(const XMFLOAT3 &v) {
+inline int EncodeMorton3(const XMINT3 &v) {
 	return (LeftShift3(v.z) << 2) | (LeftShift3(v.y) << 1) | LeftShift3(v.x);
 }
 
@@ -21,11 +21,17 @@ HBVHTree::HBVHTree(HScene* scene)
 
 void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 {
+	printf("生成BMP位图...\n");
+
 	if (!m_scene)
 	{
-		printf("WARNING: Can not create BVH trees. scene has pointed to nullptr.\n");
+		printf("ERROR: Can not create BVH trees. scene has pointed to nullptr.\n");
 		return;
 	}
+
+	auto time_st = GetTickCount();
+
+	m_mode_temp = mode;
 
 	root = new HBVHTreeNode();
 	int count = 0;	// 场景中的primitive总数
@@ -50,7 +56,10 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 			HBVHMortonPrimitiveInfo shapeInfo;
 			shapeInfo.index = count++;
 			shapeInfo.aabb = (*it)->GetAABBWorld();
-			shapeInfo.mortonCode = EncodeMorton3(m_scene->GetAABB().Offset(shapeInfo.aabb.GetCenter()));
+			XMFLOAT3 fRelativePosition = m_scene->GetAABB().Offset(shapeInfo.aabb.GetCenter());
+			int mortonScale = 1 << 10;
+			XMINT3 iRelativePositionScaled = { (int)(fRelativePosition.x * mortonScale), (int)(fRelativePosition.y * mortonScale), (int)(fRelativePosition.z * mortonScale) };
+			shapeInfo.mortonCode = EncodeMorton3(iRelativePositionScaled);
 			m_mortonPrimitiveInfo.push_back(shapeInfo);
 		}
 
@@ -77,16 +86,23 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 				start = i;
 			}
 		}
+		HBVHTreeletInfo treelet;
+		treelet.startIndex = start;
+		treelet.nPrimitive = count - start;
+		m_treeletInfo.push_back(treelet);
 
 		// 多线程构建所有treelet
 		for (int i = 0; i < m_treeletInfo.size(); i++)
 		{
-			m_treeletInfo[i].node = BuildTreelet(m_treeletInfo[i].startIndex, m_treeletInfo[i].nPrimitive, 29 - 12);
+			m_treeletInfo[i].node = BuildTreelet(m_treeletInfo[i].startIndex, m_treeletInfo[i].startIndex + m_treeletInfo[i].nPrimitive, 29 - 12);
 		}
 
 		// 所有treelet构建完毕后构建上层总树。
-		BuildUpperTree();
+		BuildUpperTree(root, 0, (int)m_treeletInfo.size());
 	}
+
+	auto time_ed = GetTickCount();
+	printf("BVH done. 用时：%.3f 秒\n", (float)(time_ed - time_st) / 1000.0f);
 }
 
 void HBVHTree::Intersect(const Ray & worldRay, SurfaceInteraction* si, int* out_hitIndex)
@@ -128,12 +144,27 @@ void HBVHTree::BuildTree(HBVHTreeNode * node, int stIndex, int edIndex, HBVHSpli
 
 	vector<HBVHPrimitiveInfo>::iterator itSplit;
 
-	int dim = node->aabb.GetMaximumExtent();
+	AABB centroidAABB;
+	for (int i = stIndex; i < edIndex; i++)
+	{
+		centroidAABB.Merge(m_primitiveInfo[i].aabb.GetCenter());
+	}
+	int dim = centroidAABB.GetMaximumExtent();
+	float startPos = XMVectorGetByIndex(XMLoadFloat3(&centroidAABB.GetVecMax()), dim);
+	float endPos = XMVectorGetByIndex(XMLoadFloat3(&centroidAABB.GetVecMin()), dim);
+	if (startPos == endPos)
+	{
+		// is leaf
+		node->child[0] = nullptr;
+		node->child[1] = nullptr;
+		return;
+	}
+
 	switch (mode)
 	{
 	case SplitPosition:
 	{
-		float midPos = XMVectorGetByIndex(XMLoadFloat3(&node->aabb.GetCenter()), dim);
+		float midPos = XMVectorGetByIndex(XMLoadFloat3(&centroidAABB.GetCenter()), dim);
 		itSplit = partition(m_primitiveInfo.begin() + stIndex, m_primitiveInfo.begin() + edIndex, [dim, midPos](HBVHPrimitiveInfo& info)
 		{
 			auto boundPos = XMVectorGetByIndex(XMLoadFloat3(&info.aabb.GetCenter()), dim);
@@ -162,7 +193,7 @@ void HBVHTree::BuildTree(HBVHTreeNode * node, int stIndex, int edIndex, HBVHSpli
 		HBVHBucketInfo bucket[nBucket];
 		for (auto it = m_primitiveInfo.begin() + stIndex; it != m_primitiveInfo.begin() + edIndex; it++)
 		{
-			int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&node->aabb.Offset(it->aabb.GetCenter())), dim));
+			int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&centroidAABB.Offset(it->aabb.GetCenter())), dim));
 			bucketPos = Clamp(bucketPos, 0, nBucket - 1);
 			bucket[bucketPos].aabb.Merge(it->aabb);
 			bucket[bucketPos].nPrimitive++;
@@ -210,7 +241,7 @@ void HBVHTree::BuildTree(HBVHTreeNode * node, int stIndex, int edIndex, HBVHSpli
 		{
 			itSplit = partition(m_primitiveInfo.begin() + stIndex, m_primitiveInfo.begin() + edIndex, [=](HBVHPrimitiveInfo& info)
 			{
-				int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&node->aabb.Offset(info.aabb.GetCenter())), dim));
+				int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&centroidAABB.Offset(info.aabb.GetCenter())), dim));
 				return bucketPos <= minCostBucket;
 			});
 		}
@@ -256,22 +287,52 @@ void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, Sur
 
 		if (node->child[0] == nullptr && node->child[1] == nullptr)
 		{
-			// leaf
-			for (int i = node->index; i < node->index + node->offset; i++)
+			if (m_mode_temp == HLBVH)
 			{
-				auto str = m_scene->shapes[m_primitiveInfo[i].index]->GetName();
-
-				if (m_primitiveInfo[i].aabb.IntersectP(worldRay, &t0, &t1))
+				// leaf
+				for (int i = node->index; i < node->index + node->offset; i++)
 				{
-					float tHit;
-					SurfaceInteraction temp_si;
-					if (m_scene->shapes[m_primitiveInfo[i].index]->Intersect(worldRay, &temp_si, &tHit)) 
+					for (int j = 0; j < m_treeletInfo[i].nPrimitive; j++)
 					{
-						if (*out_tResult > tHit)
+						int idx = m_treeletInfo[i].startIndex + j;
+						//auto str = m_scene->shapes[m_mortonPrimitiveInfo[idx].index]->GetName();
+
+						if (m_mortonPrimitiveInfo[idx].aabb.IntersectP(worldRay, &t0, &t1))
 						{
-							*out_tResult = tHit;
-							*si = temp_si;
-							*out_hitIndex = m_primitiveInfo[i].index;
+							float tHit;
+							SurfaceInteraction temp_si;
+							if (m_scene->shapes[m_mortonPrimitiveInfo[idx].index]->Intersect(worldRay, &temp_si, &tHit))
+							{
+								if (*out_tResult > tHit)
+								{
+									*out_tResult = tHit;
+									*si = temp_si;
+									*out_hitIndex = m_mortonPrimitiveInfo[idx].index;
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				// leaf
+				for (int i = node->index; i < node->index + node->offset; i++)
+				{
+					//auto str = m_scene->shapes[m_primitiveInfo[i].index]->GetName();
+
+					if (m_primitiveInfo[i].aabb.IntersectP(worldRay, &t0, &t1))
+					{
+						float tHit;
+						SurfaceInteraction temp_si;
+						if (m_scene->shapes[m_primitiveInfo[i].index]->Intersect(worldRay, &temp_si, &tHit))
+						{
+							if (*out_tResult > tHit)
+							{
+								*out_tResult = tHit;
+								*si = temp_si;
+								*out_hitIndex = m_primitiveInfo[i].index;
+							}
 						}
 					}
 				}
@@ -300,6 +361,8 @@ HBVHTreeNode* HBVHTree::BuildTreelet(int stIndex, int edIndex, int bitIndex)
 		result->index = stIndex;
 		result->offset = edIndex - stIndex;
 		result->child[0] = result->child[1] = nullptr;
+
+		return result;
 	}
 
 	// 否则，计算中间位
@@ -307,14 +370,14 @@ HBVHTreeNode* HBVHTree::BuildTreelet(int stIndex, int edIndex, int bitIndex)
 	int splitIndex = stIndex;
 	for (int i = stIndex; i < edIndex; i++)
 	{
-		if (m_mortonPrimitiveInfo[i].mortonCode & bitIndex != startMorton)
+		if ((m_mortonPrimitiveInfo[i].mortonCode & bitIndex) != startMorton)
 		{
 			splitIndex = i;
 		}
 	}
 
 	// 如果中间位没能分割出东西来，就交由下一级分割
-	if (splitIndex != stIndex && splitIndex != edIndex)
+	if (splitIndex == stIndex || splitIndex == edIndex)
 	{
 		return BuildTreelet(stIndex, edIndex, bitIndex - 1);
 	}
@@ -329,8 +392,91 @@ HBVHTreeNode* HBVHTree::BuildTreelet(int stIndex, int edIndex, int bitIndex)
 	result->offset = edIndex - stIndex;
 	result->child[0] = BuildTreelet(stIndex, splitIndex, bitIndex - 1);
 	result->child[1] = BuildTreelet(splitIndex, edIndex, bitIndex - 1);
+
+	return result;
 }
 
-void HBVHTree::BuildUpperTree()
+void HBVHTree::BuildUpperTree(HBVHTreeNode* node, int stIndex, int edIndex)
 {
+	for (int i = stIndex; i < edIndex; i++)
+	{
+		node->aabb.Merge(m_treeletInfo[i].node->aabb);
+	}
+
+	node->index = stIndex;
+	node->offset = edIndex - stIndex;
+	if (edIndex - stIndex == 1)
+	{
+		node = m_treeletInfo[stIndex].node;
+		return;
+	}
+
+	AABB centroidAABB;
+	for (int i = stIndex; i < edIndex; i++)
+	{
+		centroidAABB.Merge(m_treeletInfo[i].node->aabb.GetCenter());
+	}
+
+	vector<HBVHTreeletInfo>::iterator itSplit;
+	int dim = centroidAABB.GetMaximumExtent();
+	const int nBucket = 12;
+	HBVHBucketInfo bucket[nBucket];
+	for (auto it = m_treeletInfo.begin() + stIndex; it != m_treeletInfo.begin() + edIndex; it++)
+	{
+		int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&centroidAABB.Offset(it->node->aabb.GetCenter())), dim));
+		bucketPos = Clamp(bucketPos, 0, nBucket - 1);
+		bucket[bucketPos].aabb.Merge(it->node->aabb);
+		bucket[bucketPos].nPrimitive += it->nPrimitive;
+	}
+
+	float s = node->aabb.GetSurfaceArea();
+	float cost[nBucket - 1];
+	for (int i = 0; i < nBucket - 1; i++)
+	{
+		AABB abLeft, abRight;
+		int nA = 0;
+		int nB = 0;
+		for (int j = 0; j < i + 1; j++)
+		{
+			abLeft.Merge(bucket[j].aabb);
+			nA += bucket[j].nPrimitive;
+		}
+
+		for (int j = i + 1; j < nBucket; j++)
+		{
+			abRight.Merge(bucket[j].aabb);
+			nB += bucket[j].nPrimitive;
+		}
+
+		float sA = abLeft.GetSurfaceArea();
+		float sB = abRight.GetSurfaceArea();
+		float costValue = 1.0f + (sA * nA + sB * nB) / s;
+		cost[i] = isnan(costValue) ? FLT_MAX : costValue;
+	}
+
+	// 从11个分割方案中取最优秀的。
+	float minCost = cost[0];
+	int minCostBucket = 0;
+	for (int i = 1; i < nBucket - 1; i++)
+	{
+		if (minCost > cost[i])
+		{
+			minCost = cost[i];
+			minCostBucket = i;
+		}
+	}
+
+	// 和普通SAH不同，HLBVH的上层建树最小单位是一个高位大区。
+	// 因此不存在子节点的情况（treelet已经建好了子节点），直接构建中间节点即可。
+	itSplit = partition(m_treeletInfo.begin() + stIndex, m_treeletInfo.begin() + edIndex, [=](HBVHTreeletInfo& info)
+	{
+		int bucketPos = (int)(nBucket * XMVectorGetByIndex(XMLoadFloat3(&centroidAABB.Offset(info.node->aabb.GetCenter())), dim));
+		return bucketPos <= minCostBucket;
+	});
+
+	int splitIndex = (int)(itSplit - m_treeletInfo.begin());
+	node->child[0] = new HBVHTreeNode();
+	node->child[1] = new HBVHTreeNode();
+	BuildUpperTree(node->child[0], stIndex, splitIndex);
+	BuildUpperTree(node->child[1], splitIndex, edIndex);
 }

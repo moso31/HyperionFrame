@@ -64,7 +64,7 @@ private:
 	HBVHTreeNode* BuildTreelet(int stIndex, int edIndex, int bitIndex);
 
 	// 构建上层总树。
-	void BuildUpperTree();
+	void BuildUpperTree(HBVHTreeNode* node, int stIndex, int edIndex);
 
 private:
 	const int SPLIT_COST = 4;
@@ -74,4 +74,6 @@ private:
 	vector<HBVHPrimitiveInfo> m_primitiveInfo;
 	vector<HBVHMortonPrimitiveInfo> m_mortonPrimitiveInfo;
 	vector<HBVHTreeletInfo> m_treeletInfo;
+
+	HBVHSplitMode m_mode_temp;
 };
