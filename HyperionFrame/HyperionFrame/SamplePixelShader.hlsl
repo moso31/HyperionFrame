@@ -3,6 +3,7 @@ struct PixelShaderInput
 {
 	float4 pos : SV_POSITION;
 	float3 color : COLOR0;
+	float2 uv : TEXCOORD0;
 };
 
 // (内插)颜色数据的传递函数。

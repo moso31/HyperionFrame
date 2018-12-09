@@ -193,9 +193,6 @@ bool SceneRenderer::Render()
 		ID3D12DescriptorHeap* ppHeaps[] = { m_cbvHeap.Get() };
 		m_commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-		// 将当前帧的常量缓冲区绑定到管道。
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_dxResources->GetCurrentFrameIndex() * m_test_scene->GetShapeCount(), m_cbvDescriptorSize);
-
 		m_test_scene->Render(m_commandList, m_cbvHeap, m_cbvDescriptorSize);
 
 		// 指示呈现目标现在会用于展示命令列表完成执行的时间。

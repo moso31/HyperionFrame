@@ -103,7 +103,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape->SetScale(2.0f, 2.0f, 2.0f);
 	shape->SetMaterial(mtrl[4]);
 
-	int chessSize = 50;
+	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
