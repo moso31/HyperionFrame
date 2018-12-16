@@ -130,7 +130,7 @@ void SceneRenderer::CreateSceneResources()
 			int heapIndex = n * boxCount + i;
 
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-			cbvGpuAddress += (n * boxCount + i) * c_alignedConstantBufferSize;
+			cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
 
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
 			cbvCpuHandle.Offset(heapIndex, m_cbvDescriptorSize);
