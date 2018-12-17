@@ -4,8 +4,6 @@
 class Box : public Shape
 {
 public:
-	static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255; // 常量缓冲区大小必须都是 256 字节的整数倍。
-
 	Box();
 	Box(const shared_ptr<DXResource>& dxResources);
 	~Box();

@@ -4,7 +4,7 @@
 class SceneRenderer
 {
 public:
-	static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255; // 常量缓冲区大小必须都是 256 字节的整数倍。
+	static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + sizeof(CBufferVertData) + 255) & ~255; // 常量缓冲区大小必须都是 256 字节的整数倍。
 	SceneRenderer();
 	SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HInput>& input);
 	~SceneRenderer();

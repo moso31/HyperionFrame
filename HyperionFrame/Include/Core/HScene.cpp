@@ -156,7 +156,7 @@ void HScene::InitSceneData()
 	UpdateAccelerateStructure();
 }
 
-void HScene::Update(UINT8* pMappedConstantBuffer)
+void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBufferSize)
 {
 	static float x = 0;
 	x += 0.01f;
@@ -166,7 +166,7 @@ void HScene::Update(UINT8* pMappedConstantBuffer)
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
 		//if (i == 1) shapes[i]->SetRotation(0.0f, x, 0.0f);
-		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * c_alignedConstantBufferSize);
+		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * alignedConstantBufferSize);
 
 		shapes[i]->UpdateTransformData();
 		shapes[i]->Update(destination);

@@ -158,7 +158,7 @@ void SceneRenderer::WindowSizeChanged()
 
 void SceneRenderer::Update()
 {
-	m_test_scene->Update(m_mappedConstantBuffer);
+	m_test_scene->Update(m_mappedConstantBuffer, c_alignedConstantBufferSize);
 }
 
 bool SceneRenderer::Render()

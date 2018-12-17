@@ -11,6 +11,11 @@ struct ModelViewProjectionConstantBuffer
 	XMFLOAT4X4 projection;
 };
 
+struct CBufferVertData
+{
+	XMFLOAT3 vertColor;
+};
+
 // 用于向顶点着色器发送每个顶点的数据。
 struct VertexPositionColor
 {

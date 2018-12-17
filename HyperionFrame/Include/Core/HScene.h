@@ -10,8 +10,6 @@
 class HScene : public HListener
 {
 public:
-	static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255; // 常量缓冲区大小必须都是 256 字节的整数倍。
-
 	HScene();
 	HScene(const std::shared_ptr<DXResource>& dxResource);
 	~HScene();
@@ -19,7 +17,7 @@ public:
 	void OnResize();
 	void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	void InitSceneData();
-	void Update(UINT8* pMappedConstantBuffer);
+	void Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBufferSize);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize);
 	void Release() {}
 
