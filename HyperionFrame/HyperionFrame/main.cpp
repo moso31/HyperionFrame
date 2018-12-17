@@ -1,6 +1,6 @@
 #include "App.h"
 
-const static float WINDOW_RATIO = 0.3f;
+const static float WINDOW_RATIO = 0.5f;
 
 HWND g_hWnd;
 HINSTANCE g_hInstance;
