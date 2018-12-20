@@ -231,7 +231,7 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	auto d3dDevice = m_dxResources->GetD3DDevice();
 
-	const UINT vertexBufferSize = UINT(sizeof(VertexPCT) * m_vertices.size());
+	const UINT vertexBufferSize = UINT(sizeof(VertexPNT) * m_vertices.size());
 
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
@@ -307,8 +307,8 @@ void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	// 创建顶点/索引缓冲区视图。
 	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-	m_vertexBufferView.StrideInBytes = sizeof(VertexPCT);
-	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPCT) * m_vertices.size());
+	m_vertexBufferView.StrideInBytes = sizeof(VertexPNT);
+	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPNT) * m_vertices.size());
 
 	m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.SizeInBytes = (UINT)(sizeof(USHORT) * m_indices.size());
@@ -323,40 +323,40 @@ void Box::_initParameters(float x, float y, float z)
 	m_vertices =
 	{
 		// -X
-		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 
 		// +X
-		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.3f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 
 		// -Y
-		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 
 		// +Y
-		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.3f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
 
 		// -Z
-		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
 
 		// +Z
-		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, 0.0f, 0.3f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
 	};
 
 	m_indices =

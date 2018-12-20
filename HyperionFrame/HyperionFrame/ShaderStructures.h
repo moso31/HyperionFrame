@@ -11,21 +11,28 @@ struct ModelViewProjectionConstantBuffer
 	XMFLOAT4X4 projection;
 };
 
+// 向顶点着色器传递材质的顶点数据。
 struct CBufferVertData
 {
 	XMFLOAT3 vertColor;
 };
 
+// 向着色器传递摄像机坐标，以计算法线相关内容。
+struct CBufferEyePos
+{
+	XMFLOAT3 eyePos;
+};
+
 // 用于向顶点着色器发送每个顶点的数据。
-struct VertexPositionColor
+struct VertexPC
 {
 	XMFLOAT3 pos;
 	XMFLOAT3 color;
 };
 
-struct VertexPCT
+struct VertexPNT
 {
 	XMFLOAT3 pos;
-	XMFLOAT3 color;
+	XMFLOAT3 norm;
 	XMFLOAT2 uv;
 };

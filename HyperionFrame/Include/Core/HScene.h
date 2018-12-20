@@ -58,4 +58,5 @@ private:
 	HBVHTree* m_bvhTree;
 
 	int m_makingProcessIndex;
+	CBufferEyePos m_cbEyePos;
 };

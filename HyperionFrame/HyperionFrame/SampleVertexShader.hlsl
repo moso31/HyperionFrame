@@ -15,15 +15,17 @@ cbuffer VertBufferData : register(b1)
 struct VertexShaderInput
 {
 	float3 pos : POSITION;
-	float3 color : COLOR0;
-	float2 uv : TEXCOORD0;
+	float3 norm : NORMAL;
+	float2 uv : TEXCOORD;
 };
 
 // 通过像素着色器传递的每个像素的颜色数据。
 struct PixelShaderInput
 {
 	float4 pos : SV_POSITION;
+	float4 posW : POSITION;
 	float3 color : COLOR0;
+	float3 norm : NORMAL0;
 	float2 uv : TEXCOORD0;
 };
 
@@ -35,12 +37,14 @@ PixelShaderInput main(VertexShaderInput input)
 
 	// 将顶点位置转换为投影空间。
 	pos = mul(pos, model);
+	output.posW = pos;
 	pos = mul(pos, view);
 	pos = mul(pos, projection);
 	output.pos = pos;
 
 	// 不加修改地传递颜色。
 	output.color = vertColor;
+	output.norm = input.norm;
 	output.uv = input.uv;
 
 	return output;

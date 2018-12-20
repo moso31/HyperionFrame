@@ -148,6 +148,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 void HScene::InitSceneData()
 {
+	m_mainCamera->UpdateTransformData();
 	for (int i = 0; i < shapes.size(); i++)
 	{
 		shapes[i]->UpdateTransformData();
@@ -161,7 +162,9 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 	static float x = 0;
 	x += 0.01f;
 
+	m_mainCamera->UpdateTransformData();
 	m_mainCamera->Update();
+	m_cbEyePos.eyePos = m_mainCamera->GetTranslation();
 
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
@@ -170,6 +173,8 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 
 		shapes[i]->UpdateTransformData();
 		shapes[i]->Update(destination);
+
+		memcpy(destination + 256 * 2, &m_cbEyePos, sizeof(m_cbEyePos));
 	}
 }
 
@@ -179,10 +184,12 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 	{
 		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + (UINT)i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
-		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
+		gpuHandle.Offset(cbvIndex * 3, cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
+		gpuHandle.Offset(cbvDescriptorSize);
+		pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 		shapes[i]->Render(pCommandList);
 	}
 }

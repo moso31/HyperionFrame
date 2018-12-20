@@ -7,7 +7,8 @@ public:
 	// 常量缓冲区大小必须都是 256 字节的整数倍。
 	static const UINT c_alignedConstantBufferSize = (
 		(sizeof(ModelViewProjectionConstantBuffer) + 255) + 
-		(sizeof(CBufferVertData) + 255)
+		(sizeof(CBufferVertData) + 255) +
+		(sizeof(CBufferEyePos) + 255)
 		) & ~255;
 	SceneRenderer();
 	SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HInput>& input);
