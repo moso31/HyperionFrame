@@ -1,7 +1,9 @@
 #include "HMaterial.h"
 
-HMaterial::HMaterial()
+HMaterial::HMaterial(eMaterialType mtrlType) : 
+	m_type(mtrlType)
 {
+
 }
 
 HMaterial::~HMaterial()

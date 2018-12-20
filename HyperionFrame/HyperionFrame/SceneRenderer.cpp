@@ -25,11 +25,13 @@ void SceneRenderer::CreateSceneResources()
 
 	// 创建具有单个常量缓冲区槽的根签名。
 	{
-		CD3DX12_DESCRIPTOR_RANGE range;
-		CD3DX12_ROOT_PARAMETER parameter;
+		CD3DX12_DESCRIPTOR_RANGE range[2];
+		CD3DX12_ROOT_PARAMETER parameter[2];
 
-		range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-		parameter.InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_VERTEX);
+		range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+		range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+		parameter[0].InitAsDescriptorTable(1, &range[0], D3D12_SHADER_VISIBILITY_VERTEX);
+		parameter[1].InitAsDescriptorTable(1, &range[1], D3D12_SHADER_VISIBILITY_VERTEX);
 
 		D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // 只有输入汇编程序阶段才需要访问常量缓冲区。
@@ -39,7 +41,7 @@ void SceneRenderer::CreateSceneResources()
 			D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
 
 		CD3DX12_ROOT_SIGNATURE_DESC descRootSignature;
-		descRootSignature.Init(1, &parameter, 0, nullptr, rootSignatureFlags);
+		descRootSignature.Init(_countof(parameter), parameter, 0, nullptr, rootSignatureFlags);
 
 		ComPtr<ID3DBlob> pSignature;
 		ComPtr<ID3DBlob> pError;
@@ -93,7 +95,7 @@ void SceneRenderer::CreateSceneResources()
 	// 为常量缓冲区创建描述符堆。
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = DXResource::c_frameCount * boxCount;
+		heapDesc.NumDescriptors = DXResource::c_frameCount * boxCount * 2;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -103,7 +105,7 @@ void SceneRenderer::CreateSceneResources()
 	}
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * c_alignedConstantBufferSize * boxCount);
+	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * boxCount * c_alignedConstantBufferSize);
 	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
@@ -117,7 +119,7 @@ void SceneRenderer::CreateSceneResources()
 	// 映射常量缓冲区。
 	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
 	DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * c_alignedConstantBufferSize * boxCount);
+	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * boxCount * c_alignedConstantBufferSize);
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 
 	// 创建常量缓冲区视图以访问上载缓冲区。
@@ -133,11 +135,15 @@ void SceneRenderer::CreateSceneResources()
 			cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
 
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-			cbvCpuHandle.Offset(heapIndex, m_cbvDescriptorSize);
+			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+			desc.SizeInBytes = c_alignedConstantBufferSize / 2;
 			desc.BufferLocation = cbvGpuAddress;
-			desc.SizeInBytes = c_alignedConstantBufferSize;
+			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
+			desc.BufferLocation += 256;
 			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 		}
 	}

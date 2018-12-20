@@ -49,7 +49,7 @@ public:
 	TriangleUV GetUVs(UINT faceIndex);
 
 	HMaterial* GetMaterial() { return m_material; }
-	void SetMaterial(HMaterial* mat) { m_material = mat; }
+	void SetMaterial(HMaterial* mat);
 
 	virtual bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit) = 0;
 	virtual bool IntersectP(Ray worldRay, float* out_t0, float* out_t1) = 0;
@@ -79,4 +79,5 @@ protected:
 	vector<USHORT>					m_indices;
 
 	HMaterial* m_material;
+	CBufferVertData m_cbDataMaterial;
 };

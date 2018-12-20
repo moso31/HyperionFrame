@@ -40,7 +40,7 @@ PixelShaderInput main(VertexShaderInput input)
 	output.pos = pos;
 
 	// 不加修改地传递颜色。
-	output.color = input.color;
+	output.color = vertColor;
 	output.uv = input.uv;
 
 	return output;

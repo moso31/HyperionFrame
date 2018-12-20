@@ -60,29 +60,29 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//shape->SetMaterial(mtrl[5]);
 	//shape->SetScale(20.0f, 1.0f, 20.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall x-");
-	//shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	//shape->SetMaterial(mtrl[2]);
-	//shape->SetScale(1.0f, 20.0f, 20.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall x-");
+	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[2]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall x+");
-	//shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	//shape->SetMaterial(mtrl[0]);
-	//shape->SetScale(1.0f, 20.0f, 20.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall x+");
+	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[0]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall z-");
-	//shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(20.0f, 20.0f, 1.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall z-");
+	shape->SetTranslation(0.0f, 0.0f, -10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("wall z+");
-	//shape->SetTranslation(0.0f, 0.0f, +10.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(20.0f, 20.0f, 1.0f);
+	shape = CreateBox(pCommandList);
+	shape->SetName("wall z+");
+	shape->SetTranslation(0.0f, 0.0f, +10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
 
 	shape = CreateBox(pCommandList);
 	shape->SetName("box big");
@@ -179,9 +179,10 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 	{
 		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + (UINT)i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
-		gpuHandle.Offset(cbvIndex, cbvDescriptorSize);
-
+		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+		gpuHandle.Offset(cbvDescriptorSize);
+		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
 		shapes[i]->Render(pCommandList);
 	}
 }

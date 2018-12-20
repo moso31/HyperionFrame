@@ -1,4 +1,7 @@
 #include "Shape.h"
+#include "HMatteMaterial.h"
+#include "HGlassMaterial.h"
+#include "HMirrorMaterial.h"
 
 Shape::Shape()
 {
@@ -52,4 +55,10 @@ TriangleUV Shape::GetUVs(UINT faceIndex)
 	triUV.p[1] = m_vertices[m_indices[index + 1]].uv;
 	triUV.p[2] = m_vertices[m_indices[index + 2]].uv;
 	return triUV;
+}
+
+void Shape::SetMaterial(HMaterial * mat)
+{
+	m_material = mat;
+	m_cbDataMaterial.vertColor = mat->GetDiffuse();
 }

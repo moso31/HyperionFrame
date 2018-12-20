@@ -4,7 +4,8 @@ HMirrorMaterial::HMirrorMaterial()
 {
 }
 
-HMirrorMaterial::HMirrorMaterial(const XMCOLOR3 & _Kr)
+HMirrorMaterial::HMirrorMaterial(const XMCOLOR3 & _Kr) : 
+	HMaterial(HMAT_MIRROR)
 {
 	Kr = _Kr;
 }

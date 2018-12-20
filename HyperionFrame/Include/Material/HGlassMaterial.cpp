@@ -4,7 +4,8 @@ HGlassMaterial::HGlassMaterial()
 {
 }
 
-HGlassMaterial::HGlassMaterial(const XMCOLOR3 & _Kr, const XMCOLOR3 & _Kt, float _eta)
+HGlassMaterial::HGlassMaterial(const XMCOLOR3 & _Kr, const XMCOLOR3 & _Kt, float _eta) :
+	HMaterial(HMAT_GLASS)
 {
 	Kr = _Kr;
 	Kt = _Kt;
