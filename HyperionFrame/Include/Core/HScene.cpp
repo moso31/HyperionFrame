@@ -53,62 +53,64 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	};
 
 	Shape* shape;
+	m_sceneManager = make_shared<HSceneManager>(m_dxResources, pCommandList);
 
-	//shape = CreateBox(pCommandList);
-	//shape->SetName("floor");
-	//shape->SetTranslation(0.0f, -0.5f, 0.0f);
+	//shape = m_sceneManager->CreateBox();
+	//shape->SetName("wall x-");
+	//shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	//shape->SetMaterial(mtrl[2]);
+	//shape->SetScale(1.0f, 20.0f, 20.0f);
+	//shapes.push_back(shape);
+
+	//shape = m_sceneManager->CreateBox();
+	//shape->SetName("wall x+");
+	//shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	//shape->SetMaterial(mtrl[0]);
+	//shape->SetScale(1.0f, 20.0f, 20.0f);
+	//shapes.push_back(shape);
+
+	//shape = m_sceneManager->CreateBox();
+	//shape->SetName("wall z-");
+	//shape->SetTranslation(0.0f, 0.0f, -10.0f);
 	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(20.0f, 1.0f, 20.0f);
+	//shape->SetScale(20.0f, 20.0f, 1.0f);
+	//shapes.push_back(shape);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall x-");
-	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[2]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
+	//shape = m_sceneManager->CreateBox();
+	//shape->SetName("wall z+");
+	//shape->SetTranslation(0.0f, 0.0f, +10.0f);
+	//shape->SetMaterial(mtrl[5]);
+	//shape->SetScale(20.0f, 20.0f, 1.0f);
+	//shapes.push_back(shape);
 
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall x+");
-	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[0]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
-
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall z-");
-	shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
-
-	shape = CreateBox(pCommandList);
-	shape->SetName("wall z+");
-	shape->SetTranslation(0.0f, 0.0f, +10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
-
-	shape = CreateBox(pCommandList);
+	shape = m_sceneManager->CreateBox();
 	shape->SetName("box big");
 	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	shape->SetScale(5.0f, 5.0f, 5.0f);
 	shape->SetRotation(0.0f, -0.3f, 0.0f);
 	shape->SetMaterial(mtrl[4]);
+	shapes.push_back(shape);
 
-	shape = CreateSphere(pCommandList, 1.0f, 64, 64);
+	shape = m_sceneManager->CreateSphere(1.0f, 64, 64);
 	shape->SetName("sphere");
 	shape->SetTranslation(1.5f, 2.0f, 0.0f);
 	shape->SetScale(2.0f, 2.0f, 2.0f);
 	shape->SetMaterial(mtrl[4]);
+	shapes.push_back(shape);
 
-	shape = CreateBox(pCommandList);
+	shape = m_sceneManager->CreateBox();
 	shape->SetName("box small");
 	shape->SetTranslation(5.0f, 1.0f, -2.0f);
 	shape->SetScale(2.0f, 2.0f, 2.0f);
 	shape->SetMaterial(mtrl[4]);
+	shapes.push_back(shape);
 
-	int chessSize = 9;
+	int chessSize = 300;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
 		{
-			shape = CreateBox(pCommandList);
+			shape = m_sceneManager->CreateBox();
 			if ((i + j) % 2)
 			{
 				shape->SetTranslation(-i, -0.7f, j);
@@ -119,6 +121,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 				shape->SetTranslation(-i, -0.5f, j);
 				shape->SetMaterial(mtrl[3]);
 			}
+			shapes.push_back(shape);
 		}
 	}
 
@@ -168,7 +171,6 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
-		//if (i == 1) shapes[i]->SetRotation(0.0f, x, 0.0f);
 		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * alignedConstantBufferSize);
 
 		shapes[i]->UpdateTransformData();
@@ -259,24 +261,6 @@ Camera * HScene::CreateCamera()
 	cameras.push_back(camera);
 	camera->Init(70.0f, 0.01f, 1000.0f);
 	return camera;
-}
-
-Box * HScene::CreateBox(ComPtr<ID3D12GraphicsCommandList> pCommandList)
-{
-	auto box = new Box(m_dxResources);
-	transformNodes.push_back(box);
-	shapes.push_back(box);
-	box->Init(pCommandList);
-	return box;
-}
-
-Sphere * HScene::CreateSphere(ComPtr<ID3D12GraphicsCommandList> pCommandList, float radius, int segmentVertical, int segmentHorizontal)
-{
-	auto sphere = new Sphere(m_dxResources);
-	transformNodes.push_back(sphere);
-	shapes.push_back(sphere);
-	sphere->Init(pCommandList, radius, segmentVertical, segmentHorizontal);
-	return sphere;
 }
 
 HPointLight * HScene::CreatePointLight()

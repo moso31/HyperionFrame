@@ -9,16 +9,75 @@ Sphere::Sphere()
 Sphere::Sphere(const shared_ptr<DXResource>& dxResources) :
 	Shape(dxResources)
 {
+	m_type = eShapeType::HSHAPE_SPHERE;
 }
 
 Sphere::~Sphere()
 {
 }
 
-void Sphere::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList, float radius, int segmentVertical, int segmentHorizontal)
+void Sphere::InitParameters(float radius, int segmentHorizontal, int segmentVertical)
 {
-	_initParameters(radius, segmentVertical, segmentHorizontal);
-	_initBufferData(pCommandList);
+	int currVertIdx = 0;
+	for (int i = 0; i < segmentVertical; i++)
+	{
+		float yDown = ((float)i / (float)segmentVertical * 2.0f - 1.0f) * radius;
+		float yUp = ((float)(i + 1) / (float)segmentVertical * 2.0f - 1.0f) * radius;
+		float radiusDown = sqrtf(radius * radius - yDown * yDown);
+		float radiusUp = sqrtf(radius * radius - yUp * yUp);
+
+		for (int j = 0; j < segmentHorizontal; j++)
+		{
+			float segNow = (float)j / (float)segmentHorizontal;
+			float segNext = (float)(j + 1) / (float)segmentHorizontal;
+			float angleNow = segNow * XM_2PI;
+			float angleNext = segNext * XM_2PI;
+			float xNow = sin(angleNow);
+			float zNow = cos(angleNow);
+			float xNext = sin(angleNext);
+			float zNext = cos(angleNext);
+
+			XMFLOAT3 pNowUp = { xNow * radiusUp, yUp, zNow * radiusUp };
+			XMFLOAT3 pNextUp = { xNext * radiusUp, yUp, zNext * radiusUp };
+			XMFLOAT3 pNowDown = { xNow * radiusDown, yDown, zNow * radiusDown };
+			XMFLOAT3 pNextDown = { xNext * radiusDown, yDown, zNext * radiusDown };
+
+			XMFLOAT2 uvNowUp = { segNow, yUp };
+			XMFLOAT2 uvNextUp = { segNext, yUp };
+			XMFLOAT2 uvNowDown = { segNow, yDown };
+			XMFLOAT2 uvNextDown = { segNext, yDown };
+
+			float invRadius = 1.0f / radius;
+			XMFLOAT3 nNowUp, nNowDown, nNextUp, nNextDown;
+			XMStoreFloat3(&nNowUp, XMLoadFloat3(&pNowUp) * invRadius);
+			XMStoreFloat3(&nNextUp, XMLoadFloat3(&pNextUp) * invRadius);
+			XMStoreFloat3(&nNowDown, XMLoadFloat3(&pNowDown) * invRadius);
+			XMStoreFloat3(&nNextDown, XMLoadFloat3(&pNextDown) * invRadius);
+
+			m_vertices.push_back({ pNowUp,		nNowUp,		uvNowUp });
+			m_vertices.push_back({ pNextUp,		nNextUp,	uvNextUp });
+			m_vertices.push_back({ pNextDown,	nNextDown,	uvNextDown });
+			m_vertices.push_back({ pNowDown,	nNowDown,	uvNowDown });
+
+			m_indices.push_back(currVertIdx);
+			m_indices.push_back(currVertIdx + 1);
+			m_indices.push_back(currVertIdx + 2);
+			m_indices.push_back(currVertIdx);
+			m_indices.push_back(currVertIdx + 2);
+			m_indices.push_back(currVertIdx + 3);
+
+			currVertIdx += 4;
+		}
+	}
+
+	for (int i = 0; i < m_vertices.size(); i++)
+	{
+		m_aabb.Merge(m_vertices[i].pos);
+	}
+
+	m_radius = radius;
+	m_segmentVertical = segmentVertical;
+	m_segmentHorizontal = segmentHorizontal;
 }
 
 void Sphere::Update(UINT8* destination)
@@ -117,156 +176,4 @@ bool Sphere::IntersectP(Ray worldRay, float* out_t0, float* out_t1)
 	if (!Quadratic(a, b, c, *out_t0, *out_t1)) return false;
 
 	return *out_t1 > H_EPSILON;
-}
-
-void Sphere::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
-{
-	auto d3dDevice = m_dxResources->GetD3DDevice();
-
-	const UINT vertexBufferSize = UINT(sizeof(VertexPNT) * m_vertices.size());
-
-	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
-	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&defaultHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexBufferDesc,
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&m_vertexBuffer)));
-
-	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_vertexBufferUpload)));
-
-	DX::NAME_D3D12_OBJECT(m_vertexBuffer);
-	DX::NAME_D3D12_OBJECT(m_vertexBufferUpload);
-
-	// 将顶点缓冲区上载到 GPU。
-	{
-		D3D12_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pData = reinterpret_cast<BYTE*>(m_vertices.data());
-		vertexData.RowPitch = vertexBufferSize;
-		vertexData.SlicePitch = vertexData.RowPitch;
-
-		UpdateSubresources(pCommandList.Get(), m_vertexBuffer.Get(), m_vertexBufferUpload.Get(), 0, 0, 1, &vertexData);
-
-		CD3DX12_RESOURCE_BARRIER vertexBufferResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(m_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-		pCommandList->ResourceBarrier(1, &vertexBufferResourceBarrier);
-	}
-
-	const UINT indexBufferSize = UINT(sizeof(unsigned short) * m_indices.size());
-
-	CD3DX12_RESOURCE_DESC indexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&defaultHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&indexBufferDesc,
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&m_indexBuffer)));
-
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&indexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_indexBufferUpload)));
-
-	DX::NAME_D3D12_OBJECT(m_indexBuffer);
-	DX::NAME_D3D12_OBJECT(m_indexBufferUpload);
-
-	// 将索引缓冲区上载到 GPU。
-	{
-		D3D12_SUBRESOURCE_DATA indexData = {};
-		indexData.pData = reinterpret_cast<BYTE*>(m_indices.data());
-		indexData.RowPitch = indexBufferSize;
-		indexData.SlicePitch = indexData.RowPitch;
-
-		UpdateSubresources(pCommandList.Get(), m_indexBuffer.Get(), m_indexBufferUpload.Get(), 0, 0, 1, &indexData);
-
-		CD3DX12_RESOURCE_BARRIER indexBufferResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(m_indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
-		pCommandList->ResourceBarrier(1, &indexBufferResourceBarrier);
-	}
-
-	// 创建顶点/索引缓冲区视图。
-	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-	m_vertexBufferView.StrideInBytes = sizeof(VertexPNT);
-	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPNT) * m_vertices.size());
-
-	m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
-	m_indexBufferView.SizeInBytes = (UINT)(sizeof(USHORT) * m_indices.size());
-	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-}
-
-void Sphere::_initParameters(float radius, int segmentVertical, int segmentHorizontal)
-{
-	int currVertIdx = 0;
-	for (int i = 0; i < segmentVertical; i++)
-	{
-		float yDown = ((float)i / (float)segmentVertical * 2.0f - 1.0f) * radius;
-		float yUp = ((float)(i + 1) / (float)segmentVertical * 2.0f - 1.0f) * radius;
-		float radiusDown = sqrtf(radius * radius - yDown * yDown);
-		float radiusUp = sqrtf(radius * radius - yUp * yUp);
-
-		for (int j = 0; j < segmentHorizontal; j++)
-		{
-			float segNow = (float)j / (float)segmentHorizontal;
-			float segNext = (float)(j + 1) / (float)segmentHorizontal;
-			float angleNow = segNow * XM_2PI;
-			float angleNext = segNext * XM_2PI;
-			float xNow = sin(angleNow);
-			float zNow = cos(angleNow);
-			float xNext = sin(angleNext);
-			float zNext = cos(angleNext);
-
-			XMFLOAT3 pNowUp = { xNow * radiusUp, yUp, zNow * radiusUp };
-			XMFLOAT3 pNextUp = { xNext * radiusUp, yUp, zNext * radiusUp };
-			XMFLOAT3 pNowDown = { xNow * radiusDown, yDown, zNow * radiusDown };
-			XMFLOAT3 pNextDown = { xNext * radiusDown, yDown, zNext * radiusDown };
-
-			XMFLOAT2 uvNowUp = { segNow, yUp };
-			XMFLOAT2 uvNextUp = { segNext, yUp };
-			XMFLOAT2 uvNowDown = { segNow, yDown };
-			XMFLOAT2 uvNextDown = { segNext, yDown };
-
-			float invRadius = 1.0f / radius;
-			XMFLOAT3 nNowUp, nNowDown, nNextUp, nNextDown;
-			XMStoreFloat3(&nNowUp, XMLoadFloat3(&pNowUp) * invRadius);
-			XMStoreFloat3(&nNextUp, XMLoadFloat3(&pNextUp) * invRadius);
-			XMStoreFloat3(&nNowDown, XMLoadFloat3(&pNowDown) * invRadius);
-			XMStoreFloat3(&nNextDown, XMLoadFloat3(&pNextDown) * invRadius);
-
-			m_vertices.push_back({ pNowUp,		nNowUp,		uvNowUp });
-			m_vertices.push_back({ pNextUp,		nNextUp,	uvNextUp });
-			m_vertices.push_back({ pNextDown,	nNextDown,	uvNextDown });
-			m_vertices.push_back({ pNowDown,	nNowDown,	uvNowDown });
-
-			m_indices.push_back(currVertIdx);
-			m_indices.push_back(currVertIdx + 1);
-			m_indices.push_back(currVertIdx + 2);
-			m_indices.push_back(currVertIdx);
-			m_indices.push_back(currVertIdx + 2);
-			m_indices.push_back(currVertIdx + 3);
-
-			currVertIdx += 4;
-		}
-	}
-
-	for (int i = 0; i < m_vertices.size(); i++)
-	{
-		m_aabb.Merge(m_vertices[i].pos);
-	}
-
-	m_radius = radius;
-	m_segmentVertical = segmentVertical;
-	m_segmentHorizontal = segmentHorizontal;
 }

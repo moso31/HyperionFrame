@@ -9,16 +9,77 @@ Box::Box()
 Box::Box(const shared_ptr<DXResource>& dxResources) :
 	Shape(dxResources)
 {
+	m_type = eShapeType::HSHAPE_BOX;
 }
 
 Box::~Box()
 {
 }
 
-void Box::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList, float length, float width, float height)
+void Box::InitParameters()
 {
-	_initParameters(length, width, height);
-	_initBufferData(pCommandList);
+	float x = 0.5f, y = 0.5f, z = 0.5f;
+	m_vertices =
+	{
+		// -X
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// +X
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// -Y
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// +Y
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// -Z
+		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
+
+		// +Z
+		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
+	};
+
+	m_indices =
+	{
+		0,  2,  1,
+		0,  3,  2,
+		        
+		4,  6,  5,
+		4,  7,  6,
+		    
+		8,  10, 9,
+		8,  11, 10,
+
+		12, 14, 13,
+		12, 15, 14,
+
+		16, 18, 17,
+		16, 19, 18,
+
+		20, 22, 21,
+		20, 23, 22
+	};
+
+	m_aabb = AABB(XMFLOAT3(-x, -y, -z), XMFLOAT3(x, y, z));
 }
 
 void Box::Update(UINT8* destination)
@@ -225,160 +286,4 @@ bool Box::IntersectP(Ray worldRay, float* out_t0, float* out_t1)
 	*out_t0 = tNear;
 	*out_t1 = tFar;
 	return tNear > 0 && tNear < tFar;
-}
-
-void Box::_initBufferData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
-{
-	auto d3dDevice = m_dxResources->GetD3DDevice();
-
-	const UINT vertexBufferSize = UINT(sizeof(VertexPNT) * m_vertices.size());
-
-	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
-	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&defaultHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexBufferDesc,
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&m_vertexBuffer)));
-
-	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_vertexBufferUpload)));
-
-	DX::NAME_D3D12_OBJECT(m_vertexBuffer);
-	DX::NAME_D3D12_OBJECT(m_vertexBufferUpload);
-
-	// 将顶点缓冲区上载到 GPU。
-	{
-		D3D12_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pData = reinterpret_cast<BYTE*>(m_vertices.data());
-		vertexData.RowPitch = vertexBufferSize;
-		vertexData.SlicePitch = vertexData.RowPitch;
-
-		UpdateSubresources(pCommandList.Get(), m_vertexBuffer.Get(), m_vertexBufferUpload.Get(), 0, 0, 1, &vertexData);
-
-		CD3DX12_RESOURCE_BARRIER vertexBufferResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(m_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-		pCommandList->ResourceBarrier(1, &vertexBufferResourceBarrier);
-	}
-
-	const UINT indexBufferSize = UINT(sizeof(unsigned short) * m_indices.size());
-
-	CD3DX12_RESOURCE_DESC indexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&defaultHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&indexBufferDesc,
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(&m_indexBuffer)));
-
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&indexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_indexBufferUpload)));
-
-	DX::NAME_D3D12_OBJECT(m_indexBuffer);
-	DX::NAME_D3D12_OBJECT(m_indexBufferUpload);
-
-	// 将索引缓冲区上载到 GPU。
-	{
-		D3D12_SUBRESOURCE_DATA indexData = {};
-		indexData.pData = reinterpret_cast<BYTE*>(m_indices.data());
-		indexData.RowPitch = indexBufferSize;
-		indexData.SlicePitch = indexData.RowPitch;
-
-		UpdateSubresources(pCommandList.Get(), m_indexBuffer.Get(), m_indexBufferUpload.Get(), 0, 0, 1, &indexData);
-
-		CD3DX12_RESOURCE_BARRIER indexBufferResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(m_indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
-		pCommandList->ResourceBarrier(1, &indexBufferResourceBarrier);
-	}
-
-	// 创建顶点/索引缓冲区视图。
-	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-	m_vertexBufferView.StrideInBytes = sizeof(VertexPNT);
-	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPNT) * m_vertices.size());
-
-	m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
-	m_indexBufferView.SizeInBytes = (UINT)(sizeof(USHORT) * m_indices.size());
-	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-}
-
-void Box::_initParameters(float x, float y, float z)
-{
-	x *= 0.5f;
-	y *= 0.5f;
-	z *= 0.5f;
-	m_vertices =
-	{
-		// -X
-		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		// +X
-		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		// -Y
-		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		// +Y
-		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		// -Z
-		{ XMFLOAT3(-x, +y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(+x, +y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(+x, -y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(-x, -y, -z), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
-
-		// +Z
-		{ XMFLOAT3(+x, +y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(-x, +y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-x, -y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(+x, -y, +z), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-	};
-
-	m_indices =
-	{
-		0, 2, 1,
-		0, 3, 2,
-
-		4, 6, 5,
-		4, 7, 6,
-
-		8, 10, 9,
-		8, 11, 10,
-
-		12, 14, 13,
-		12, 15, 14,
-
-		16, 18, 17,
-		16, 19, 18,
-
-		20, 22, 21,
-		20, 23, 22
-	};
-
-	m_aabb = AABB(XMFLOAT3(-x, -y, -z), XMFLOAT3(x, y, z));
 }

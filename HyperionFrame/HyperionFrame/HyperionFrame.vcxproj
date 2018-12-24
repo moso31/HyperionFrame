@@ -149,6 +149,7 @@
     <ClCompile Include="..\Include\Core\HObject.cpp" />
     <ClCompile Include="..\Include\Core\HSampler.cpp" />
     <ClCompile Include="..\Include\Core\HScene.cpp" />
+    <ClCompile Include="..\Include\Core\HSceneManager.cpp" />
     <ClCompile Include="..\Include\Core\Integrator.cpp" />
     <ClCompile Include="..\Include\Core\Interaction.cpp" />
     <ClCompile Include="..\Include\Core\Reflection.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="..\Include\Core\HObject.h" />
     <ClInclude Include="..\Include\Core\HSampler.h" />
     <ClInclude Include="..\Include\Core\HScene.h" />
+    <ClInclude Include="..\Include\Core\HSceneManager.h" />
     <ClInclude Include="..\Include\Core\Integrator.h" />
     <ClInclude Include="..\Include\Core\Interaction.h" />
     <ClInclude Include="..\Include\Core\Reflection.h" />
@@ -223,8 +225,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="SampleVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -233,8 +235,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
