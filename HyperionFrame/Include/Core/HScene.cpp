@@ -105,7 +105,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shape->SetMaterial(mtrl[4]);
 	shapes.push_back(shape);
 
-	int chessSize = 300;
+	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
@@ -169,29 +169,33 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 	m_mainCamera->Update();
 	m_cbEyePos.eyePos = m_mainCamera->GetTranslation();
 
+	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * GetShapeCount() * alignedConstantBufferSize);
+	memcpy(destination, &m_cbEyePos, sizeof(m_cbEyePos));
+
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
 		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * alignedConstantBufferSize);
 
 		shapes[i]->UpdateTransformData();
 		shapes[i]->Update(destination);
-
-		memcpy(destination + 256 * 2, &m_cbEyePos, sizeof(m_cbEyePos));
 	}
 }
 
 void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize)
 {
+	UINT cbvIndex = DXResource::c_frameCount * GetShapeCount();
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
+	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
+
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
 		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + (UINT)i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
-		gpuHandle.Offset(cbvIndex * 3, cbvDescriptorSize);
+		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
-		gpuHandle.Offset(cbvDescriptorSize);
-		pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 		shapes[i]->Render(pCommandList);
 	}
 }

@@ -107,7 +107,7 @@
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,7 +141,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -172,7 +172,6 @@
     <ClCompile Include="..\Math\RandomNumberGenerator.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="DXResource.cpp" />
-    <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="ImageGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PipelineManager.cpp" />
@@ -208,7 +207,6 @@
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DirectXHelper.h" />
     <ClInclude Include="DXResource.h" />
-    <ClInclude Include="FileReader.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="ImageGenerator.h" />
     <ClInclude Include="PipelineManager.h" />

@@ -52,8 +52,9 @@ void SceneRenderer::CreateSceneResources()
 	}
 
 	// 1. 加载着色器。
-	m_vertexShader = FileReader::ReadData(L"SampleVertexShader.cso");
-	m_pixelShader = FileReader::ReadData(L"SamplePixelShader.cso");
+	ComPtr<ID3DBlob> pVertexShader, pPixelShader;
+	DX::ThrowIfFailed(D3DReadFileToBlob(L"SampleVertexShader.cso", &pVertexShader));
+	DX::ThrowIfFailed(D3DReadFileToBlob(L"SamplePixelShader.cso", &pPixelShader));
 
 	// 2. 加载着色器之后创建管道状态。
 	static const D3D12_INPUT_ELEMENT_DESC inputLayout[] =
@@ -66,8 +67,8 @@ void SceneRenderer::CreateSceneResources()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC state = {};
 	state.InputLayout = { inputLayout, _countof(inputLayout) };
 	state.pRootSignature = m_rootSignature.Get();
-	state.VS = CD3DX12_SHADER_BYTECODE(&m_vertexShader[0], m_vertexShader.size());
-	state.PS = CD3DX12_SHADER_BYTECODE(&m_pixelShader[0], m_pixelShader.size());
+	state.VS = CD3DX12_SHADER_BYTECODE(pVertexShader.Get());
+	state.PS = CD3DX12_SHADER_BYTECODE(pPixelShader.Get());
 	state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	state.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	state.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -97,7 +98,7 @@ void SceneRenderer::CreateSceneResources()
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		printf("%d\n", shapeCount);
-		heapDesc.NumDescriptors = DXResource::c_frameCount * shapeCount * 3;
+		heapDesc.NumDescriptors = DXResource::c_frameCount * shapeCount * 2 + 1;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -107,7 +108,7 @@ void SceneRenderer::CreateSceneResources()
 	}
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * shapeCount * c_alignedConstantBufferSize);
+	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * shapeCount * c_alignedConstantBufferSize + 256);
 	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
@@ -121,7 +122,7 @@ void SceneRenderer::CreateSceneResources()
 	// 映射常量缓冲区。
 	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
 	DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * shapeCount * c_alignedConstantBufferSize);
+	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * shapeCount * c_alignedConstantBufferSize + 256);
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 
 	// 创建常量缓冲区视图以访问上载缓冲区。
@@ -137,7 +138,7 @@ void SceneRenderer::CreateSceneResources()
 			cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
 
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-			cbvCpuHandle.Offset(heapIndex * 3, m_cbvDescriptorSize);
+			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 			desc.SizeInBytes = 256;
@@ -147,12 +148,20 @@ void SceneRenderer::CreateSceneResources()
 			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 			desc.BufferLocation += 256;
 			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
-			desc.BufferLocation += 256;
-			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 		}
 	}
+
+	int heapIndex = DXResource::c_frameCount * shapeCount;
+	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
+	cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+	cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+	desc.SizeInBytes = 256;
+	desc.BufferLocation = cbvGpuAddress;
+	d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 
 	// 关闭命令列表并执行它，以开始将顶点/索引缓冲区复制到 GPU 的默认堆中。
 	DX::ThrowIfFailed(m_commandList->Close());

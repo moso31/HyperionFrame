@@ -7,9 +7,6 @@
     <ClCompile Include="DXResource.cpp">
       <Filter>App\DX</Filter>
     </ClCompile>
-    <ClCompile Include="FileReader.cpp">
-      <Filter>App\File</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>App</Filter>
     </ClCompile>
@@ -113,9 +110,6 @@
     </ClInclude>
     <ClInclude Include="DXResource.h">
       <Filter>App\DX</Filter>
-    </ClInclude>
-    <ClInclude Include="FileReader.h">
-      <Filter>App\File</Filter>
     </ClInclude>
     <ClInclude Include="App.h">
       <Filter>App</Filter>
