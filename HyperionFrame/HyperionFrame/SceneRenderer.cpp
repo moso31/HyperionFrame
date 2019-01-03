@@ -1,5 +1,4 @@
 #include "SceneRenderer.h"
-#include "FileReader.h"
 #include "Camera.h"
 
 SceneRenderer::SceneRenderer()

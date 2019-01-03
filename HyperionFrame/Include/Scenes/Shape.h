@@ -45,7 +45,8 @@ enum eShapeType
 {
 	HSHAPE_NONE,
 	HSHAPE_BOX,
-	HSHAPE_SPHERE
+	HSHAPE_SPHERE,
+	HSHAPE_MESH,
 };
 
 class Shape : public Transform

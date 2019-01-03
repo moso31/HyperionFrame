@@ -16,9 +16,6 @@
     <ClCompile Include="PipelineManager.cpp">
       <Filter>App\Content</Filter>
     </ClCompile>
-    <ClCompile Include="..\Math\HMath.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="..\Include\Scenes\Box.cpp">
       <Filter>Include\Scenes</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
     <ClCompile Include="..\Include\Samplers\HDefaultSampler.cpp">
       <Filter>Include\Samplers</Filter>
     </ClCompile>
-    <ClCompile Include="..\Math\RandomNumberGenerator.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="..\Include\Material\HMirrorMaterial.cpp">
       <Filter>Include\Material</Filter>
     </ClCompile>
@@ -93,6 +87,15 @@
     </ClCompile>
     <ClCompile Include="..\Include\Core\HSceneManager.cpp">
       <Filter>Include\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Scenes\HMesh.cpp">
+      <Filter>Include\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Math\HMath.cpp">
+      <Filter>Include\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Math\RandomNumberGenerator.cpp">
+      <Filter>Include\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,9 +122,6 @@
     </ClInclude>
     <ClInclude Include="PipelineManager.h">
       <Filter>App\Content</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Math\HMath.h">
-      <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Scenes\Box.h">
       <Filter>Include\Scenes</Filter>
@@ -177,9 +177,6 @@
     <ClInclude Include="..\Include\Samplers\HDefaultSampler.h">
       <Filter>Include\Samplers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Math\RandomNumberGenerator.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\Material\HMirrorMaterial.h">
       <Filter>Include\Material</Filter>
     </ClInclude>
@@ -197,6 +194,15 @@
     </ClInclude>
     <ClInclude Include="..\Include\Core\HSceneManager.h">
       <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Scenes\HMesh.h">
+      <Filter>Include\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Math\RandomNumberGenerator.h">
+      <Filter>Include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Math\HMath.h">
+      <Filter>Include\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -226,9 +232,6 @@
     <Filter Include="Include">
       <UniqueIdentifier>{0f506a41-ecad-4da5-b340-53e93f36df28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{f56d8c1d-88ae-4b32-81ea-a8c56eee1645}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\Material">
       <UniqueIdentifier>{d3d794de-09b8-4a5c-9b73-582a19754177}</UniqueIdentifier>
     </Filter>
@@ -252,6 +255,9 @@
     </Filter>
     <Filter Include="Include\Lights">
       <UniqueIdentifier>{cd5e98a5-fcf3-47c9-90f1-5ff6f9192591}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Math">
+      <UniqueIdentifier>{f56d8c1d-88ae-4b32-81ea-a8c56eee1645}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
