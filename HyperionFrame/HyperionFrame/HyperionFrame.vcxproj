@@ -99,7 +99,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math;..\FBXImporter\core;..\FBXImporter\Include</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -107,7 +107,8 @@
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;FBXImporter.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\..\lib\FBXImporter\x64\Debug\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -135,13 +136,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\FBXImporter\Core;.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;FBXImporter.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\..\lib\FBXImporter\x64\Release\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
