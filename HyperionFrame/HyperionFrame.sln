@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HyperionFrame", "HyperionFrame\HyperionFrame.vcxproj", "{A55055E4-9F58-47F2-9806-8A909F0DA7CF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{33842630-5245-444F-B7CD-F038F3C2707A} = {33842630-5245-444F-B7CD-F038F3C2707A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FBXImporter", "FBXImporter\FBXImporter.vcxproj", "{33842630-5245-444F-B7CD-F038F3C2707A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,11 +21,15 @@ Global
 		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x64.ActiveCfg = Debug|x64
 		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x64.Build.0 = Debug|x64
 		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x86.ActiveCfg = Debug|Win32
-		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Debug|x86.Build.0 = Debug|Win32
 		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x64.ActiveCfg = Release|x64
 		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x64.Build.0 = Release|x64
 		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x86.ActiveCfg = Release|Win32
-		{A55055E4-9F58-47F2-9806-8A909F0DA7CF}.Release|x86.Build.0 = Release|Win32
+		{33842630-5245-444F-B7CD-F038F3C2707A}.Debug|x64.ActiveCfg = Debug|x64
+		{33842630-5245-444F-B7CD-F038F3C2707A}.Debug|x64.Build.0 = Debug|x64
+		{33842630-5245-444F-B7CD-F038F3C2707A}.Debug|x86.ActiveCfg = Debug|Win32
+		{33842630-5245-444F-B7CD-F038F3C2707A}.Release|x64.ActiveCfg = Release|x64
+		{33842630-5245-444F-B7CD-F038F3C2707A}.Release|x64.Build.0 = Release|x64
+		{33842630-5245-444F-B7CD-F038F3C2707A}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

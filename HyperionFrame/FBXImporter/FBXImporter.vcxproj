@@ -20,19 +20,19 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{39E57E19-227E-4040-9217-97F5702A594C}</ProjectGuid>
+    <ProjectGuid>{33842630-5245-444F-B7CD-F038F3C2707A}</ProjectGuid>
     <RootNamespace>FBXImporter</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -69,11 +69,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\lib\FBXImporter\x64\Release\</OutDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\lib\FBXImporter\x64\Debug\</OutDir>
+    <OutDir>$(SolutionDir)HyperionFrame\lib\$(configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)HyperionFrame\lib\$(configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -81,15 +81,24 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\;.\core;.\core\ImportScene;.\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;WIN32;_WINDOWS;_DEBUG;WIN64;_WIN64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;..;.\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>.\lib\vs2015\x64\debug;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk.lib;</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
     <Lib>
-      <AdditionalLibraryDirectories>.\lib\vs2015\x64\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfbxsdk.lib;</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>.\lib\vs2015\x64\$(configuration)\</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>copy .\lib\vs2015\x64\debug\libfbxsdk.dll $(SolutionDir)x64\Debug\</Command>
+      <Command>copy .\lib\vs2015\x64\$(configuration)\libfbxsdk.dll $(SolutionDir)$(platform)\$(configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -122,47 +131,29 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\core;.\core\ImportScene;.\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;WIN32;_WINDOWS;NDEBUG;WIN64;_WIN64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;..;.\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>.\lib\vs2015\x64\Release;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk.lib;</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>.\lib\vs2015\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfbxsdk.lib;</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>.\lib\vs2015\x64\$(configuration)\</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>copy .\lib\vs2015\x64\Release\libfbxsdk.dll $(SolutionDir)x64\Release</Command>
+      <Command>copy .\lib\vs2015\x64\$(configuration)\libfbxsdk.dll $(SolutionDir)$(platform)\$(configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="core\Common\AnimationUtility.h" />
-    <ClInclude Include="core\Common\Common.h" />
-    <ClInclude Include="core\Common\GeometryUtility.h" />
-    <ClInclude Include="core\fbxHeader.h" />
-    <ClInclude Include="core\ImportScene\DisplayAnimation.h" />
-    <ClInclude Include="core\ImportScene\DisplayCache.h" />
-    <ClInclude Include="core\ImportScene\DisplayCamera.h" />
-    <ClInclude Include="core\ImportScene\DisplayCommon.h" />
-    <ClInclude Include="core\ImportScene\DisplayGenericInfo.h" />
-    <ClInclude Include="core\ImportScene\DisplayGlobalSettings.h" />
-    <ClInclude Include="core\ImportScene\DisplayHierarchy.h" />
-    <ClInclude Include="core\ImportScene\DisplayLight.h" />
-    <ClInclude Include="core\ImportScene\DisplayLink.h" />
-    <ClInclude Include="core\ImportScene\DisplayLodGroup.h" />
-    <ClInclude Include="core\ImportScene\DisplayMarker.h" />
-    <ClInclude Include="core\ImportScene\DisplayMaterial.h" />
-    <ClInclude Include="core\ImportScene\DisplayMesh.h" />
-    <ClInclude Include="core\ImportScene\DisplayNurb.h" />
-    <ClInclude Include="core\ImportScene\DisplayPatch.h" />
-    <ClInclude Include="core\ImportScene\DisplayPivotsAndLimits.h" />
-    <ClInclude Include="core\ImportScene\DisplayPose.h" />
-    <ClInclude Include="core\ImportScene\DisplayShape.h" />
-    <ClInclude Include="core\ImportScene\DisplaySkeleton.h" />
-    <ClInclude Include="core\ImportScene\DisplayTexture.h" />
-    <ClInclude Include="core\ImportScene\DisplayUserProperties.h" />
+    <ClInclude Include="Common\AnimationUtility.h" />
+    <ClInclude Include="Common\Common.h" />
+    <ClInclude Include="Common\GeometryUtility.h" />
     <ClInclude Include="include\fbxsdk.h" />
     <ClInclude Include="include\fbxsdk\core\arch\fbxalloc.h" />
     <ClInclude Include="include\fbxsdk\core\arch\fbxarch.h" />
@@ -398,30 +389,9 @@
     <ClInclude Include="include\fbxsdk\utils\fbxusernotification.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="core\Common\AnimationUtility.cpp" />
-    <ClCompile Include="core\Common\Common.cpp" />
-    <ClCompile Include="core\Common\GeometryUtility.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayAnimation.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayCache.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayCamera.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayCommon.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayGenericInfo.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayGlobalSettings.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayHierarchy.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayLight.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayLink.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayLodGroup.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayMarker.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayMaterial.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayMesh.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayNurb.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayPatch.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayPivotsAndLimits.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayPose.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayShape.cpp" />
-    <ClCompile Include="core\ImportScene\DisplaySkeleton.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayTexture.cpp" />
-    <ClCompile Include="core\ImportScene\DisplayUserProperties.cpp" />
+    <ClCompile Include="Common\AnimationUtility.cpp" />
+    <ClCompile Include="Common\Common.cpp" />
+    <ClCompile Include="Common\GeometryUtility.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

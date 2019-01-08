@@ -84,7 +84,7 @@ public:
 		* \param pMaterialArray An array of material pointers. */
 		void FillMaterialArray(FbxArray<FbxSurfaceMaterial*>& pMaterialArray);
 	//@}
-
+		
 	//! \name Generic Node Access
 	//@{
 		/** Get number of generic nodes in the scene.
