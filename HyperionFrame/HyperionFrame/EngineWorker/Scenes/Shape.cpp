@@ -66,6 +66,12 @@ void Shape::SetMaterial(HMaterial * mat)
 
 void Shape::GenerateShapeBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList, ShapeBuffer * pShapeBuffer)
 {
+	if (m_vertices.empty() || m_indices.empty())
+	{
+		printf("[WARNING] 顶点/索引数据为空，无法创建缓存。");
+		return;
+	}
+
 	auto d3dDevice = m_dxResources->GetD3DDevice();
 
 	const UINT vertexBufferSize = UINT(sizeof(VertexPNT) * m_vertices.size());

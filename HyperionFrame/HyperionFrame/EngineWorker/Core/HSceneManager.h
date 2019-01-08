@@ -25,6 +25,7 @@ public:
 
 	Box* CreateBox(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
 	Sphere* CreateSphere(float radius, int segmentHorizontal, int segmentVertical);
+	HMesh* CreateMesh(string filepath);
 
 	int GetShapeCharacterCount();
 	int GetShapeBufferIndex(size_t shapeIndex); 

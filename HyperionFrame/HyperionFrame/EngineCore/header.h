@@ -44,6 +44,7 @@ class Transform;
 class Camera;
 class Box;
 class Sphere;
+class HMesh;
 
 class HMaterial;
 class HMatteMaterial;

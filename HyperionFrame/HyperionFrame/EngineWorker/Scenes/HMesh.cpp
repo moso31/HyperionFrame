@@ -2,8 +2,6 @@
 #include "PipelineManager.h"
 #include "Interaction.h"
 
-#include "fbxHeader.h"
-
 HMesh::HMesh()
 {
 }

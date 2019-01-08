@@ -70,10 +70,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,7 +86,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Input;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -99,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math;..\FBXImporter\core;..\FBXImporter\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Input;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -107,9 +112,13 @@
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;FBXImporter.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>.\..\lib\FBXImporter\x64\Debug\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(targetDir)*.cso $(ProjectDir)*.cso</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -119,7 +128,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Input;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -136,115 +145,119 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>..\FBXImporter\Core;.\;..\;..\Include;..\Include\Math;..\Include\Core;..\Include\Lights;..\Include\Material;..\Include\Input;..\Include\Integrators;..\Include\Samplers;..\Include\Accelerators;..\Include\Scenes;..\Math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Input;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;FBXImporter.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>.\..\lib\FBXImporter\x64\Release\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(targetDir)*.cso $(ProjectDir)*.cso</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Include\Accelerators\HBVH.cpp" />
-    <ClCompile Include="..\Include\Core\HObject.cpp" />
-    <ClCompile Include="..\Include\Core\HSampler.cpp" />
-    <ClCompile Include="..\Include\Core\HScene.cpp" />
-    <ClCompile Include="..\Include\Core\HSceneManager.cpp" />
-    <ClCompile Include="..\Include\Core\Integrator.cpp" />
-    <ClCompile Include="..\Include\Core\Interaction.cpp" />
-    <ClCompile Include="..\Include\Core\Reflection.cpp" />
-    <ClCompile Include="..\Include\Input\HInput.cpp" />
-    <ClCompile Include="..\Include\Integrators\whitted.cpp" />
-    <ClCompile Include="..\Include\Lights\HLight.cpp" />
-    <ClCompile Include="..\Include\Lights\HPointLight.cpp" />
-    <ClCompile Include="..\Include\Material\HGlassMaterial.cpp" />
-    <ClCompile Include="..\Include\Material\HMaterial.cpp" />
-    <ClCompile Include="..\Include\Material\HMatteMaterial.cpp" />
-    <ClCompile Include="..\Include\Material\HMirrorMaterial.cpp" />
-    <ClCompile Include="..\Include\Math\HMath.cpp" />
-    <ClCompile Include="..\Include\Math\RandomNumberGenerator.cpp" />
-    <ClCompile Include="..\Include\Samplers\HDefaultSampler.cpp" />
-    <ClCompile Include="..\Include\Samplers\HPixelSampler.cpp" />
-    <ClCompile Include="..\Include\Scenes\Box.cpp" />
-    <ClCompile Include="..\Include\Scenes\Camera.cpp" />
-    <ClCompile Include="..\Include\Scenes\HMesh.cpp" />
-    <ClCompile Include="..\Include\Scenes\Shape.cpp" />
-    <ClCompile Include="..\Include\Scenes\Sphere.cpp" />
-    <ClCompile Include="..\Include\Scenes\Transform.cpp" />
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="DXResource.cpp" />
-    <ClCompile Include="ImageGenerator.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="PipelineManager.cpp" />
-    <ClCompile Include="SceneRenderer.cpp" />
+    <ClCompile Include="EngineCore\App.cpp" />
+    <ClCompile Include="EngineCore\DirectX\DXResource.cpp" />
+    <ClCompile Include="EngineCore\File\FBXMeshLoader.cpp" />
+    <ClCompile Include="EngineCore\File\ImageGenerator.cpp" />
+    <ClCompile Include="EngineCore\main.cpp" />
+    <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp" />
+    <ClCompile Include="EngineCore\Renderer\SceneRenderer.cpp" />
+    <ClCompile Include="EngineWorker\Accelerators\HBVH.cpp" />
+    <ClCompile Include="EngineWorker\Core\HObject.cpp" />
+    <ClCompile Include="EngineWorker\Core\HSampler.cpp" />
+    <ClCompile Include="EngineWorker\Core\HScene.cpp" />
+    <ClCompile Include="EngineWorker\Core\HSceneManager.cpp" />
+    <ClCompile Include="EngineWorker\Core\Integrator.cpp" />
+    <ClCompile Include="EngineWorker\Core\Interaction.cpp" />
+    <ClCompile Include="EngineWorker\Core\Reflection.cpp" />
+    <ClCompile Include="EngineWorker\Input\HInput.cpp" />
+    <ClCompile Include="EngineWorker\Integrators\whitted.cpp" />
+    <ClCompile Include="EngineWorker\Lights\HLight.cpp" />
+    <ClCompile Include="EngineWorker\Lights\HPointLight.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HGlassMaterial.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HMaterial.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HMatteMaterial.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HMirrorMaterial.cpp" />
+    <ClCompile Include="EngineWorker\Math\HMath.cpp" />
+    <ClCompile Include="EngineWorker\Math\RandomNumberGenerator.cpp" />
+    <ClCompile Include="EngineWorker\Samplers\HDefaultSampler.cpp" />
+    <ClCompile Include="EngineWorker\Samplers\HPixelSampler.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\Box.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\Camera.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\HMesh.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\Shape.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\Sphere.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Accelerators\HBVH.h" />
-    <ClInclude Include="..\Include\Core\HObject.h" />
-    <ClInclude Include="..\Include\Core\HSampler.h" />
-    <ClInclude Include="..\Include\Core\HScene.h" />
-    <ClInclude Include="..\Include\Core\HSceneManager.h" />
-    <ClInclude Include="..\Include\Core\Integrator.h" />
-    <ClInclude Include="..\Include\Core\Interaction.h" />
-    <ClInclude Include="..\Include\Core\Reflection.h" />
-    <ClInclude Include="..\Include\Input\HInput.h" />
-    <ClInclude Include="..\Include\Integrators\whitted.h" />
-    <ClInclude Include="..\Include\Lights\HLight.h" />
-    <ClInclude Include="..\Include\Lights\HPointLight.h" />
-    <ClInclude Include="..\Include\Material\HGlassMaterial.h" />
-    <ClInclude Include="..\Include\Material\HMaterial.h" />
-    <ClInclude Include="..\Include\Material\HMatteMaterial.h" />
-    <ClInclude Include="..\Include\Material\HMirrorMaterial.h" />
-    <ClInclude Include="..\Include\Math\HMath.h" />
-    <ClInclude Include="..\Include\Math\RandomNumberGenerator.h" />
-    <ClInclude Include="..\Include\Samplers\HDefaultSampler.h" />
-    <ClInclude Include="..\Include\Samplers\HPixelSampler.h" />
-    <ClInclude Include="..\Include\Scenes\Box.h" />
-    <ClInclude Include="..\Include\Scenes\Camera.h" />
-    <ClInclude Include="..\Include\Scenes\HMesh.h" />
-    <ClInclude Include="..\Include\Scenes\Shape.h" />
-    <ClInclude Include="..\Include\Scenes\Sphere.h" />
-    <ClInclude Include="..\Include\Scenes\Transform.h" />
-    <ClInclude Include="App.h" />
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="DirectXHelper.h" />
-    <ClInclude Include="DXResource.h" />
-    <ClInclude Include="header.h" />
-    <ClInclude Include="ImageGenerator.h" />
-    <ClInclude Include="PipelineManager.h" />
-    <ClInclude Include="SceneRenderer.h" />
-    <ClInclude Include="ShaderStructures.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="SamplePixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </DeploymentContent>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="SampleVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
+    <ClInclude Include="EngineCore\App.h" />
+    <ClInclude Include="EngineCore\DirectX\d3dx12.h" />
+    <ClInclude Include="EngineCore\DirectX\DirectXHelper.h" />
+    <ClInclude Include="EngineCore\DirectX\DXResource.h" />
+    <ClInclude Include="EngineCore\File\FBXMeshLoader.h" />
+    <ClInclude Include="EngineCore\File\ImageGenerator.h" />
+    <ClInclude Include="EngineCore\header.h" />
+    <ClInclude Include="EngineCore\Renderer\PipelineManager.h" />
+    <ClInclude Include="EngineCore\Renderer\SceneRenderer.h" />
+    <ClInclude Include="EngineCore\Renderer\ShaderStructures.h" />
+    <ClInclude Include="EngineWorker\Accelerators\HBVH.h" />
+    <ClInclude Include="EngineWorker\Core\HObject.h" />
+    <ClInclude Include="EngineWorker\Core\HSampler.h" />
+    <ClInclude Include="EngineWorker\Core\HScene.h" />
+    <ClInclude Include="EngineWorker\Core\HSceneManager.h" />
+    <ClInclude Include="EngineWorker\Core\Integrator.h" />
+    <ClInclude Include="EngineWorker\Core\Interaction.h" />
+    <ClInclude Include="EngineWorker\Core\Reflection.h" />
+    <ClInclude Include="EngineWorker\Input\HInput.h" />
+    <ClInclude Include="EngineWorker\Integrators\whitted.h" />
+    <ClInclude Include="EngineWorker\Lights\HLight.h" />
+    <ClInclude Include="EngineWorker\Lights\HPointLight.h" />
+    <ClInclude Include="EngineWorker\Materials\HGlassMaterial.h" />
+    <ClInclude Include="EngineWorker\Materials\HMaterial.h" />
+    <ClInclude Include="EngineWorker\Materials\HMatteMaterial.h" />
+    <ClInclude Include="EngineWorker\Materials\HMirrorMaterial.h" />
+    <ClInclude Include="EngineWorker\Math\HMath.h" />
+    <ClInclude Include="EngineWorker\Math\RandomNumberGenerator.h" />
+    <ClInclude Include="EngineWorker\Samplers\HDefaultSampler.h" />
+    <ClInclude Include="EngineWorker\Samplers\HPixelSampler.h" />
+    <ClInclude Include="EngineWorker\Scenes\Box.h" />
+    <ClInclude Include="EngineWorker\Scenes\Camera.h" />
+    <ClInclude Include="EngineWorker\Scenes\HMesh.h" />
+    <ClInclude Include="EngineWorker\Scenes\Shape.h" />
+    <ClInclude Include="EngineWorker\Scenes\Sphere.h" />
+    <ClInclude Include="EngineWorker\Scenes\Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\HyperionFrame Include Hierarchy.vsdx" />
     <None Include="..\..\Next Work" />
     <None Include="..\..\Version log" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="EngineCore\Shader\SamplePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="EngineCore\Shader\SampleVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

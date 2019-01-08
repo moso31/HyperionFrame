@@ -1,268 +1,274 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="SceneRenderer.cpp">
-      <Filter>App\Content</Filter>
+    <ClCompile Include="EngineCore\DirectX\DXResource.cpp">
+      <Filter>EngineCore\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="DXResource.cpp">
-      <Filter>App\DX</Filter>
+    <ClCompile Include="EngineCore\File\FBXMeshLoader.cpp">
+      <Filter>EngineCore\File</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>App</Filter>
+    <ClCompile Include="EngineCore\File\ImageGenerator.cpp">
+      <Filter>EngineCore\File</Filter>
     </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>App</Filter>
+    <ClCompile Include="EngineCore\Renderer\SceneRenderer.cpp">
+      <Filter>EngineCore\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="PipelineManager.cpp">
-      <Filter>App\Content</Filter>
+    <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp">
+      <Filter>EngineCore\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Scenes\Box.cpp">
-      <Filter>Include\Scenes</Filter>
+    <ClCompile Include="EngineCore\main.cpp">
+      <Filter>EngineCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Scenes\Camera.cpp">
-      <Filter>Include\Scenes</Filter>
+    <ClCompile Include="EngineCore\App.cpp">
+      <Filter>EngineCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Scenes\Shape.cpp">
-      <Filter>Include\Scenes</Filter>
+    <ClCompile Include="EngineWorker\Accelerators\HBVH.cpp">
+      <Filter>EngineWorker\Accelerators</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Scenes\Transform.cpp">
-      <Filter>Include\Scenes</Filter>
+    <ClCompile Include="EngineWorker\Core\Integrator.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Material\HMaterial.cpp">
-      <Filter>Include\Material</Filter>
+    <ClCompile Include="EngineWorker\Core\Interaction.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Core\Interaction.cpp">
-      <Filter>Include\Core</Filter>
+    <ClCompile Include="EngineWorker\Core\Reflection.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Material\HMatteMaterial.cpp">
-      <Filter>Include\Material</Filter>
+    <ClCompile Include="EngineWorker\Core\HObject.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Core\HScene.cpp">
-      <Filter>Include\Core</Filter>
+    <ClCompile Include="EngineWorker\Core\HSampler.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Lights\HPointLight.cpp">
-      <Filter>Include\Lights</Filter>
+    <ClCompile Include="EngineWorker\Core\HScene.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Lights\HLight.cpp">
-      <Filter>Include\Lights</Filter>
+    <ClCompile Include="EngineWorker\Core\HSceneManager.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Core\Reflection.cpp">
-      <Filter>Include\Core</Filter>
+    <ClCompile Include="EngineWorker\Input\HInput.cpp">
+      <Filter>EngineWorker\Input</Filter>
     </ClCompile>
-    <ClCompile Include="ImageGenerator.cpp">
-      <Filter>App\File</Filter>
+    <ClCompile Include="EngineWorker\Integrators\whitted.cpp">
+      <Filter>EngineWorker\Integrators</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Input\HInput.cpp">
-      <Filter>Include\Input</Filter>
+    <ClCompile Include="EngineWorker\Lights\HPointLight.cpp">
+      <Filter>EngineWorker\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Integrators\whitted.cpp">
-      <Filter>Include\Integrators</Filter>
+    <ClCompile Include="EngineWorker\Lights\HLight.cpp">
+      <Filter>EngineWorker\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Core\Integrator.cpp">
-      <Filter>Include\Core</Filter>
+    <ClCompile Include="EngineWorker\Scenes\Sphere.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Core\HSampler.cpp">
-      <Filter>Include\Core</Filter>
+    <ClCompile Include="EngineWorker\Scenes\Transform.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Samplers\HPixelSampler.cpp">
-      <Filter>Include\Samplers</Filter>
+    <ClCompile Include="EngineWorker\Scenes\Box.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Samplers\HDefaultSampler.cpp">
-      <Filter>Include\Samplers</Filter>
+    <ClCompile Include="EngineWorker\Scenes\Camera.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Material\HMirrorMaterial.cpp">
-      <Filter>Include\Material</Filter>
+    <ClCompile Include="EngineWorker\Scenes\HMesh.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Material\HGlassMaterial.cpp">
-      <Filter>Include\Material</Filter>
+    <ClCompile Include="EngineWorker\Scenes\Shape.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Scenes\Sphere.cpp">
-      <Filter>Include\Scenes</Filter>
+    <ClCompile Include="EngineWorker\Samplers\HDefaultSampler.cpp">
+      <Filter>EngineWorker\Samplers</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Core\HObject.cpp">
-      <Filter>Include\Core</Filter>
+    <ClCompile Include="EngineWorker\Samplers\HPixelSampler.cpp">
+      <Filter>EngineWorker\Samplers</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Accelerators\HBVH.cpp">
-      <Filter>Include\Accelerators</Filter>
+    <ClCompile Include="EngineWorker\Math\HMath.cpp">
+      <Filter>EngineWorker\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Core\HSceneManager.cpp">
-      <Filter>Include\Core</Filter>
+    <ClCompile Include="EngineWorker\Math\RandomNumberGenerator.cpp">
+      <Filter>EngineWorker\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Scenes\HMesh.cpp">
-      <Filter>Include\Scenes</Filter>
+    <ClCompile Include="EngineWorker\Materials\HMatteMaterial.cpp">
+      <Filter>EngineWorker\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Math\HMath.cpp">
-      <Filter>Include\Math</Filter>
+    <ClCompile Include="EngineWorker\Materials\HMirrorMaterial.cpp">
+      <Filter>EngineWorker\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\Math\RandomNumberGenerator.cpp">
-      <Filter>Include\Math</Filter>
+    <ClCompile Include="EngineWorker\Materials\HGlassMaterial.cpp">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Materials\HMaterial.cpp">
+      <Filter>EngineWorker\Materials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SceneRenderer.h">
-      <Filter>App\Content</Filter>
+    <ClInclude Include="EngineCore\DirectX\DXResource.h">
+      <Filter>EngineCore\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderStructures.h">
-      <Filter>App\Content</Filter>
+    <ClInclude Include="EngineCore\DirectX\d3dx12.h">
+      <Filter>EngineCore\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>App\DX</Filter>
+    <ClInclude Include="EngineCore\DirectX\DirectXHelper.h">
+      <Filter>EngineCore\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXHelper.h">
-      <Filter>App\DX</Filter>
+    <ClInclude Include="EngineCore\File\ImageGenerator.h">
+      <Filter>EngineCore\File</Filter>
     </ClInclude>
-    <ClInclude Include="DXResource.h">
-      <Filter>App\DX</Filter>
+    <ClInclude Include="EngineCore\File\FBXMeshLoader.h">
+      <Filter>EngineCore\File</Filter>
     </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>App</Filter>
+    <ClInclude Include="EngineCore\Renderer\SceneRenderer.h">
+      <Filter>EngineCore\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="header.h">
-      <Filter>App</Filter>
+    <ClInclude Include="EngineCore\Renderer\ShaderStructures.h">
+      <Filter>EngineCore\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="PipelineManager.h">
-      <Filter>App\Content</Filter>
+    <ClInclude Include="EngineCore\Renderer\PipelineManager.h">
+      <Filter>EngineCore\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Scenes\Box.h">
-      <Filter>Include\Scenes</Filter>
+    <ClInclude Include="EngineCore\header.h">
+      <Filter>EngineCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Scenes\Camera.h">
-      <Filter>Include\Scenes</Filter>
+    <ClInclude Include="EngineCore\App.h">
+      <Filter>EngineCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Scenes\Shape.h">
-      <Filter>Include\Scenes</Filter>
+    <ClInclude Include="EngineWorker\Accelerators\HBVH.h">
+      <Filter>EngineWorker\Accelerators</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Scenes\Transform.h">
-      <Filter>Include\Scenes</Filter>
+    <ClInclude Include="EngineWorker\Core\HSceneManager.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Material\HMaterial.h">
-      <Filter>Include\Material</Filter>
+    <ClInclude Include="EngineWorker\Core\Integrator.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Core\Interaction.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="EngineWorker\Core\Interaction.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Material\HMatteMaterial.h">
-      <Filter>Include\Material</Filter>
+    <ClInclude Include="EngineWorker\Core\Reflection.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Core\HScene.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="EngineWorker\Core\HObject.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Lights\HPointLight.h">
-      <Filter>Include\Lights</Filter>
+    <ClInclude Include="EngineWorker\Core\HSampler.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Lights\HLight.h">
-      <Filter>Include\Lights</Filter>
+    <ClInclude Include="EngineWorker\Core\HScene.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Core\Reflection.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="EngineWorker\Input\HInput.h">
+      <Filter>EngineWorker\Input</Filter>
     </ClInclude>
-    <ClInclude Include="ImageGenerator.h">
-      <Filter>App\File</Filter>
+    <ClInclude Include="EngineWorker\Integrators\whitted.h">
+      <Filter>EngineWorker\Integrators</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Input\HInput.h">
-      <Filter>Include\Input</Filter>
+    <ClInclude Include="EngineWorker\Lights\HPointLight.h">
+      <Filter>EngineWorker\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Integrators\whitted.h">
-      <Filter>Include\Integrators</Filter>
+    <ClInclude Include="EngineWorker\Lights\HLight.h">
+      <Filter>EngineWorker\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Core\Integrator.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="EngineWorker\Scenes\Shape.h">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Core\HSampler.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="EngineWorker\Scenes\Sphere.h">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Samplers\HPixelSampler.h">
-      <Filter>Include\Samplers</Filter>
+    <ClInclude Include="EngineWorker\Scenes\Transform.h">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Samplers\HDefaultSampler.h">
-      <Filter>Include\Samplers</Filter>
+    <ClInclude Include="EngineWorker\Scenes\Box.h">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Material\HMirrorMaterial.h">
-      <Filter>Include\Material</Filter>
+    <ClInclude Include="EngineWorker\Scenes\Camera.h">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Material\HGlassMaterial.h">
-      <Filter>Include\Material</Filter>
+    <ClInclude Include="EngineWorker\Scenes\HMesh.h">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Scenes\Sphere.h">
-      <Filter>Include\Scenes</Filter>
+    <ClInclude Include="EngineWorker\Samplers\HPixelSampler.h">
+      <Filter>EngineWorker\Samplers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Core\HObject.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="EngineWorker\Samplers\HDefaultSampler.h">
+      <Filter>EngineWorker\Samplers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Accelerators\HBVH.h">
-      <Filter>Include\Accelerators</Filter>
+    <ClInclude Include="EngineWorker\Math\RandomNumberGenerator.h">
+      <Filter>EngineWorker\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Core\HSceneManager.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="EngineWorker\Math\HMath.h">
+      <Filter>EngineWorker\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Scenes\HMesh.h">
-      <Filter>Include\Scenes</Filter>
+    <ClInclude Include="EngineWorker\Materials\HMatteMaterial.h">
+      <Filter>EngineWorker\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Math\RandomNumberGenerator.h">
-      <Filter>Include\Math</Filter>
+    <ClInclude Include="EngineWorker\Materials\HMirrorMaterial.h">
+      <Filter>EngineWorker\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Math\HMath.h">
-      <Filter>Include\Math</Filter>
+    <ClInclude Include="EngineWorker\Materials\HGlassMaterial.h">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Materials\HMaterial.h">
+      <Filter>EngineWorker\Materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="SampleVertexShader.hlsl">
-      <Filter>App\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="SamplePixelShader.hlsl">
-      <Filter>App\HLSL</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="App">
+    <Filter Include="EngineCore">
       <UniqueIdentifier>{abd6c365-adff-4ca1-864f-eb85700d2413}</UniqueIdentifier>
     </Filter>
-    <Filter Include="App\Content">
-      <UniqueIdentifier>{58c67af9-c441-4bc8-9df9-f076634a8903}</UniqueIdentifier>
+    <Filter Include="EngineCore\DirectX">
+      <UniqueIdentifier>{f0cd9e15-1ebb-4087-8a8d-a6d3ae45cda9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="App\DX">
-      <UniqueIdentifier>{b75fd476-87fe-4e3e-8013-f0331febe8e5}</UniqueIdentifier>
+    <Filter Include="EngineCore\File">
+      <UniqueIdentifier>{99826a86-672d-4434-bb21-679e5af4d247}</UniqueIdentifier>
     </Filter>
-    <Filter Include="App\File">
-      <UniqueIdentifier>{91977760-415f-4ee1-9390-b0e77862c208}</UniqueIdentifier>
+    <Filter Include="EngineCore\Shader">
+      <UniqueIdentifier>{3517e472-2a50-411a-927a-f5f6bb514031}</UniqueIdentifier>
     </Filter>
-    <Filter Include="App\HLSL">
-      <UniqueIdentifier>{369587fc-8549-4b9c-884b-4a5e839a29ed}</UniqueIdentifier>
+    <Filter Include="EngineCore\Renderer">
+      <UniqueIdentifier>{8ad2fe49-f34d-4df2-bd65-71a520214917}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include">
+    <Filter Include="EngineWorker">
       <UniqueIdentifier>{0f506a41-ecad-4da5-b340-53e93f36df28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Material">
-      <UniqueIdentifier>{d3d794de-09b8-4a5c-9b73-582a19754177}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include\Core">
+    <Filter Include="EngineWorker\Core">
       <UniqueIdentifier>{aa99ae3f-61fe-426a-9231-f2a22fac6909}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Input">
+    <Filter Include="EngineWorker\Input">
       <UniqueIdentifier>{acd8700f-52da-4512-96bb-08319f1e9739}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Integrators">
+    <Filter Include="EngineWorker\Integrators">
       <UniqueIdentifier>{a2198855-5e23-4999-a3cc-7026ddddf209}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Samplers">
+    <Filter Include="EngineWorker\Samplers">
       <UniqueIdentifier>{d50c43c1-ed00-42f1-9ddd-9366bf7815c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Accelerators">
+    <Filter Include="EngineWorker\Accelerators">
       <UniqueIdentifier>{95d55625-79fb-417a-bc6a-25d490a34ecd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Scenes">
+    <Filter Include="EngineWorker\Scenes">
       <UniqueIdentifier>{6e6e21e0-a4fa-46ca-9a57-a7a45c85fd9b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Lights">
+    <Filter Include="EngineWorker\Lights">
       <UniqueIdentifier>{cd5e98a5-fcf3-47c9-90f1-5ff6f9192591}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Math">
+    <Filter Include="EngineWorker\Math">
       <UniqueIdentifier>{f56d8c1d-88ae-4b32-81ea-a8c56eee1645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorker\Materials">
+      <UniqueIdentifier>{d3d794de-09b8-4a5c-9b73-582a19754177}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Next Work" />
     <None Include="..\..\HyperionFrame Include Hierarchy.vsdx" />
     <None Include="..\..\Version log" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="EngineCore\Shader\SampleVertexShader.hlsl">
+      <Filter>EngineCore\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineCore\Shader\SamplePixelShader.hlsl">
+      <Filter>EngineCore\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
