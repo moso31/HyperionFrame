@@ -100,6 +100,9 @@
     <ClCompile Include="EngineWorker\Materials\HMaterial.cpp">
       <Filter>EngineWorker\Materials</Filter>
     </ClCompile>
+    <ClCompile Include="EngineCore\File\FBXDataConvert.cpp">
+      <Filter>EngineCore\File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -209,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="EngineWorker\Materials\HMaterial.h">
       <Filter>EngineWorker\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\File\FBXDataConvert.h">
+      <Filter>EngineCore\File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 
 #include "Box.h"
 #include "Sphere.h"
+#include "HMesh.h"
 #include "HPointLight.h"
 #include "HMatteMaterial.h"
 #include "HGlassMaterial.h"
@@ -52,7 +53,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		CreateMirrorMaterial(mirror_white),
 	};
 
-	Shape* shape;
+	shared_ptr<Shape> shape;
 	m_sceneManager = make_shared<HSceneManager>(m_dxResources, pCommandList);
 
 	//shape = m_sceneManager->CreateBox();
@@ -82,6 +83,10 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//shape->SetMaterial(mtrl[5]);
 	//shape->SetScale(20.0f, 20.0f, 1.0f);
 	//shapes.push_back(shape);
+
+	shape = m_sceneManager->CreateMesh("D:\\test.fbx");
+	shape->SetMaterial(mtrl[4]);
+	shapes.push_back(shape);
 
 	shape = m_sceneManager->CreateBox();
 	shape->SetName("box big");

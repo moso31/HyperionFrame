@@ -1,6 +1,9 @@
 #include "HMesh.h"
 #include "PipelineManager.h"
 #include "Interaction.h"
+#include "FBXMeshLoader.h"
+
+using namespace FBXMeshLoader;
 
 HMesh::HMesh()
 {
@@ -16,8 +19,16 @@ HMesh::~HMesh()
 {
 }
 
-void HMesh::InitParameters(string filePath)
+void HMesh::InitParameters(string filepath)
 {
+	FBXMeshLoader::LoadFBXFile(filepath, shared_from_this());
+
+	for (int i = 0; i < m_vertices.size(); i++)
+	{
+		m_aabb.Merge(m_vertices[i].pos);
+	}
+
+	m_filepath = filepath;
 }
 
 void HMesh::Update(UINT8* destination)

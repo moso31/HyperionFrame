@@ -1,7 +1,7 @@
 #pragma once
 #include "Shape.h"
 
-// 特征表。
+// 特征表的单个特征纪录。
 // 如果当前物体具有新特征，则存储到特征表中，如果新物体的特征在特征表中已经存在，则和对应的物体共用同一buffer。
 // 此操作用于优化并减少buffer的数量。
 struct ShapeCharacter
@@ -23,9 +23,9 @@ public:
 	HSceneManager(std::shared_ptr<DXResource> dxResources, ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	~HSceneManager();
 
-	Box* CreateBox(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
-	Sphere* CreateSphere(float radius, int segmentHorizontal, int segmentVertical);
-	HMesh* CreateMesh(string filepath);
+	shared_ptr<Box> CreateBox(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
+	shared_ptr<Sphere> CreateSphere(float radius, int segmentHorizontal, int segmentVertical);
+	shared_ptr<HMesh> CreateMesh(string filepath);
 
 	int GetShapeCharacterCount();
 	int GetShapeBufferIndex(size_t shapeIndex); 

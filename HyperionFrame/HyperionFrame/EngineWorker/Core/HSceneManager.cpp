@@ -34,9 +34,9 @@ HSceneManager::~HSceneManager()
 {
 }
 
-Box * HSceneManager::CreateBox(float width, float height, float depth)
+shared_ptr<Box> HSceneManager::CreateBox(float width, float height, float depth)
 {
-	auto box = new Box(m_dxResources);
+	auto box = make_shared<Box>(m_dxResources);
 
 	ShapeCharacter sc;
 	sc.type = eShapeType::HSHAPE_BOX;
@@ -62,9 +62,9 @@ Box * HSceneManager::CreateBox(float width, float height, float depth)
 	return box;
 }
 
-Sphere * HSceneManager::CreateSphere(float radius, int segmentHorizontal, int segmentVertical)
+shared_ptr<Sphere> HSceneManager::CreateSphere(float radius, int segmentHorizontal, int segmentVertical)
 {
-	auto sphere = new Sphere(m_dxResources);
+	auto sphere = make_shared<Sphere>(m_dxResources);
 
 	ShapeCharacter sc;
 	sc.type = eShapeType::HSHAPE_SPHERE;
@@ -90,9 +90,9 @@ Sphere * HSceneManager::CreateSphere(float radius, int segmentHorizontal, int se
 	return sphere;
 }
 
-HMesh * HSceneManager::CreateMesh(string filepath)
+shared_ptr<HMesh> HSceneManager::CreateMesh(string filepath)
 {
-	auto mesh = new HMesh(m_dxResources);
+	auto mesh = make_shared<HMesh>(m_dxResources);
 
 	ShapeCharacter sc;
 	sc.type = eShapeType::HSHAPE_MESH;

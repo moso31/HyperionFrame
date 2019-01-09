@@ -1,15 +1,22 @@
 #pragma once
+#include <memory>
+#include <string>
+
+#include "FBXDataConvert.h"
 #include "..\FBXImporter\Common\Common.h"
-#include "HMesh.h"
+
+using namespace std;
+
+class HMesh;
 
 namespace FBXMeshLoader
 {
-	void LoadContent(FbxScene* pScene);
-	void LoadContent(FbxNode* pNode);
-	void DisplayGeometricTransform(FbxNode* pNode);
+	void LoadContent(FbxScene* pScene, shared_ptr<HMesh>& pEngineMesh);
+	void LoadContent(FbxNode* pNode, shared_ptr<HMesh>& pEngineMesh);
+	void DisplayGeometricTransform(FbxNode* pNode, shared_ptr<HMesh>& pEngineMesh);
 
-	void LoadMesh(FbxNode* pNode);
-	void LoadPolygons(FbxMesh* pMesh);
+	void LoadMesh(FbxNode* pNode, shared_ptr<HMesh>& pEngineMesh);
+	void LoadPolygons(FbxMesh* pMesh, shared_ptr<HMesh>& pEngineMesh);
 
-	void LoadTest();
+	void LoadFBXFile(string filepath, shared_ptr<HMesh>& pEngineMesh);
 }

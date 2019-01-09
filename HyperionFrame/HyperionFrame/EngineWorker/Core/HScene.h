@@ -45,7 +45,7 @@ public:
 	vector<Transform*>	transformNodes;
 	vector<Camera*>		cameras;
 	vector<HLight*>		lights;
-	vector<Shape*>		shapes;
+	vector<shared_ptr<Shape>>		shapes;
 	vector<HMaterial*>	materials;
 
 private:

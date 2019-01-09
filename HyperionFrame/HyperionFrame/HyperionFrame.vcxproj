@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="EngineCore\App.cpp" />
     <ClCompile Include="EngineCore\DirectX\DXResource.cpp" />
+    <ClCompile Include="EngineCore\File\FBXDataConvert.cpp" />
     <ClCompile Include="EngineCore\File\FBXMeshLoader.cpp" />
     <ClCompile Include="EngineCore\File\ImageGenerator.cpp" />
     <ClCompile Include="EngineCore\main.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="EngineCore\DirectX\d3dx12.h" />
     <ClInclude Include="EngineCore\DirectX\DirectXHelper.h" />
     <ClInclude Include="EngineCore\DirectX\DXResource.h" />
+    <ClInclude Include="EngineCore\File\FBXDataConvert.h" />
     <ClInclude Include="EngineCore\File\FBXMeshLoader.h" />
     <ClInclude Include="EngineCore\File\ImageGenerator.h" />
     <ClInclude Include="EngineCore\header.h" />
