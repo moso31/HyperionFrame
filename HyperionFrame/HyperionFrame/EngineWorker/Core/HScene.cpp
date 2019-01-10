@@ -57,6 +57,13 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	m_sceneManager = make_shared<HSceneManager>(m_dxResources, pCommandList);
 
 	shape = m_sceneManager->CreateBox();
+	shape->SetName("wall y+");
+	shape->SetTranslation(0.0f, 22.0f, 0.0f);
+	shape->SetMaterial(mtrl[1]);
+	shape->SetScale(20.0f, 1.0f, 20.0f);
+	shapes.push_back(shape);
+
+	shape = m_sceneManager->CreateBox();
 	shape->SetName("wall x-");
 	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
 	shape->SetMaterial(mtrl[2]);
@@ -85,7 +92,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shapes.push_back(shape);
 
 	shape = m_sceneManager->CreateMesh("D:\\test.fbx");
-	shape->SetMaterial(mtrl[4]);
+	shape->SetMaterial(mtrl[6]);
 	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	shape->SetScale(5.0f, 5.0f, 5.0f);
 	shape->SetRotation(0.0f, -0.3f, 0.0f);
