@@ -36,7 +36,7 @@ public:
 	int GetShapeCharacterCount()	{ return (int)m_sceneManager->GetShapeCharacterCount(); }
 	AABB GetAABB()					{ return m_aabb; }
 
-	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, int* out_hitShapeIndex) const;
+	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, int* out_hitShapeIndex, float tMax = FLT_MAX) const;
 	bool IntersectP(Ray worldRay) const;
 
 	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);

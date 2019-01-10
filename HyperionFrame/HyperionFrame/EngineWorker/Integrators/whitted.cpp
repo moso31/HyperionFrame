@@ -13,6 +13,13 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 	if (scene.Intersect(ray, &isect, &hitShapeIndex))
 	{
 #if _DEBUG
+		Ray r;
+		XMFLOAT3 ro, rd;
+		r = ray;
+		ro = r.GetOrigin();
+		rd = r.GetDirection();
+		printf("Ray: orig: %.3f, %.3f, %.3f;  dir: %.3f, %.3f, %.3f\n", ro.x, ro.y, ro.z, rd.x, rd.y, rd.z);
+
 		printf("hit: name: %s, ID: %d\n", scene.shapes[hitShapeIndex]->GetName().data(), hitShapeIndex);
 #endif
 		XMFLOAT3 wo = isect.wo;

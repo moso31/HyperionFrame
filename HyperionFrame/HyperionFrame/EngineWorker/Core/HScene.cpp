@@ -58,7 +58,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	shape = m_sceneManager->CreateBox();
 	shape->SetName("wall y+");
-	shape->SetTranslation(0.0f, 22.0f, 0.0f);
+	shape->SetTranslation(0.0f, 10.5f, 0.0f);
 	shape->SetMaterial(mtrl[1]);
 	shape->SetScale(20.0f, 1.0f, 20.0f);
 	shapes.push_back(shape);
@@ -311,10 +311,10 @@ HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3
 	return mat;
 }
 
-bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex) const
+bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex, float tMax) const
 {
 	*out_hitShapeIndex = -1;
-	m_bvhTree->Intersect(worldRay, out_isect, out_hitShapeIndex);
+	m_bvhTree->Intersect(worldRay, out_isect, out_hitShapeIndex, tMax);
 	return *out_hitShapeIndex != -1;
 }
 

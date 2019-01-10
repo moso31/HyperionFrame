@@ -105,9 +105,9 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 	printf("BVH done. ”√ ±£∫%.3f √Î\n", (float)(time_ed - time_st) / 1000.0f);
 }
 
-void HBVHTree::Intersect(const Ray & worldRay, SurfaceInteraction* si, int* out_hitIndex)
+void HBVHTree::Intersect(const Ray & worldRay, SurfaceInteraction* si, int* out_hitIndex, float tMax)
 {
-	float tResult = FLT_MAX;
+	float tResult = tMax;
 	RecursiveIntersect(root, worldRay, si, &tResult, out_hitIndex);
 }
 

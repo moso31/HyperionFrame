@@ -54,7 +54,7 @@ public:
 
 	// BVH碰撞检测。
 	// 给定世界坐标射线，输出SurfaceInteraction和对象的索引号hitIndex，
-	void Intersect(const Ray& worldRay, SurfaceInteraction* si, int* out_hitIndex);
+	void Intersect(const Ray& worldRay, SurfaceInteraction* si, int* out_hitIndex, float tMax = FLT_MAX);
 
 private:
 	void BuildTree(HBVHTreeNode* node, int stIndex, int edIndex, HBVHSplitMode mode);
