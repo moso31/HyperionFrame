@@ -68,7 +68,7 @@ namespace FBXMeshLoader
 		// Translation
 		//
 		lTmpVector = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
-		ReadXMFLOAT4(lTmpVector);
+		vec = ReadXMFLOAT4(lTmpVector);
 		pEngineMesh->SetTranslation(vec.x, vec.y, vec.z);
 		FBXSDK_printf("        Translation: %f %f %f\n", lTmpVector[0], lTmpVector[1], lTmpVector[2]);
 
@@ -76,6 +76,7 @@ namespace FBXMeshLoader
 		// Rotation
 		//
 		lTmpVector = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
+		vec = ReadXMFLOAT4(lTmpVector);
 		pEngineMesh->SetRotation(vec.x, vec.y, vec.z);
 		FBXSDK_printf("        Rotation:    %f %f %f\n", lTmpVector[0], lTmpVector[1], lTmpVector[2]);
 
@@ -83,6 +84,7 @@ namespace FBXMeshLoader
 		// Scaling
 		//
 		lTmpVector = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
+		vec = ReadXMFLOAT4(lTmpVector);
 		pEngineMesh->SetScale(vec.x, vec.y, vec.z);
 		FBXSDK_printf("        Scaling:     %f %f %f\n", lTmpVector[0], lTmpVector[1], lTmpVector[2]);
 	}
@@ -312,7 +314,11 @@ namespace FBXMeshLoader
 				vertexId++;
 
 				pEngineMesh->AddVertex(vertex);
-				pEngineMesh->AddIndex(lControlPointIndex);
+				int x = i * 3 + j;
+				int meshIdx = i * 3 + j;
+				if (j % 3 == 1) meshIdx++;
+				else if (j % 3 == 2) meshIdx--;
+				pEngineMesh->AddIndex(meshIdx);
 			} // for polygonSize
 		} // for polygonCount
 

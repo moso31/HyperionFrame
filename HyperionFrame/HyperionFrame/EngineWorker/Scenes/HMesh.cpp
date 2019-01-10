@@ -46,7 +46,7 @@ void HMesh::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
 	pCommandList->IASetIndexBuffer(&m_indexBufferView);
-	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
+	pCommandList->DrawIndexedInstanced((int)m_indices.size(), 1, 0, 0, 0);
 }
 
 bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit)

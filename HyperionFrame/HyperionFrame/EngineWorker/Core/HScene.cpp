@@ -56,45 +56,48 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	shared_ptr<Shape> shape;
 	m_sceneManager = make_shared<HSceneManager>(m_dxResources, pCommandList);
 
-	//shape = m_sceneManager->CreateBox();
-	//shape->SetName("wall x-");
-	//shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	//shape->SetMaterial(mtrl[2]);
-	//shape->SetScale(1.0f, 20.0f, 20.0f);
-	//shapes.push_back(shape);
-
-	//shape = m_sceneManager->CreateBox();
-	//shape->SetName("wall x+");
-	//shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	//shape->SetMaterial(mtrl[0]);
-	//shape->SetScale(1.0f, 20.0f, 20.0f);
-	//shapes.push_back(shape);
-
-	//shape = m_sceneManager->CreateBox();
-	//shape->SetName("wall z-");
-	//shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(20.0f, 20.0f, 1.0f);
-	//shapes.push_back(shape);
-
-	//shape = m_sceneManager->CreateBox();
-	//shape->SetName("wall z+");
-	//shape->SetTranslation(0.0f, 0.0f, +10.0f);
-	//shape->SetMaterial(mtrl[5]);
-	//shape->SetScale(20.0f, 20.0f, 1.0f);
-	//shapes.push_back(shape);
-
-	shape = m_sceneManager->CreateMesh("D:\\test.fbx");
-	shape->SetMaterial(mtrl[4]);
+	shape = m_sceneManager->CreateBox();
+	shape->SetName("wall x-");
+	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[2]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
 	shapes.push_back(shape);
 
 	shape = m_sceneManager->CreateBox();
-	shape->SetName("box big");
+	shape->SetName("wall x+");
+	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	shape->SetMaterial(mtrl[0]);
+	shape->SetScale(1.0f, 20.0f, 20.0f);
+	shapes.push_back(shape);
+
+	shape = m_sceneManager->CreateBox();
+	shape->SetName("wall z-");
+	shape->SetTranslation(0.0f, 0.0f, -10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
+	shapes.push_back(shape);
+
+	shape = m_sceneManager->CreateBox();
+	shape->SetName("wall z+");
+	shape->SetTranslation(0.0f, 0.0f, +10.0f);
+	shape->SetMaterial(mtrl[5]);
+	shape->SetScale(20.0f, 20.0f, 1.0f);
+	shapes.push_back(shape);
+
+	shape = m_sceneManager->CreateMesh("D:\\test.fbx");
+	shape->SetMaterial(mtrl[4]);
 	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	shape->SetScale(5.0f, 5.0f, 5.0f);
 	shape->SetRotation(0.0f, -0.3f, 0.0f);
-	shape->SetMaterial(mtrl[4]);
 	shapes.push_back(shape);
+
+	//shape = m_sceneManager->CreateBox();
+	//shape->SetName("box big");
+	//shape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	//shape->SetScale(5.0f, 5.0f, 5.0f);
+	//shape->SetRotation(0.0f, -0.3f, 0.0f);
+	//shape->SetMaterial(mtrl[4]);
+	//shapes.push_back(shape);
 
 	shape = m_sceneManager->CreateSphere(1.0f, 64, 64);
 	shape->SetName("sphere");
