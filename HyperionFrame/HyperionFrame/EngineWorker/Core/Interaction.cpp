@@ -27,7 +27,7 @@ SurfaceInteraction::~SurfaceInteraction()
 
 void SurfaceInteraction::ComputeScatterFunctions()
 {
-	HMaterial* material = shape->GetMaterial();
+	auto material = shape->GetMaterial();
 	if (material)
 		material->ComputeScatterFunction(this);
 }

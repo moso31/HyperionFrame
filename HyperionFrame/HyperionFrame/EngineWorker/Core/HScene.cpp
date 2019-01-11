@@ -43,7 +43,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		mirror_white = { 0.9f, 0.9f, 0.9f },
 		gray = { 0.8f, 0.8f, 0.8f };
 	float sig = 90.0f;
-	HMaterial* mtrl[7] = {
+	shared_ptr<HMaterial> mtrl[7] = {
 		CreateMatteMaterial(green, sig),
 		CreateMatteMaterial(red, sig),
 		CreateMatteMaterial(blue, sig),
@@ -184,12 +184,13 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 	m_mainCamera->Update();
 	m_cbEyePos.eyePos = m_mainCamera->GetTranslation();
 
-	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * GetShapeCount() * alignedConstantBufferSize);
+	UINT shapeCount = (UINT)shapes.size();
+	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * shapeCount * alignedConstantBufferSize);
 	memcpy(destination, &m_cbEyePos, sizeof(m_cbEyePos));
 
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
-		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + i) * alignedConstantBufferSize);
+		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * shapeCount + i) * alignedConstantBufferSize);
 
 		shapes[i]->UpdateTransformData();
 		shapes[i]->Update(destination);
@@ -198,14 +199,15 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 
 void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize)
 {
-	UINT cbvIndex = DXResource::c_frameCount * GetShapeCount();
+	UINT shapeCount = (UINT)shapes.size();
+	UINT cbvIndex = DXResource::c_frameCount * shapeCount;
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
 	gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
 	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 
 	for (size_t i = 0; i < shapes.size(); i++)
 	{
-		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * GetShapeCount() + (UINT)i;
+		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * shapeCount + (UINT)i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
 		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
@@ -290,23 +292,23 @@ HPointLight * HScene::CreatePointLight()
 	return pointLight;
 }
 
-HMatteMaterial * HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sigma)
+shared_ptr<HMatteMaterial> HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sigma)
 {
-	auto mat = new HMatteMaterial(kd, sigma);
+	auto mat = make_shared<HMatteMaterial>(kd, sigma);
 	materials.push_back(mat);
 	return mat;
 }
 
-HMirrorMaterial * HScene::CreateMirrorMaterial(const XMCOLOR3 & kr)
+shared_ptr<HMirrorMaterial> HScene::CreateMirrorMaterial(const XMCOLOR3 & kr)
 {
-	auto mat = new HMirrorMaterial(kr);
+	auto mat = make_shared<HMirrorMaterial>(kr);
 	materials.push_back(mat);
 	return mat;
 }
 
-HGlassMaterial * HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3 & Kt, const float eta)
+shared_ptr<HGlassMaterial> HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3 & Kt, const float eta)
 {
-	auto mat = new HGlassMaterial(Kr, Kt, eta);
+	auto mat = make_shared<HGlassMaterial>(Kr, Kt, eta);
 	materials.push_back(mat);
 	return mat;
 }

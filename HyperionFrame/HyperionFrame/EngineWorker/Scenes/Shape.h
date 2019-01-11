@@ -71,8 +71,8 @@ public:
 	Triangle GetFace(UINT faceIndex);
 	TriangleUV GetUVs(UINT faceIndex);
 
-	HMaterial* GetMaterial() { return m_material; }
-	void SetMaterial(HMaterial* mat);
+	shared_ptr<HMaterial> GetMaterial() { return m_material; }
+	void SetMaterial(shared_ptr<HMaterial> mat);
 
 	virtual bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit) = 0;
 	virtual bool IntersectP(Ray worldRay, float* out_t0, float* out_t1) = 0;
@@ -81,20 +81,17 @@ public:
 	void SetShapeBuffer(ShapeBuffer* pShapeBuffer);
 
 protected:
-	eShapeType	m_type;
+	shared_ptr<DXResource>		m_dxResources;
 
-	Camera*		m_camera;
-	AABB		m_aabb;
+	eShapeType					m_type;
 
-	shared_ptr<DXResource> m_dxResources;
+	vector<VertexPNT>			m_vertices;
+	vector<USHORT>				m_indices;
+	AABB						m_aabb;
+	shared_ptr<HMaterial>		m_material;
 
-	ShapeBuffer*					m_pShapeBuffer;
-	D3D12_VERTEX_BUFFER_VIEW		m_vertexBufferView;
-	D3D12_INDEX_BUFFER_VIEW			m_indexBufferView;
-
-	vector<VertexPNT>				m_vertices;
-	vector<USHORT>					m_indices;
-
-	HMaterial* m_material;
-	CBufferVertData m_cbDataMaterial;
+	CBufferMeshData				m_cbDataMaterial;
+	ShapeBuffer*				m_pShapeBuffer;
+	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW		m_indexBufferView;
 };

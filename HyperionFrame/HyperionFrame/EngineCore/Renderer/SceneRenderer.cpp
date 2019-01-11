@@ -91,7 +91,7 @@ void SceneRenderer::CreateSceneResources()
 	// 创建场景资源
 	m_test_scene->Init(m_commandList);
 	m_input->Attach(m_test_scene);
-	UINT shapeCount = m_test_scene->GetShapeCount();
+	UINT shapeCount = (UINT)m_test_scene->shapes.size();
 
 	// 为常量缓冲区创建描述符堆。
 	{

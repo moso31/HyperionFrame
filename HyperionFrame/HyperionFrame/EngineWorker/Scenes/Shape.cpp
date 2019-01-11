@@ -58,7 +58,7 @@ TriangleUV Shape::GetUVs(UINT faceIndex)
 	return triUV;
 }
 
-void Shape::SetMaterial(HMaterial * mat)
+void Shape::SetMaterial(shared_ptr<HMaterial> mat)
 {
 	m_material = mat;
 	m_cbDataMaterial.vertColor = mat->GetDiffuse();

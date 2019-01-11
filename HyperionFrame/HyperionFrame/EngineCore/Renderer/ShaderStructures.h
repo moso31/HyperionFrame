@@ -11,8 +11,8 @@ struct ModelViewProjectionConstantBuffer
 	XMFLOAT4X4 projection;
 };
 
-// 向顶点着色器传递材质的顶点数据。
-struct CBufferVertData
+// 向顶点着色器传递Mesh的数据。
+struct CBufferMeshData
 {
 	XMFLOAT3 vertColor;
 };
