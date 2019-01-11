@@ -61,7 +61,7 @@ TriangleUV Shape::GetUVs(UINT faceIndex)
 void Shape::SetMaterial(shared_ptr<HMaterial> mat)
 {
 	m_material = mat;
-	m_cbDataMaterial.vertColor = mat->GetDiffuse();
+	m_cbMeshData.vertColor = mat->GetDiffuse();
 }
 
 void Shape::GenerateShapeBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList, ShapeBuffer * pShapeBuffer)

@@ -88,7 +88,7 @@ void Box::Update(UINT8* destination)
 	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(XMLoadFloat4x4(&GetObject2World())));
 
 	memcpy(destination, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
-	memcpy(destination + 256, &m_cbDataMaterial, sizeof(m_cbDataMaterial));
+	memcpy(destination + 256, &m_cbMeshData, sizeof(m_cbMeshData));
 }
 
 void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)

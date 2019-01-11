@@ -90,7 +90,7 @@ protected:
 	AABB						m_aabb;
 	shared_ptr<HMaterial>		m_material;
 
-	CBufferMeshData				m_cbDataMaterial;
+	CBufferMeshData				m_cbMeshData;
 	ShapeBuffer*				m_pShapeBuffer;
 	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		m_indexBufferView;
