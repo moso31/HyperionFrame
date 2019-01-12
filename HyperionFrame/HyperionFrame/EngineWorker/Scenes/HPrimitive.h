@@ -1,6 +1,5 @@
 #pragma once
 #include "DXResource.h"
-#include "DirectXHelper.h"
 #include "ShaderStructures.h"
 
 #include "Transform.h"

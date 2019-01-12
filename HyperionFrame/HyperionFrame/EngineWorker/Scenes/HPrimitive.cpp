@@ -1,4 +1,5 @@
 #include "HPrimitive.h"
+#include "DirectXHelper.h"
 
 HPrimitive::HPrimitive()
 {

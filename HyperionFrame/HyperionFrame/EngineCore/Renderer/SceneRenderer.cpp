@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 #include "Camera.h"
+#include "DirectXHelper.h"
 
 SceneRenderer::SceneRenderer()
 {

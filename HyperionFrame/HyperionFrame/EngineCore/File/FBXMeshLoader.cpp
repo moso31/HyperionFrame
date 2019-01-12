@@ -62,15 +62,12 @@ namespace FBXMeshLoader
 		FbxVector4 lTmpVector;
 		XMFLOAT4 vec = XMFLOAT4();
 
-		FBXSDK_printf("    Geometric Transformations\n");
-
 		//
 		// Translation
 		//
 		lTmpVector = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
 		vec = ReadXMFLOAT4(lTmpVector);
 		pEngineMesh->SetTranslation(vec.x, vec.y, vec.z);
-		FBXSDK_printf("        Translation: %f %f %f\n", lTmpVector[0], lTmpVector[1], lTmpVector[2]);
 
 		//
 		// Rotation
@@ -78,7 +75,6 @@ namespace FBXMeshLoader
 		lTmpVector = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
 		vec = ReadXMFLOAT4(lTmpVector);
 		pEngineMesh->SetRotation(vec.x, vec.y, vec.z);
-		FBXSDK_printf("        Rotation:    %f %f %f\n", lTmpVector[0], lTmpVector[1], lTmpVector[2]);
 
 		//
 		// Scaling
@@ -86,7 +82,6 @@ namespace FBXMeshLoader
 		lTmpVector = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
 		vec = ReadXMFLOAT4(lTmpVector);
 		pEngineMesh->SetScale(vec.x, vec.y, vec.z);
-		FBXSDK_printf("        Scaling:     %f %f %f\n", lTmpVector[0], lTmpVector[1], lTmpVector[2]);
 	}
 
 	void LoadMesh(FbxNode * pNode, shared_ptr<HMesh>& pEngineMesh)
