@@ -8,7 +8,7 @@ public:
 	Box(const shared_ptr<DXResource>& dxResources);
 	~Box();
 
-	eShapeType GetType() { return HSHAPE_BOX; }
+	ePrimitiveType GetType() { return BOX; }
 
 	void InitParameters();
 

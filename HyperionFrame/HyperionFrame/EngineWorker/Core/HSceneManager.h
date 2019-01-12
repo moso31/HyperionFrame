@@ -9,11 +9,11 @@ struct CommonFeatureParams
 	bool IsSame(const CommonFeatureParams &other) const;
 
 	// 物体的类型。
-	eShapeType type;
+	ePrimitiveType type;
 	// 物体的特征参数。可能为空。
 	vector<int> params;	
 	// 物体的buffer数据。
-	ShapeBuffer bufferData;
+	PrimitiveBuffer bufferData;
 };
 
 class HSceneManager

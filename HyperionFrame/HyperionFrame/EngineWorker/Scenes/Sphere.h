@@ -8,7 +8,7 @@ public:
 	Sphere(const shared_ptr<DXResource>& dxResources);
 	~Sphere();
 
-	eShapeType GetType() { return m_type; }
+	ePrimitiveType GetType() { return m_type; }
 
 	void InitParameters(float radius = 1.0f, int segmentHorizontal = 16, int segmentVertical = 16);
 

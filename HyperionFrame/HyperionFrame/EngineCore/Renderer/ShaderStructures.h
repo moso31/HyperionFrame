@@ -17,6 +17,11 @@ struct CBufferMeshData
 	XMFLOAT3 vertColor;
 };
 
+struct CBufferLineData
+{
+	XMFLOAT3 lineColor;
+};
+
 // 向着色器传递摄像机坐标，以计算法线相关内容。
 struct CBufferEyePos
 {

@@ -8,7 +8,7 @@ public:
 	HMesh(const shared_ptr<DXResource>& dxResources);
 	~HMesh();
 
-	eShapeType GetType() { return HSHAPE_BOX; }
+	ePrimitiveType GetType() { return BOX; }
 
 	void AddVertex(VertexPNT vertex) { m_vertices.push_back(vertex); }
 	void AddIndex(USHORT index) { m_indices.push_back(index); }

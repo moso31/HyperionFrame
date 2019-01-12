@@ -103,6 +103,9 @@
     <ClCompile Include="EngineCore\File\FBXDataConvert.cpp">
       <Filter>EngineCore\File</Filter>
     </ClCompile>
+    <ClCompile Include="EngineWorker\Scenes\HPrimitive.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -215,6 +218,9 @@
     </ClInclude>
     <ClInclude Include="EngineCore\File\FBXDataConvert.h">
       <Filter>EngineCore\File</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Scenes\HPrimitive.h">
+      <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

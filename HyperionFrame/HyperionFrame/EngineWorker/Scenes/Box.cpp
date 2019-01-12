@@ -9,7 +9,7 @@ Box::Box()
 Box::Box(const shared_ptr<DXResource>& dxResources) :
 	Shape(dxResources)
 {
-	m_type = eShapeType::HSHAPE_BOX;
+	m_type = ePrimitiveType::BOX;
 }
 
 Box::~Box()

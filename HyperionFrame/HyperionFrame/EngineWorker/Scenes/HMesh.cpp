@@ -12,7 +12,7 @@ HMesh::HMesh()
 HMesh::HMesh(const shared_ptr<DXResource>& dxResources) :
 	Shape(dxResources)
 {
-	m_type = eShapeType::HSHAPE_MESH;
+	m_type = ePrimitiveType::MESH;
 }
 
 HMesh::~HMesh()

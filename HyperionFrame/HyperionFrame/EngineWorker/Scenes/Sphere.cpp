@@ -9,7 +9,7 @@ Sphere::Sphere()
 Sphere::Sphere(const shared_ptr<DXResource>& dxResources) :
 	Shape(dxResources)
 {
-	m_type = eShapeType::HSHAPE_SPHERE;
+	m_type = ePrimitiveType::SPHERE;
 }
 
 Sphere::~Sphere()

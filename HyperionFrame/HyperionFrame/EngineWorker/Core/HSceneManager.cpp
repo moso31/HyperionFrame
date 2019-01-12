@@ -39,7 +39,7 @@ shared_ptr<Box> HSceneManager::CreateBox(float width, float height, float depth)
 	auto box = make_shared<Box>(m_dxResources);
 
 	CommonFeatureParams sc;
-	sc.type = eShapeType::HSHAPE_BOX;
+	sc.type = ePrimitiveType::BOX;
 
 	// 如果新物体的特征和已经创建的物体有匹配，就和其共用缓存。
 	for (int i = 0; i < m_commonFeatureTable.size(); i++)
@@ -48,14 +48,14 @@ shared_ptr<Box> HSceneManager::CreateBox(float width, float height, float depth)
 		if (ch.IsSame(sc))
 		{
 			box->InitParameters();
-			box->SetShapeBuffer(&ch.bufferData);
+			box->SetPrimitiveBuffer(&ch.bufferData);
 			return box;
 		}
 	}
 
 	// 否则，将新物体新增到特征表中。
 	box->InitParameters();
-	box->GenerateShapeBuffer(m_pCommandList, &sc.bufferData);
+	box->GeneratePrimitiveBuffer(m_pCommandList, &sc.bufferData);
 	m_commonFeatureTable.push_back(sc);
 	return box;
 }
@@ -65,7 +65,7 @@ shared_ptr<Sphere> HSceneManager::CreateSphere(float radius, int segmentHorizont
 	auto sphere = make_shared<Sphere>(m_dxResources);
 
 	CommonFeatureParams sc;
-	sc.type = eShapeType::HSHAPE_SPHERE;
+	sc.type = ePrimitiveType::SPHERE;
 
 	// 如果新物体的特征和已经创建的物体有匹配，就和其共用缓存。
 	for (int i = 0; i < m_commonFeatureTable.size(); i++)
@@ -74,14 +74,14 @@ shared_ptr<Sphere> HSceneManager::CreateSphere(float radius, int segmentHorizont
 		if (ch.IsSame(sc))
 		{
 			sphere->InitParameters(radius, segmentHorizontal, segmentVertical);
-			sphere->SetShapeBuffer(&ch.bufferData);
+			sphere->SetPrimitiveBuffer(&ch.bufferData);
 			return sphere;
 		}
 	}
 
 	// 否则，将新物体新增到特征表中。
 	sphere->InitParameters(radius, segmentHorizontal, segmentVertical);
-	sphere->GenerateShapeBuffer(m_pCommandList, &sc.bufferData);
+	sphere->GeneratePrimitiveBuffer(m_pCommandList, &sc.bufferData);
 	m_commonFeatureTable.push_back(sc);
 	return sphere;
 }
@@ -91,7 +91,7 @@ shared_ptr<HMesh> HSceneManager::CreateMesh(string filepath)
 	auto mesh = make_shared<HMesh>(m_dxResources);
 
 	CommonFeatureParams sc;
-	sc.type = eShapeType::HSHAPE_MESH;
+	sc.type = ePrimitiveType::MESH;
 
 	// 如果新物体的特征和已经创建的物体有匹配，就和其共用缓存。
 	for (int i = 0; i < m_commonFeatureTable.size(); i++)
@@ -100,14 +100,14 @@ shared_ptr<HMesh> HSceneManager::CreateMesh(string filepath)
 		if (ch.IsSame(sc))
 		{
 			mesh->InitParameters(filepath);
-			mesh->SetShapeBuffer(&ch.bufferData);
+			mesh->SetPrimitiveBuffer(&ch.bufferData);
 			return mesh;
 		}
 	}
 
 	// 否则，将新物体新增到特征表中。
 	mesh->InitParameters(filepath);
-	mesh->GenerateShapeBuffer(m_pCommandList, &sc.bufferData);
+	mesh->GeneratePrimitiveBuffer(m_pCommandList, &sc.bufferData);
 	m_commonFeatureTable.push_back(sc);
 	return mesh;
 }
