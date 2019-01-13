@@ -3,26 +3,25 @@
 #include "HGlassMaterial.h"
 #include "HMirrorMaterial.h"
 
-Shape::Shape()
+HShape::HShape()
 {
 }
 
-Shape::Shape(const shared_ptr<DXResource>& dxResources) :
+HShape::HShape(const shared_ptr<DXResource>& dxResources) :
 	HPrimitive(dxResources)
 {
-	m_type = ePrimitiveType::NONE;
 }
 
-Shape::~Shape()
+HShape::~HShape()
 {
 }
 
-UINT Shape::GetFaceCount()
+UINT HShape::GetFaceCount()
 {
 	return (UINT)m_indices.size() / 3;
 }
 
-Triangle Shape::GetFace(UINT faceIndex)
+Triangle HShape::GetFace(UINT faceIndex)
 {
 	int index = faceIndex * 3;
 	Triangle tri;
@@ -32,7 +31,7 @@ Triangle Shape::GetFace(UINT faceIndex)
 	return tri;
 }
 
-TriangleUV Shape::GetUVs(UINT faceIndex)
+TriangleUV HShape::GetUVs(UINT faceIndex)
 {
 	int index = faceIndex * 3;
 	TriangleUV triUV;
@@ -42,7 +41,7 @@ TriangleUV Shape::GetUVs(UINT faceIndex)
 	return triUV;
 }
 
-void Shape::SetMaterial(shared_ptr<HMaterial> mat)
+void HShape::SetMaterial(shared_ptr<HMaterial> mat)
 {
 	m_material = mat;
 	m_cbMeshData.vertColor = mat->GetDiffuse();

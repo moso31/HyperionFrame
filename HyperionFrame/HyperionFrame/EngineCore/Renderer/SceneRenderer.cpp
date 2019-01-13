@@ -92,13 +92,13 @@ void SceneRenderer::CreateSceneResources()
 	// 创建场景资源
 	m_test_scene->Init(m_commandList);
 	m_input->Attach(m_test_scene);
-	UINT shapeCount = (UINT)m_test_scene->shapes.size();
+	UINT primitiveCount = (UINT)m_test_scene->primitives.size();
 
 	// 为常量缓冲区创建描述符堆。
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		printf("%d\n", shapeCount);
-		heapDesc.NumDescriptors = DXResource::c_frameCount * shapeCount * 2 + 1;
+		printf("%d\n", primitiveCount);
+		heapDesc.NumDescriptors = DXResource::c_frameCount * primitiveCount * 2 + 1;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -108,7 +108,7 @@ void SceneRenderer::CreateSceneResources()
 	}
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * shapeCount * c_alignedConstantBufferSize + 256);
+	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * primitiveCount * c_alignedConstantBufferSize + 256);
 	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
@@ -122,7 +122,7 @@ void SceneRenderer::CreateSceneResources()
 	// 映射常量缓冲区。
 	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
 	DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * shapeCount * c_alignedConstantBufferSize + 256);
+	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * primitiveCount * c_alignedConstantBufferSize + 256);
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 
 	// 创建常量缓冲区视图以访问上载缓冲区。
@@ -130,9 +130,9 @@ void SceneRenderer::CreateSceneResources()
 
 	for (UINT n = 0; n < DXResource::c_frameCount; n++)
 	{
-		for (UINT i = 0; i < shapeCount; i++)
+		for (UINT i = 0; i < primitiveCount; i++)
 		{
-			int heapIndex = n * shapeCount + i;
+			int heapIndex = n * primitiveCount + i;
 
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
 			cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
@@ -151,7 +151,7 @@ void SceneRenderer::CreateSceneResources()
 		}
 	}
 
-	int heapIndex = DXResource::c_frameCount * shapeCount;
+	int heapIndex = DXResource::c_frameCount * primitiveCount;
 	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
 	cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
 

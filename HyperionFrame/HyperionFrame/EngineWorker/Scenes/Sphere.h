@@ -1,7 +1,7 @@
 #pragma once
 #include "Shape.h"
 
-class Sphere : public Shape
+class Sphere : public HShape
 {
 public:
 	Sphere();

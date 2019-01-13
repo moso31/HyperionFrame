@@ -4,6 +4,13 @@
 
 #include "Transform.h"
 
+enum eRenderType
+{
+	None,
+	Shape,
+	Line
+};
+
 enum ePrimitiveType
 {
 	NONE,
@@ -14,7 +21,7 @@ enum ePrimitiveType
 	MESH,
 
 	// Lines
-	//LINE
+	SEGMENT
 };
 
 struct PrimitiveBuffer
@@ -38,6 +45,8 @@ public:
 
 	ePrimitiveType GetType() { return m_type; }
 	void SetType(ePrimitiveType type) { m_type = type; }
+	eRenderType GetRenderType() { return m_renderType; }
+	void SetType(eRenderType type) { m_renderType = type; }
 
 	AABB GetAABB();
 
@@ -54,12 +63,13 @@ protected:
 	shared_ptr<DXResource>		m_dxResources;
 
 	ePrimitiveType				m_type;
+	eRenderType					m_renderType;
 
 	vector<VertexPNT>			m_vertices;
 	vector<USHORT>				m_indices;
 	AABB						m_aabb;
 
-	PrimitiveBuffer*			m_pShapeBuffer;
+	PrimitiveBuffer*			m_pPrimitiveBuffer;
 	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		m_indexBufferView;
 };

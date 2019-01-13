@@ -2,6 +2,7 @@
 #include "Box.h"
 #include "Sphere.h"
 #include "HMesh.h"
+#include "HSegment.h"
 
 bool CommonFeatureParams::IsSame(const CommonFeatureParams &other) const
 {
@@ -110,6 +111,32 @@ shared_ptr<HMesh> HSceneManager::CreateMesh(string filepath)
 	mesh->GeneratePrimitiveBuffer(m_pCommandList, &sc.bufferData);
 	m_commonFeatureTable.push_back(sc);
 	return mesh;
+}
+
+shared_ptr<HSegment> HSceneManager::CreateSegment(XMFLOAT3 point1, XMFLOAT3 point2)
+{
+	auto segment = make_shared<HSegment>(m_dxResources);
+
+	CommonFeatureParams sc;
+	sc.type = ePrimitiveType::SEGMENT;
+
+	// 如果新物体的特征和已经创建的物体有匹配，就和其共用缓存。
+	for (int i = 0; i < m_commonFeatureTable.size(); i++)
+	{
+		CommonFeatureParams ch = m_commonFeatureTable[i];
+		if (ch.IsSame(sc))
+		{
+			segment->InitParameters(point1, point2);
+			segment->SetPrimitiveBuffer(&ch.bufferData);
+			return segment;
+		}
+	}
+
+	// 否则，将新物体新增到特征表中。
+	segment->InitParameters(point1, point2);
+	segment->GeneratePrimitiveBuffer(m_pCommandList, &sc.bufferData);
+	m_commonFeatureTable.push_back(sc);
+	return segment;
 }
 
 int HSceneManager::GetCommonFeatureTableCount() 

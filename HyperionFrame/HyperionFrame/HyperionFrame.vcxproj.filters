@@ -106,6 +106,12 @@
     <ClCompile Include="EngineWorker\Scenes\HPrimitive.cpp">
       <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="EngineWorker\Scenes\HLine.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Scenes\HSegment.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -220,6 +226,12 @@
       <Filter>EngineCore\File</Filter>
     </ClInclude>
     <ClInclude Include="EngineWorker\Scenes\HPrimitive.h">
+      <Filter>EngineWorker\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Scenes\HLine.h">
+      <Filter>EngineWorker\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Scenes\HSegment.h">
       <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
   </ItemGroup>

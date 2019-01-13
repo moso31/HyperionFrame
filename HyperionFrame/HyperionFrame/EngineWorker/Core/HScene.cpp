@@ -5,6 +5,7 @@
 #include "Box.h"
 #include "Sphere.h"
 #include "HMesh.h"
+#include "HSegment.h"
 #include "HPointLight.h"
 #include "HMatteMaterial.h"
 #include "HGlassMaterial.h"
@@ -53,50 +54,51 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 		CreateMirrorMaterial(mirror_white),
 	};
 
-	shared_ptr<Shape> shape;
+	shared_ptr<HShape> pShape;
+	shared_ptr<HLine> pLine;
 	m_sceneManager = make_shared<HSceneManager>(m_dxResources, pCommandList);
 
-	shape = m_sceneManager->CreateBox();
-	shape->SetName("wall y+");
-	shape->SetTranslation(0.0f, 10.5f, 0.0f);
-	shape->SetMaterial(mtrl[1]);
-	shape->SetScale(20.0f, 1.0f, 20.0f);
-	shapes.push_back(shape);
+	pShape = m_sceneManager->CreateBox();
+	pShape->SetName("wall y+");
+	pShape->SetTranslation(0.0f, 10.5f, 0.0f);
+	pShape->SetMaterial(mtrl[1]);
+	pShape->SetScale(20.0f, 1.0f, 20.0f);
+	primitives.push_back(pShape);
 
-	shape = m_sceneManager->CreateBox();
-	shape->SetName("wall x-");
-	shape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[2]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
-	shapes.push_back(shape);
+	pShape = m_sceneManager->CreateBox();
+	pShape->SetName("wall x-");
+	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[2]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	primitives.push_back(pShape);
 
-	shape = m_sceneManager->CreateBox();
-	shape->SetName("wall x+");
-	shape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	shape->SetMaterial(mtrl[0]);
-	shape->SetScale(1.0f, 20.0f, 20.0f);
-	shapes.push_back(shape);
+	pShape = m_sceneManager->CreateBox();
+	pShape->SetName("wall x+");
+	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[0]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	primitives.push_back(pShape);
 
-	shape = m_sceneManager->CreateBox();
-	shape->SetName("wall z-");
-	shape->SetTranslation(0.0f, 0.0f, -10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
-	shapes.push_back(shape);
+	pShape = m_sceneManager->CreateBox();
+	pShape->SetName("wall z-");
+	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	primitives.push_back(pShape);
 
-	shape = m_sceneManager->CreateBox();
-	shape->SetName("wall z+");
-	shape->SetTranslation(0.0f, 0.0f, +10.0f);
-	shape->SetMaterial(mtrl[5]);
-	shape->SetScale(20.0f, 20.0f, 1.0f);
-	shapes.push_back(shape);
+	pShape = m_sceneManager->CreateBox();
+	pShape->SetName("wall z+");
+	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	primitives.push_back(pShape);
 
-	shape = m_sceneManager->CreateMesh("D:\\test.fbx");
-	shape->SetMaterial(mtrl[6]);
-	shape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	shape->SetScale(5.0f, 5.0f, 5.0f);
-	shape->SetRotation(0.0f, -0.3f, 0.0f);
-	shapes.push_back(shape);
+	pShape = m_sceneManager->CreateMesh("D:\\test.fbx");
+	pShape->SetMaterial(mtrl[6]);
+	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	pShape->SetScale(5.0f, 5.0f, 5.0f);
+	pShape->SetRotation(0.0f, -0.3f, 0.0f);
+	primitives.push_back(pShape);
 
 	//shape = m_sceneManager->CreateBox();
 	//shape->SetName("box big");
@@ -104,39 +106,43 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//shape->SetScale(5.0f, 5.0f, 5.0f);
 	//shape->SetRotation(0.0f, -0.3f, 0.0f);
 	//shape->SetMaterial(mtrl[4]);
-	//shapes.push_back(shape);
+	//primitives.push_back(shape);
 
-	shape = m_sceneManager->CreateSphere(1.0f, 64, 64);
-	shape->SetName("sphere");
-	shape->SetTranslation(1.5f, 2.0f, 0.0f);
-	shape->SetScale(2.0f, 2.0f, 2.0f);
-	shape->SetMaterial(mtrl[4]);
-	shapes.push_back(shape);
+	pLine = m_sceneManager->CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
+	pLine->SetName("debugline");
+	primitives.push_back(pLine);
 
-	shape = m_sceneManager->CreateBox();
-	shape->SetName("box small");
-	shape->SetTranslation(5.0f, 1.0f, -2.0f);
-	shape->SetScale(2.0f, 2.0f, 2.0f);
-	shape->SetMaterial(mtrl[4]);
-	shapes.push_back(shape);
+	pShape = m_sceneManager->CreateSphere(1.0f, 64, 64);
+	pShape->SetName("sphere");
+	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[4]);
+	primitives.push_back(pShape);
+
+	pShape = m_sceneManager->CreateBox();
+	pShape->SetName("box small");
+	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[4]);
+	primitives.push_back(pShape);
 
 	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
 		{
-			shape = m_sceneManager->CreateBox();
+			pShape = m_sceneManager->CreateBox();
 			if ((i + j) % 2)
 			{
-				shape->SetTranslation(-i, -0.7f, j);
-				shape->SetMaterial(mtrl[1]);
+				pShape->SetTranslation(-i, -0.7f, j);
+				pShape->SetMaterial(mtrl[1]);
 			}
 			else
 			{
-				shape->SetTranslation(-i, -0.5f, j);
-				shape->SetMaterial(mtrl[3]);
+				pShape->SetTranslation(-i, -0.5f, j);
+				pShape->SetMaterial(mtrl[3]);
 			}
-			shapes.push_back(shape);
+			primitives.push_back(pShape);
 		}
 	}
 
@@ -167,10 +173,10 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 void HScene::InitSceneData()
 {
 	m_mainCamera->UpdateTransformData();
-	for (int i = 0; i < shapes.size(); i++)
+	for (int i = 0; i < primitives.size(); i++)
 	{
-		shapes[i]->UpdateTransformData();
-		m_aabb.Merge(shapes[i]->GetAABBWorld());
+		primitives[i]->UpdateTransformData();
+		m_aabb.Merge(primitives[i]->GetAABBWorld());
 	}
 	UpdateAccelerateStructure();
 }
@@ -184,28 +190,33 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 	m_mainCamera->Update();
 	m_cbEyePos.eyePos = m_mainCamera->GetTranslation();
 
-	UINT shapeCount = (UINT)shapes.size();
-	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * shapeCount * alignedConstantBufferSize);
+	UINT primitiveCount = (UINT)primitives.size();
+	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * primitiveCount * alignedConstantBufferSize);
 	memcpy(destination, &m_cbEyePos, sizeof(m_cbEyePos));
 
-	for (size_t i = 0; i < shapes.size(); i++)
+	for (size_t i = 0; i < primitives.size(); i++)
 	{
-		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * shapeCount + i) * alignedConstantBufferSize);
+		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * primitiveCount + i) * alignedConstantBufferSize);
 
-		shapes[i]->UpdateTransformData();
-		shapes[i]->Update(destination);
+		if (primitives[i]->GetName() == "debugline")
+		{
+			primitives[i]->SetRotation(0.0f, x, 0.0f);
+		}
+
+		primitives[i]->UpdateTransformData();
+		primitives[i]->Update(destination);
 	}
 }
 
 void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize)
 {
-	UINT shapeCount = (UINT)shapes.size();
+	UINT shapeCount = (UINT)primitives.size();
 	UINT cbvIndex = DXResource::c_frameCount * shapeCount;
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
 	gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
 	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 
-	for (size_t i = 0; i < shapes.size(); i++)
+	for (size_t i = 0; i < primitives.size(); i++)
 	{
 		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * shapeCount + (UINT)i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
@@ -213,7 +224,7 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D1
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
-		shapes[i]->Render(pCommandList);
+		primitives[i]->Render(pCommandList);
 	}
 }
 
@@ -376,5 +387,5 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSample
 void HScene::UpdateAccelerateStructure()
 {
 	m_bvhTree = new HBVHTree(this);
-	m_bvhTree->BuildTreesWithScene(HBVHSplitMode::HLBVH);
+	m_bvhTree->BuildTreesWithScene(HBVHSplitMode::SplitCount);
 }

@@ -6,7 +6,9 @@ HPrimitive::HPrimitive()
 }
 
 HPrimitive::HPrimitive(const shared_ptr<DXResource>& dxResources) :
-	m_dxResources(dxResources)
+	m_dxResources(dxResources),
+	m_type(ePrimitiveType::NONE),
+	m_renderType(eRenderType::None)
 {
 }
 
@@ -30,7 +32,7 @@ AABB HPrimitive::GetAABBWorld()
 	return AABB(min, max);
 }
 
-void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList, PrimitiveBuffer * pShapeBuffer)
+void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList, PrimitiveBuffer * pPrimitiveBuffer)
 {
 	if (m_vertices.empty() || m_indices.empty())
 	{
@@ -50,7 +52,7 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 		&vertexBufferDesc,
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
-		IID_PPV_ARGS(&pShapeBuffer->VB)));
+		IID_PPV_ARGS(&pPrimitiveBuffer->VB)));
 
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
 	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
@@ -59,10 +61,10 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 		&vertexBufferDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&pShapeBuffer->VBUpload)));
+		IID_PPV_ARGS(&pPrimitiveBuffer->VBUpload)));
 
-	DX::NAME_D3D12_OBJECT(pShapeBuffer->VB);
-	DX::NAME_D3D12_OBJECT(pShapeBuffer->VBUpload);
+	DX::NAME_D3D12_OBJECT(pPrimitiveBuffer->VB);
+	DX::NAME_D3D12_OBJECT(pPrimitiveBuffer->VBUpload);
 
 	// 将顶点缓冲区上载到 GPU。
 	{
@@ -71,10 +73,10 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 		vertexData.RowPitch = vertexBufferSize;
 		vertexData.SlicePitch = vertexData.RowPitch;
 
-		UpdateSubresources(pCommandList.Get(), pShapeBuffer->VB.Get(), pShapeBuffer->VBUpload.Get(), 0, 0, 1, &vertexData);
+		UpdateSubresources(pCommandList.Get(), pPrimitiveBuffer->VB.Get(), pPrimitiveBuffer->VBUpload.Get(), 0, 0, 1, &vertexData);
 
 		CD3DX12_RESOURCE_BARRIER vertexBufferResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(pShapeBuffer->VB.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+			CD3DX12_RESOURCE_BARRIER::Transition(pPrimitiveBuffer->VB.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 		pCommandList->ResourceBarrier(1, &vertexBufferResourceBarrier);
 	}
 
@@ -87,7 +89,7 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 		&indexBufferDesc,
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
-		IID_PPV_ARGS(&pShapeBuffer->IB)));
+		IID_PPV_ARGS(&pPrimitiveBuffer->IB)));
 
 	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 		&uploadHeapProperties,
@@ -95,10 +97,10 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 		&indexBufferDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&pShapeBuffer->IBUpload)));
+		IID_PPV_ARGS(&pPrimitiveBuffer->IBUpload)));
 
-	DX::NAME_D3D12_OBJECT(pShapeBuffer->IB);
-	DX::NAME_D3D12_OBJECT(pShapeBuffer->IBUpload);
+	DX::NAME_D3D12_OBJECT(pPrimitiveBuffer->IB);
+	DX::NAME_D3D12_OBJECT(pPrimitiveBuffer->IBUpload);
 
 	// 将索引缓冲区上载到 GPU。
 	{
@@ -107,35 +109,35 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 		indexData.RowPitch = indexBufferSize;
 		indexData.SlicePitch = indexData.RowPitch;
 
-		UpdateSubresources(pCommandList.Get(), pShapeBuffer->IB.Get(), pShapeBuffer->IBUpload.Get(), 0, 0, 1, &indexData);
+		UpdateSubresources(pCommandList.Get(), pPrimitiveBuffer->IB.Get(), pPrimitiveBuffer->IBUpload.Get(), 0, 0, 1, &indexData);
 
 		CD3DX12_RESOURCE_BARRIER indexBufferResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(pShapeBuffer->IB.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+			CD3DX12_RESOURCE_BARRIER::Transition(pPrimitiveBuffer->IB.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		pCommandList->ResourceBarrier(1, &indexBufferResourceBarrier);
 	}
 
 	// 创建顶点/索引缓冲区视图。
-	m_vertexBufferView.BufferLocation = pShapeBuffer->VB->GetGPUVirtualAddress();
+	m_vertexBufferView.BufferLocation = pPrimitiveBuffer->VB->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = sizeof(VertexPNT);
 	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPNT) * m_vertices.size());
 
-	m_indexBufferView.BufferLocation = pShapeBuffer->IB->GetGPUVirtualAddress();
+	m_indexBufferView.BufferLocation = pPrimitiveBuffer->IB->GetGPUVirtualAddress();
 	m_indexBufferView.SizeInBytes = (UINT)(sizeof(USHORT) * m_indices.size());
 	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 
-	m_pShapeBuffer = pShapeBuffer;
+	m_pPrimitiveBuffer = pPrimitiveBuffer;
 }
 
-void HPrimitive::SetPrimitiveBuffer(PrimitiveBuffer * pShapeBuffer)
+void HPrimitive::SetPrimitiveBuffer(PrimitiveBuffer * pPrimitiveBuffer)
 {
 	// 创建顶点/索引缓冲区视图。
-	m_vertexBufferView.BufferLocation = pShapeBuffer->VB->GetGPUVirtualAddress();
+	m_vertexBufferView.BufferLocation = pPrimitiveBuffer->VB->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = sizeof(VertexPNT);
 	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPNT) * m_vertices.size());
 
-	m_indexBufferView.BufferLocation = pShapeBuffer->IB->GetGPUVirtualAddress();
+	m_indexBufferView.BufferLocation = pPrimitiveBuffer->IB->GetGPUVirtualAddress();
 	m_indexBufferView.SizeInBytes = (UINT)(sizeof(USHORT) * m_indices.size());
 	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 
-	m_pShapeBuffer = pShapeBuffer;
+	m_pPrimitiveBuffer = pPrimitiveBuffer;
 }

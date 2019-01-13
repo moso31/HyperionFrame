@@ -6,7 +6,6 @@
 XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& scene, int depth)
 {
 	bool isHit = false;
-	int shapeCount = (int)scene.shapes.size();
 
 	SurfaceInteraction isect;
 	int hitShapeIndex = -1;
@@ -20,7 +19,7 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 		rd = r.GetDirection();
 		printf("Ray: orig: %.3f, %.3f, %.3f;  dir: %.3f, %.3f, %.3f\n", ro.x, ro.y, ro.z, rd.x, rd.y, rd.z);
 
-		printf("hit: name: %s, ID: %d\n", scene.shapes[hitShapeIndex]->GetName().data(), hitShapeIndex);
+		printf("hit: name: %s, ID: %d\n", scene.primitives[hitShapeIndex]->GetName().data(), hitShapeIndex);
 #endif
 		XMFLOAT3 wo = isect.wo;
 

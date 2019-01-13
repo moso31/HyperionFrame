@@ -35,32 +35,44 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 
 	root = new HBVHTreeNode();
 	int count = 0;	// 场景中的primitive总数
+	int skipCount = 0;	// 跳过的primitive总数（诸如line之类不可能相交计算的primitive都会被跳过）。
 	if (mode != HLBVH)
 	{
-		m_primitiveInfo.reserve(m_scene->shapes.size());
-		for (auto it = m_scene->shapes.begin(); it < m_scene->shapes.end(); it++)
+		//m_primitiveInfo.reserve(m_scene->primitives.size());
+		for (auto it = m_scene->primitives.begin(); it < m_scene->primitives.end(); it++)
 		{
-			HBVHPrimitiveInfo shapeInfo;
-			shapeInfo.index = count++;
-			shapeInfo.aabb = (*it)->GetAABBWorld();
-			m_primitiveInfo.push_back(shapeInfo);
+			if ((*it)->GetRenderType() == eRenderType::Shape)
+			{
+				HBVHPrimitiveInfo primitiveInfo;
+				primitiveInfo.index = count++;
+				primitiveInfo.aabb = (*it)->GetAABBWorld();
+				m_primitiveInfo.push_back(primitiveInfo);
+			}
+			else
+			{
+				count++;
+				skipCount++;
+			}
 		}
 
-		BuildTree(root, 0, count, mode);
+		BuildTree(root, 0, count - skipCount, mode);
 	}
 	else
 	{
-		m_mortonPrimitiveInfo.reserve(m_scene->shapes.size());
-		for (auto it = m_scene->shapes.begin(); it < m_scene->shapes.end(); it++)
+		//m_mortonPrimitiveInfo.reserve(m_scene->primitives.size());
+		for (auto it = m_scene->primitives.begin(); it < m_scene->primitives.end(); it++)
 		{
-			HBVHMortonPrimitiveInfo shapeInfo;
-			shapeInfo.index = count++;
-			shapeInfo.aabb = (*it)->GetAABBWorld();
-			XMFLOAT3 fRelativePosition = m_scene->GetAABB().Offset(shapeInfo.aabb.GetCenter());
-			int mortonScale = 1 << 10;
-			XMINT3 iRelativePositionScaled = { (int)(fRelativePosition.x * mortonScale), (int)(fRelativePosition.y * mortonScale), (int)(fRelativePosition.z * mortonScale) };
-			shapeInfo.mortonCode = EncodeMorton3(iRelativePositionScaled);
-			m_mortonPrimitiveInfo.push_back(shapeInfo);
+			if ((*it)->GetRenderType() == eRenderType::Shape)
+			{
+				HBVHMortonPrimitiveInfo primitiveInfo;
+				primitiveInfo.index = count++;
+				primitiveInfo.aabb = (*it)->GetAABBWorld();
+				XMFLOAT3 fRelativePosition = m_scene->GetAABB().Offset(primitiveInfo.aabb.GetCenter());
+				int mortonScale = 1 << 10;
+				XMINT3 iRelativePositionScaled = { (int)(fRelativePosition.x * mortonScale), (int)(fRelativePosition.y * mortonScale), (int)(fRelativePosition.z * mortonScale) };
+				primitiveInfo.mortonCode = EncodeMorton3(iRelativePositionScaled);
+				m_mortonPrimitiveInfo.push_back(primitiveInfo);
+			}
 		}
 
 		sort(m_mortonPrimitiveInfo.begin(), m_mortonPrimitiveInfo.end(), [](const HBVHMortonPrimitiveInfo& a, const HBVHMortonPrimitiveInfo& b) {
@@ -295,19 +307,24 @@ void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, Sur
 					for (int j = 0; j < m_treeletInfo[i].nPrimitive; j++)
 					{
 						int idx = m_treeletInfo[i].startIndex + j;
-						//auto str = m_scene->shapes[m_mortonPrimitiveInfo[idx].index]->GetName();
 
-						if (m_mortonPrimitiveInfo[idx].aabb.IntersectP(worldRay, &t0, &t1))
+						if (m_scene->primitives[m_mortonPrimitiveInfo[idx].index]->GetRenderType() == eRenderType::Shape)
 						{
-							float tHit;
-							SurfaceInteraction temp_si;
-							if (m_scene->shapes[m_mortonPrimitiveInfo[idx].index]->Intersect(worldRay, &temp_si, &tHit))
+							//auto str = m_scene->primitives[m_mortonPrimitiveInfo[idx].index]->GetName();
+
+							if (m_mortonPrimitiveInfo[idx].aabb.IntersectP(worldRay, &t0, &t1))
 							{
-								if (*out_tResult > tHit)
+								float tHit;
+								SurfaceInteraction temp_si;
+								shared_ptr<HShape> pCurrentShape = dynamic_pointer_cast<HShape>(m_scene->primitives[m_mortonPrimitiveInfo[idx].index]);
+								if (pCurrentShape->Intersect(worldRay, &temp_si, &tHit))
 								{
-									*out_tResult = tHit;
-									*si = temp_si;
-									*out_hitIndex = m_mortonPrimitiveInfo[idx].index;
+									if (*out_tResult > tHit)
+									{
+										*out_tResult = tHit;
+										*si = temp_si;
+										*out_hitIndex = m_mortonPrimitiveInfo[idx].index;
+									}
 								}
 							}
 						}
@@ -319,19 +336,24 @@ void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, Sur
 				// leaf
 				for (int i = node->index; i < node->index + node->offset; i++)
 				{
-					//auto str = m_scene->shapes[m_primitiveInfo[i].index]->GetName();
-
-					if (m_primitiveInfo[i].aabb.IntersectP(worldRay, &t0, &t1))
+					if (m_scene->primitives[m_primitiveInfo[i].index]->GetRenderType() == eRenderType::Shape)
 					{
-						float tHit;
-						SurfaceInteraction temp_si;
-						if (m_scene->shapes[m_primitiveInfo[i].index]->Intersect(worldRay, &temp_si, &tHit))
+						auto str = m_scene->primitives[m_primitiveInfo[i].index]->GetName();
+
+						if (m_primitiveInfo[i].aabb.IntersectP(worldRay, &t0, &t1))
 						{
-							if (*out_tResult > tHit)
+							float tHit;
+							SurfaceInteraction temp_si;
+							shared_ptr<HShape> pCurrentShape = dynamic_pointer_cast<HShape>(m_scene->primitives[m_primitiveInfo[i].index]);
+							auto t = pCurrentShape->GetAABBWorld();
+							if (pCurrentShape->Intersect(worldRay, &temp_si, &tHit))
 							{
-								*out_tResult = tHit;
-								*si = temp_si;
-								*out_hitIndex = m_primitiveInfo[i].index;
+								if (*out_tResult > tHit)
+								{
+									*out_tResult = tHit;
+									*si = temp_si;
+									*out_hitIndex = m_primitiveInfo[i].index;
+								}
 							}
 						}
 					}
@@ -356,7 +378,7 @@ HBVHTreeNode* HBVHTree::BuildTreelet(int stIndex, int edIndex, int bitIndex)
 		HBVHTreeNode* result = new HBVHTreeNode();
 		for (int i = stIndex; i < edIndex; i++)
 		{
-			result->aabb.Merge(m_scene->shapes[m_mortonPrimitiveInfo[i].index]->GetAABBWorld());
+			result->aabb.Merge(m_scene->primitives[m_mortonPrimitiveInfo[i].index]->GetAABBWorld());
 		}
 		result->index = stIndex;
 		result->offset = edIndex - stIndex;
@@ -386,7 +408,7 @@ HBVHTreeNode* HBVHTree::BuildTreelet(int stIndex, int edIndex, int bitIndex)
 	HBVHTreeNode* result = new HBVHTreeNode();
 	for (int i = stIndex; i < edIndex; i++)
 	{
-		result->aabb.Merge(m_scene->shapes[m_mortonPrimitiveInfo[i].index]->GetAABBWorld());
+		result->aabb.Merge(m_scene->primitives[m_mortonPrimitiveInfo[i].index]->GetAABBWorld());
 	}
 	result->index = stIndex;
 	result->offset = edIndex - stIndex;

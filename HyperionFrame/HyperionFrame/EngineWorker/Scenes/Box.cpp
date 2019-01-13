@@ -7,9 +7,10 @@ Box::Box()
 }
 
 Box::Box(const shared_ptr<DXResource>& dxResources) :
-	Shape(dxResources)
+	HShape(dxResources)
 {
 	m_type = ePrimitiveType::BOX;
+	m_renderType = eRenderType::Shape;
 }
 
 Box::~Box()

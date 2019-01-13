@@ -44,8 +44,8 @@ public:
 	vector<Transform*>	transformNodes;
 	vector<Camera*>		cameras;
 	vector<HLight*>		lights;
-	vector<shared_ptr<Shape>>		shapes;
-	vector<shared_ptr<HMaterial>>	materials;
+	vector<shared_ptr<HPrimitive>>		primitives;
+	vector<shared_ptr<HMaterial>>		materials;
 
 private:
 	void UpdateAccelerateStructure();

@@ -25,12 +25,12 @@ struct TriangleUV
 	};
 };
 
-class Shape : public HPrimitive
+class HShape : public HPrimitive
 {
 public:
-	Shape();
-	Shape(const shared_ptr<DXResource>& dxResources);
-	virtual ~Shape();
+	HShape();
+	HShape(const shared_ptr<DXResource>& dxResources);
+	virtual ~HShape();
 
 	virtual void Update(UINT8 * destination) = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;

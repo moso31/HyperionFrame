@@ -10,9 +10,10 @@ HMesh::HMesh()
 }
 
 HMesh::HMesh(const shared_ptr<DXResource>& dxResources) :
-	Shape(dxResources)
+	HShape(dxResources)
 {
 	m_type = ePrimitiveType::MESH;
+	m_renderType = eRenderType::Shape;
 }
 
 HMesh::~HMesh()

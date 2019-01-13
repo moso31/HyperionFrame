@@ -1,9 +1,9 @@
 #include "HMath.h"
 
-Ray::Ray(const XMFLOAT3 _orig, const XMFLOAT3 _dir)
+Ray::Ray(const XMFLOAT3 _orig, const XMFLOAT3 _dir) :
+	origin(_orig),
+	direction(_dir)
 {
-	origin = _orig;
-	direction = _dir;
 }
 
 XMFLOAT3 Ray::GetOrigin()
@@ -26,10 +26,22 @@ XMFLOAT3 Ray::GetT(float t)
 	return result;
 }
 
-AABB::AABB(XMFLOAT3 _min, XMFLOAT3 _max)
+AABB::AABB() :
+	min({ FLT_MAX, FLT_MAX, FLT_MAX }),
+	max({ -FLT_MAX, -FLT_MAX, -FLT_MAX })
 {
-	min = _min;
-	max = _max;
+}
+
+AABB::AABB(XMFLOAT3 p) :
+	min(p),
+	max(p)
+{
+}
+
+AABB::AABB(XMFLOAT3 _min, XMFLOAT3 _max) :
+	min(_min),
+	max(_max)
+{
 }
 
 XMFLOAT3 AABB::GetCenter() const

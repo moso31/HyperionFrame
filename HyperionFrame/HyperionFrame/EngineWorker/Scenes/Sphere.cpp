@@ -7,9 +7,10 @@ Sphere::Sphere()
 }
 
 Sphere::Sphere(const shared_ptr<DXResource>& dxResources) :
-	Shape(dxResources)
+	HShape(dxResources)
 {
 	m_type = ePrimitiveType::SPHERE;
+	m_renderType = eRenderType::Shape;
 }
 
 Sphere::~Sphere()

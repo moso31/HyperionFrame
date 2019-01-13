@@ -39,12 +39,13 @@ class BxDF;
 class HScene;
 class HBVHTree;
 
-class Shape;
+class HShape;
 class Transform;
 class Camera;
 class Box;
 class Sphere;
 class HMesh;
+class HSegment;
 
 class HMaterial;
 class HMatteMaterial;

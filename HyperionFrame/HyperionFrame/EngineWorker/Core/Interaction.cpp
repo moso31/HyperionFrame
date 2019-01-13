@@ -7,7 +7,7 @@ SurfaceInteraction::SurfaceInteraction()
 {
 }
 
-SurfaceInteraction::SurfaceInteraction(const XMFLOAT3 & p, const XMFLOAT2 & uv, const XMFLOAT3 & wo, const XMFLOAT3 & dpdu, const XMFLOAT3 & dpdv, Shape * shape) :
+SurfaceInteraction::SurfaceInteraction(const XMFLOAT3 & p, const XMFLOAT2 & uv, const XMFLOAT3 & wo, const XMFLOAT3 & dpdu, const XMFLOAT3 & dpdv, HShape * shape) :
 	uv(uv),
 	dpdu(dpdu),
 	dpdv(dpdv),

@@ -1,7 +1,7 @@
 #pragma once
 #include "Shape.h"
 
-class HMesh : public Shape, public enable_shared_from_this<HMesh>
+class HMesh : public HShape, public enable_shared_from_this<HMesh>
 {
 public:
 	HMesh();

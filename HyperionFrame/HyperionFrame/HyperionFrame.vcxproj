@@ -188,8 +188,10 @@
     <ClCompile Include="EngineWorker\Samplers\HPixelSampler.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Box.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Camera.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\HLine.cpp" />
     <ClCompile Include="EngineWorker\Scenes\HMesh.cpp" />
     <ClCompile Include="EngineWorker\Scenes\HPrimitive.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\HSegment.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Shape.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Sphere.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Transform.cpp" />
@@ -228,8 +230,10 @@
     <ClInclude Include="EngineWorker\Samplers\HPixelSampler.h" />
     <ClInclude Include="EngineWorker\Scenes\Box.h" />
     <ClInclude Include="EngineWorker\Scenes\Camera.h" />
+    <ClInclude Include="EngineWorker\Scenes\HLine.h" />
     <ClInclude Include="EngineWorker\Scenes\HMesh.h" />
     <ClInclude Include="EngineWorker\Scenes\HPrimitive.h" />
+    <ClInclude Include="EngineWorker\Scenes\HSegment.h" />
     <ClInclude Include="EngineWorker\Scenes\Shape.h" />
     <ClInclude Include="EngineWorker\Scenes\Sphere.h" />
     <ClInclude Include="EngineWorker\Scenes\Transform.h" />
