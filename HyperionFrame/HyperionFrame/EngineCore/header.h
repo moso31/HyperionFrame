@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <WinUser.h>
 #include <wincodec.h>
 #include <wrl.h>
 #include <time.h>

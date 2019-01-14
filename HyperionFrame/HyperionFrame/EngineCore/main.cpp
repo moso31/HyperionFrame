@@ -1,17 +1,6 @@
 #include "App.h"
-
-const static float WINDOW_RATIO = 0.5f;
-
-HWND g_hWnd;
-HINSTANCE g_hInstance;
-
-App* g_app;
-XMFLOAT2 g_windowSize;
-
-FILE* fp = 0;
-
-bool g_test = false;
-XMINT2 g_pos;
+#include "HBInput.h"
+#include "global.h"
 
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -24,6 +13,10 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_INPUT:
+		HBII->UpdateRawInput(lParam);
+
+		if (HBII->KeyDown(VK_ESCAPE))
+			PostQuitMessage(0);
 		break;
 	case WM_LBUTTONDOWN:
 		g_app->OnLButtonClicked(XMINT2((int)x, (int)y));
@@ -40,6 +33,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 	{
 		g_app->OnKeyDown(wParam);
+		break;
 	}
 	default:
 		break;
@@ -50,6 +44,8 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 bool InitWindow()
 {
 	AllocConsole();
+
+	FILE* fp = 0;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 
 	printf("正在执行WIN32 API 窗口初始化...");
@@ -116,6 +112,8 @@ int Run()
 
 	while (msg.message != WM_QUIT)
 	{
+		HBII->Update();
+
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
@@ -130,6 +128,8 @@ int Run()
 			}
 
 			RunApp();
+
+			HBII->RestoreData(); // 清空一次鼠标位置
 		}
 	}
 

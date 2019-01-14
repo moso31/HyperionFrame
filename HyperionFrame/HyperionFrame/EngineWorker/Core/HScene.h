@@ -50,7 +50,8 @@ public:
 	bool IntersectP(Ray worldRay) const;
 
 	// BMP图片生成函数。
-	void MakeImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
+	void MakeBMPImage();
+	void MakeBMPImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
 
 public:
 	// 下列参数负责记录场景内常用的交互数据信息。
@@ -65,6 +66,8 @@ public:
 private:
 	// 构建并生成BVH树。
 	void UpdateAccelerateStructure();
+
+	void CreateRayTracingLine();
 
 private:
 	std::shared_ptr<DXResource>		m_dxResources;

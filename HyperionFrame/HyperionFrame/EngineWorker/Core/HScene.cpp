@@ -11,6 +11,8 @@
 #include "HGlassMaterial.h"
 #include "HMirrorMaterial.h"
 
+#include "HBInput.h"
+
 HScene::HScene()
 {
 }
@@ -107,10 +109,6 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//shape->SetRotation(0.0f, -0.3f, 0.0f);
 	//shape->SetMaterial(mtrl[4]);
 	//primitives.push_back(shape);
-
-	pLine = m_sceneManager->CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
-	pLine->SetName("debugline");
-	debugMsgLines.push_back(pLine);
 
 	pShape = m_sceneManager->CreateSphere(1.0f, 64, 64);
 	pShape->SetName("sphere");
@@ -267,7 +265,18 @@ void HScene::OnMouseDown(int x, int y)
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;
-	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0);
+	vector<Ray> rays;
+	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0, &rays);
+
+#ifdef _DEBUG
+	for (int i = 0; i < rays.size(); i++)
+	{
+		shared_ptr<HLine> pLine = m_sceneManager->CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
+		pLine->SetName("debugline");
+		debugMsgLines.push_back(pLine);
+	}
+#endif //_DEBUG
+
 	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", x, y, L.x, L.y, L.z);
 }
 
@@ -275,47 +284,12 @@ void HScene::OnKeyDown(WPARAM wParam)
 {
 	if (wParam == 'G')
 	{
-		XMINT2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
-		XMINT2 tileSingleSize(32, 32);
-		XMINT2 tileCount(screenSize.x / tileSingleSize.x + 1, screenSize.y / tileSingleSize.y + 1);
-		int tileSampleCount = tileCount.x * tileCount.y;
-		int sampleCount = screenSize.x * screenSize.y;
+		MakeBMPImage();
+	}
 
-		ImageBMPData* pRGB = new ImageBMPData[sampleCount];
-		memset(pRGB, 0, sizeof(ImageBMPData) * sampleCount);
-
-		printf("生成BMP位图...\n");
-		auto time_st = GetTickCount();
-
-		thread* threads = new thread[tileCount.x * tileCount.y];
-
-		m_makingProcessIndex = 0;
-		for (int i = 0; i < tileCount.x; i++)
-		{
-			for (int j = 0; j < tileCount.y; j++)
-			{
-				int count = i * tileCount.y + j;
-				threads[count] = thread(&HScene::MakeImageTile, this, i, j, tileSingleSize, tileSampleCount, pRGB);
-			}
-		}
-
-		for (int i = 0; i < tileCount.x; i++)
-		{
-			for (int j = 0; j < tileCount.y; j++)
-			{
-				int count = i * tileCount.y + j;
-				threads[count].join();
-			}
-		}
-
-		delete[] threads;
-		threads = nullptr;
-
-		//生成BMP图片
-		ImageGenerator::GenerateImageBMP((BYTE*)pRGB, screenSize.x, screenSize.y, "D:\\rgb.bmp");
-
-		auto time_ed = GetTickCount();
-		printf("done. 用时：%.2f 秒\n", (float)(time_ed - time_st) / 1000.0f);
+	if (HBII->KeyDown('T'))
+	{
+		MakeBMPImage();
 	}
 }
 
@@ -370,7 +344,52 @@ bool HScene::IntersectP(Ray worldRay) const
 	return false;
 }
 
-void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSampleCount, ImageBMPData* pRGB)
+void HScene::MakeBMPImage()
+{
+	XMINT2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
+	XMINT2 tileSingleSize(32, 32);
+	XMINT2 tileCount(screenSize.x / tileSingleSize.x + 1, screenSize.y / tileSingleSize.y + 1);
+	int tileSampleCount = tileCount.x * tileCount.y;
+	int sampleCount = screenSize.x * screenSize.y;
+
+	ImageBMPData* pRGB = new ImageBMPData[sampleCount];
+	memset(pRGB, 0, sizeof(ImageBMPData) * sampleCount);
+
+	printf("生成BMP位图...\n");
+	auto time_st = GetTickCount();
+
+	thread* threads = new thread[tileCount.x * tileCount.y];
+
+	m_makingProcessIndex = 0;
+	for (int i = 0; i < tileCount.x; i++)
+	{
+		for (int j = 0; j < tileCount.y; j++)
+		{
+			int count = i * tileCount.y + j;
+			threads[count] = thread(&HScene::MakeBMPImageTile, this, i, j, tileSingleSize, tileSampleCount, pRGB);
+		}
+	}
+
+	for (int i = 0; i < tileCount.x; i++)
+	{
+		for (int j = 0; j < tileCount.y; j++)
+		{
+			int count = i * tileCount.y + j;
+			threads[count].join();
+		}
+	}
+
+	delete[] threads;
+	threads = nullptr;
+
+	//生成BMP图片
+	ImageGenerator::GenerateImageBMP((BYTE*)pRGB, screenSize.x, screenSize.y, "D:\\rgb.bmp");
+
+	auto time_ed = GetTickCount();
+	printf("done. 用时：%.2f 秒\n", (float)(time_ed - time_st) / 1000.0f);
+}
+
+void HScene::MakeBMPImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSampleCount, ImageBMPData* pRGB)
 {
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 
@@ -394,7 +413,7 @@ void HScene::MakeImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSample
 			{
 				Ray ray = m_mainCamera->GenerateRay((float)pixel.x, (float)pixel.y);
 				WhittedIntegrator whi;
-				XMCOLOR3 L = whi.Li(ray, *tileSampler, *this, 0);
+				XMCOLOR3 L = whi.Li(ray, *tileSampler, *this, 0, nullptr);
 				//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
 				LV += XMLoadFloat3(&L);
 			} while (tileSampler->NextSample());

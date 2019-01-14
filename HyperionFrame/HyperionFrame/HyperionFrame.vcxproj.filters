@@ -112,6 +112,12 @@
     <ClCompile Include="EngineWorker\Scenes\HShape.cpp">
       <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="EngineCore\Input\HBInput.cpp">
+      <Filter>EngineCore\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineCore\global.cpp">
+      <Filter>EngineCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -234,6 +240,12 @@
     <ClInclude Include="EngineWorker\Scenes\HShape.h">
       <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="EngineCore\Input\HBInput.h">
+      <Filter>EngineCore\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\global.h">
+      <Filter>EngineCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EngineCore">
@@ -280,6 +292,9 @@
     </Filter>
     <Filter Include="EngineWorker\Materials">
       <UniqueIdentifier>{d3d794de-09b8-4a5c-9b73-582a19754177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineCore\Input">
+      <UniqueIdentifier>{fb1997b2-7566-4772-9db1-9f6794ed6a14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
