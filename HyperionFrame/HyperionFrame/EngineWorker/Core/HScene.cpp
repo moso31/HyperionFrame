@@ -110,7 +110,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	pLine = m_sceneManager->CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
 	pLine->SetName("debugline");
-	primitives.push_back(pLine);
+	debugMsgLines.push_back(pLine);
 
 	pShape = m_sceneManager->CreateSphere(1.0f, 64, 64);
 	pShape->SetName("sphere");
@@ -178,6 +178,10 @@ void HScene::InitSceneData()
 		primitives[i]->UpdateTransformData();
 		m_aabb.Merge(primitives[i]->GetAABBWorld());
 	}
+	for (int i = 0; i < debugMsgLines.size(); i++)
+	{
+		debugMsgLines[i]->UpdateTransformData();
+	}
 	UpdateAccelerateStructure();
 }
 
@@ -191,12 +195,14 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 	m_cbEyePos.eyePos = m_mainCamera->GetTranslation();
 
 	UINT primitiveCount = (UINT)primitives.size();
-	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * primitiveCount * alignedConstantBufferSize);
+	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
+	UINT renderCount = primitiveCount + debugMsgLineCount;
+	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * renderCount * alignedConstantBufferSize);
 	memcpy(destination, &m_cbEyePos, sizeof(m_cbEyePos));
 
-	for (size_t i = 0; i < primitives.size(); i++)
+	for (UINT i = 0; i < primitiveCount; i++)
 	{
-		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * primitiveCount + i) * alignedConstantBufferSize);
+		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * renderCount + i) * alignedConstantBufferSize);
 
 		if (primitives[i]->GetName() == "debugline")
 		{
@@ -206,25 +212,52 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 		primitives[i]->UpdateTransformData();
 		primitives[i]->Update(destination);
 	}
+
+	for (UINT i = 0; i < debugMsgLineCount; i++)
+	{
+		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i) * alignedConstantBufferSize);
+
+		if (debugMsgLines[i]->GetName() == "debugline")
+		{
+			debugMsgLines[i]->SetRotation(0.0f, x, 0.0f);
+		}
+
+		debugMsgLines[i]->UpdateTransformData();
+		debugMsgLines[i]->Update(destination);
+	}
 }
 
-void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize)
+void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize)
 {
-	UINT shapeCount = (UINT)primitives.size();
-	UINT cbvIndex = DXResource::c_frameCount * shapeCount;
+	UINT primitiveCount = (UINT)primitives.size();
+	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
+	UINT renderCount = primitiveCount + debugMsgLineCount;
+	UINT cbvIndex = DXResource::c_frameCount * renderCount;
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
 	gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
 	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 
-	for (size_t i = 0; i < primitives.size(); i++)
+	for (UINT i = 0; i < primitiveCount; i++)
 	{
-		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * shapeCount + (UINT)i;
+		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
 		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
 		primitives[i]->Render(pCommandList);
+	}
+
+	pCommandList->SetPipelineState(pPSOs.at("wireFrame").Get());
+	for (UINT i = 0; i < debugMsgLineCount; i++)
+	{
+		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
+		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
+		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+		gpuHandle.Offset(cbvDescriptorSize);
+		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
+		debugMsgLines[i]->Render(pCommandList);
 	}
 }
 

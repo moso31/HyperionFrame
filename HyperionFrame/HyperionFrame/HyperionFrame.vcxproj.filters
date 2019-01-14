@@ -73,9 +73,6 @@
     <ClCompile Include="EngineWorker\Scenes\HMesh.cpp">
       <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="EngineWorker\Scenes\Shape.cpp">
-      <Filter>EngineWorker\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="EngineWorker\Samplers\HDefaultSampler.cpp">
       <Filter>EngineWorker\Samplers</Filter>
     </ClCompile>
@@ -110,6 +107,9 @@
       <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="EngineWorker\Scenes\HSegment.cpp">
+      <Filter>EngineWorker\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Scenes\HShape.cpp">
       <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
@@ -180,9 +180,6 @@
     <ClInclude Include="EngineWorker\Lights\HLight.h">
       <Filter>EngineWorker\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="EngineWorker\Scenes\Shape.h">
-      <Filter>EngineWorker\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="EngineWorker\Scenes\Sphere.h">
       <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
@@ -232,6 +229,9 @@
       <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="EngineWorker\Scenes\HSegment.h">
+      <Filter>EngineWorker\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Scenes\HShape.h">
       <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,4 @@
-#include "Shape.h"
+#include "HShape.h"
 #include "HMatteMaterial.h"
 #include "HGlassMaterial.h"
 #include "HMirrorMaterial.h"

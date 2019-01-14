@@ -28,7 +28,10 @@ private:
 
 	ComPtr<ID3D12GraphicsCommandList>					m_commandList;
 	ComPtr<ID3D12RootSignature>							m_rootSignature;
-	ComPtr<ID3D12PipelineState>							m_pipelineState;
+
+	// 记录场景的所有渲染管线状态对象。
+	map<string, ComPtr<ID3D12PipelineState>>			m_PSOs;
+
 	vector<byte>										m_vertexShader;
 	vector<byte>										m_pixelShader;
 

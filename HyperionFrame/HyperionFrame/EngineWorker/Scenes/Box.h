@@ -1,5 +1,5 @@
 #pragma once
-#include "Shape.h"
+#include "HShape.h"
 
 class Box : public HShape
 {

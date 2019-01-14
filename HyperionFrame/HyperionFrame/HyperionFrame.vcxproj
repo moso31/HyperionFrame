@@ -192,7 +192,7 @@
     <ClCompile Include="EngineWorker\Scenes\HMesh.cpp" />
     <ClCompile Include="EngineWorker\Scenes\HPrimitive.cpp" />
     <ClCompile Include="EngineWorker\Scenes\HSegment.cpp" />
-    <ClCompile Include="EngineWorker\Scenes\Shape.cpp" />
+    <ClCompile Include="EngineWorker\Scenes\HShape.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Sphere.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Transform.cpp" />
   </ItemGroup>
@@ -234,7 +234,7 @@
     <ClInclude Include="EngineWorker\Scenes\HMesh.h" />
     <ClInclude Include="EngineWorker\Scenes\HPrimitive.h" />
     <ClInclude Include="EngineWorker\Scenes\HSegment.h" />
-    <ClInclude Include="EngineWorker\Scenes\Shape.h" />
+    <ClInclude Include="EngineWorker\Scenes\HShape.h" />
     <ClInclude Include="EngineWorker\Scenes\Sphere.h" />
     <ClInclude Include="EngineWorker\Scenes\Transform.h" />
   </ItemGroup>

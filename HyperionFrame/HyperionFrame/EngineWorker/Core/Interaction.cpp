@@ -1,5 +1,5 @@
 #include "Interaction.h"
-#include "Shape.h"
+#include "HShape.h"
 #include "HMaterial.h"
 #include "Reflection.h"
 
