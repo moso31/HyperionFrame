@@ -46,7 +46,7 @@ struct HBVHTreeletInfo
 class HBVHTree
 {
 public:
-	HBVHTree(HScene* scene);
+	HBVHTree(const shared_ptr<HScene>& scene);
 	~HBVHTree() {}
 
 	// 根据场景信息，生成构建BVH树所需要的信息。
@@ -70,7 +70,7 @@ private:
 	const int SPLIT_COST = 4;
 
 	HBVHTreeNode* root;
-	HScene* m_scene;
+	shared_ptr<HScene> m_scene;
 	vector<HBVHPrimitiveInfo> m_primitiveInfo;
 	vector<HBVHMortonPrimitiveInfo> m_mortonPrimitiveInfo;
 	vector<HBVHTreeletInfo> m_treeletInfo;

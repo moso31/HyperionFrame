@@ -10,7 +10,7 @@ public:
 		(sizeof(CBufferMeshData) + 255)
 		) & ~255;
 	SceneRenderer();
-	SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HInput>& input);
+	SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown);
 	~SceneRenderer();
 
 	void CreateSceneResources();
@@ -24,7 +24,7 @@ public:
 
 private:
 	std::shared_ptr<DXResource> m_dxResources;
-	std::shared_ptr<HInput> m_input;
+	std::shared_ptr<HEvent> m_pEventKeyDown;
 
 	ComPtr<ID3D12GraphicsCommandList>					m_commandList;
 	ComPtr<ID3D12RootSignature>							m_rootSignature;
@@ -42,6 +42,6 @@ private:
 
 	D3D12_RECT											m_scissorRect;
 
-	HScene* m_test_scene;
+	std::shared_ptr<HScene> m_test_scene;
 };
 

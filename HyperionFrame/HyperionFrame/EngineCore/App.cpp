@@ -1,6 +1,5 @@
 #include "App.h"
 
-
 App::App()
 {
 }
@@ -9,6 +8,7 @@ App::App(HWND hwnd)
 {
 	m_hwnd = hwnd;
 	m_dxResources = std::make_shared<DXResource>(hwnd);
+	m_pEventKeyDown = std::make_shared<HEvent>();
 }
 
 App::~App()
@@ -17,7 +17,6 @@ App::~App()
 
 void App::Init(XMFLOAT2 windowSize)
 {
-	m_input = std::make_shared<HInput>();
 	SetWindow(windowSize);
 	CreateRenderers();
 }
@@ -58,7 +57,7 @@ void App::SetWindow(XMFLOAT2 size)
 
 void App::CreateRenderers()
 {
-	m_sceneRenderer = std::make_shared<SceneRenderer>(m_dxResources, m_input);
+	m_sceneRenderer = std::make_shared<SceneRenderer>(m_dxResources, m_pEventKeyDown);
 	m_sceneRenderer->WindowSizeChanged();
 }
 
@@ -69,5 +68,6 @@ void App::OnLButtonClicked(XMINT2 screenXY)
 
 void App::OnKeyDown(WPARAM wParam)
 {
-	m_sceneRenderer->OnKeyDown(wParam);
+	//m_sceneRenderer->OnKeyDown(wParam);
+	m_pEventKeyDown->Notify();
 }

@@ -23,6 +23,7 @@ public:
 private:
 	HWND m_hwnd;
 	std::shared_ptr<DXResource> m_dxResources;
-	std::shared_ptr<HInput> m_input;
 	std::shared_ptr<SceneRenderer> m_sceneRenderer;
+
+	std::shared_ptr<HEvent> m_pEventKeyDown;
 };

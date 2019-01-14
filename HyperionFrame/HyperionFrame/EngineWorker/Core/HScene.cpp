@@ -17,8 +17,9 @@ HScene::HScene()
 {
 }
 
-HScene::HScene(const std::shared_ptr<DXResource>& dxResource) :
-	m_dxResources(dxResource)
+HScene::HScene(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown) :
+	m_dxResources(dxResource),
+	m_pEventKeyDown(pEventKeyDown)
 {
 }
 
@@ -33,6 +34,8 @@ void HScene::OnResize()
 
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
+	m_pEventKeyDown->AddListener(shared_from_this());
+
 	m_mainCamera = CreateCamera();
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
@@ -183,10 +186,10 @@ void HScene::InitSceneData()
 	UpdateAccelerateStructure();
 }
 
+static float xxxxx = 0;
 void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBufferSize)
 {
-	static float x = 0;
-	x += 0.01f;
+	xxxxx += 0.01f;
 
 	m_mainCamera->UpdateTransformData();
 	m_mainCamera->Update();
@@ -202,11 +205,6 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 	{
 		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * renderCount + i) * alignedConstantBufferSize);
 
-		if (primitives[i]->GetName() == "debugline")
-		{
-			primitives[i]->SetRotation(0.0f, x, 0.0f);
-		}
-
 		primitives[i]->UpdateTransformData();
 		primitives[i]->Update(destination);
 	}
@@ -217,7 +215,7 @@ void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBuff
 
 		if (debugMsgLines[i]->GetName() == "debugline")
 		{
-			debugMsgLines[i]->SetRotation(0.0f, x, 0.0f);
+			debugMsgLines[i]->SetRotation(0.0f, xxxxx, 0.0f);
 		}
 
 		debugMsgLines[i]->UpdateTransformData();
@@ -290,6 +288,22 @@ void HScene::OnKeyDown(WPARAM wParam)
 	if (HBII->KeyDown('T'))
 	{
 		MakeBMPImage();
+	}
+}
+
+void HScene::OnNotify()
+{  
+	printf("Scene::OnNotify() processed.\n");
+
+	if (HBII->KeyDown('G'))
+		MakeBMPImage();
+	else
+	for (int i = 0; i < primitives.size(); i++)
+	{
+		if (primitives[i]->GetName() == "box small")
+		{
+			primitives[i]->SetRotation(0.0f, xxxxx, 0.0f);
+		}
 	}
 }
 
@@ -438,6 +452,6 @@ void HScene::MakeBMPImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSam
 
 void HScene::UpdateAccelerateStructure()
 {
-	m_bvhTree = new HBVHTree(this);
+	m_bvhTree = new HBVHTree(shared_from_this());
 	m_bvhTree->BuildTreesWithScene(HBVHSplitMode::SplitCount);
 }

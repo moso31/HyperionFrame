@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Input;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -144,7 +144,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Input;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -165,6 +165,8 @@
     <ClCompile Include="EngineCore\File\ImageGenerator.cpp" />
     <ClCompile Include="EngineCore\global.cpp" />
     <ClCompile Include="EngineCore\Input\HBInput.cpp" />
+    <ClCompile Include="EngineCore\Input\HEvent.cpp" />
+    <ClCompile Include="EngineCore\Input\HListener.cpp" />
     <ClCompile Include="EngineCore\main.cpp" />
     <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp" />
     <ClCompile Include="EngineCore\Renderer\SceneRenderer.cpp" />
@@ -176,7 +178,6 @@
     <ClCompile Include="EngineWorker\Core\Integrator.cpp" />
     <ClCompile Include="EngineWorker\Core\Interaction.cpp" />
     <ClCompile Include="EngineWorker\Core\Reflection.cpp" />
-    <ClCompile Include="EngineWorker\Input\HInput.cpp" />
     <ClCompile Include="EngineWorker\Integrators\whitted.cpp" />
     <ClCompile Include="EngineWorker\Lights\HLight.cpp" />
     <ClCompile Include="EngineWorker\Lights\HPointLight.cpp" />
@@ -209,6 +210,8 @@
     <ClInclude Include="EngineCore\global.h" />
     <ClInclude Include="EngineCore\header.h" />
     <ClInclude Include="EngineCore\Input\HBInput.h" />
+    <ClInclude Include="EngineCore\Input\HEvent.h" />
+    <ClInclude Include="EngineCore\Input\HListener.h" />
     <ClInclude Include="EngineCore\Renderer\PipelineManager.h" />
     <ClInclude Include="EngineCore\Renderer\SceneRenderer.h" />
     <ClInclude Include="EngineCore\Renderer\ShaderStructures.h" />
@@ -220,7 +223,6 @@
     <ClInclude Include="EngineWorker\Core\Integrator.h" />
     <ClInclude Include="EngineWorker\Core\Interaction.h" />
     <ClInclude Include="EngineWorker\Core\Reflection.h" />
-    <ClInclude Include="EngineWorker\Input\HInput.h" />
     <ClInclude Include="EngineWorker\Integrators\whitted.h" />
     <ClInclude Include="EngineWorker\Lights\HLight.h" />
     <ClInclude Include="EngineWorker\Lights\HPointLight.h" />

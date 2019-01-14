@@ -14,7 +14,7 @@ inline int EncodeMorton3(const XMINT3 &v) {
 	return (LeftShift3(v.z) << 2) | (LeftShift3(v.y) << 1) | LeftShift3(v.x);
 }
 
-HBVHTree::HBVHTree(HScene* scene)
+HBVHTree::HBVHTree(const shared_ptr<HScene>& scene)
 {
 	m_scene = scene;
 }

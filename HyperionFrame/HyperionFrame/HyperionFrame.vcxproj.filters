@@ -46,9 +46,6 @@
     <ClCompile Include="EngineWorker\Core\HSceneManager.cpp">
       <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="EngineWorker\Input\HInput.cpp">
-      <Filter>EngineWorker\Input</Filter>
-    </ClCompile>
     <ClCompile Include="EngineWorker\Integrators\whitted.cpp">
       <Filter>EngineWorker\Integrators</Filter>
     </ClCompile>
@@ -118,6 +115,12 @@
     <ClCompile Include="EngineCore\global.cpp">
       <Filter>EngineCore</Filter>
     </ClCompile>
+    <ClCompile Include="EngineCore\Input\HListener.cpp">
+      <Filter>EngineCore\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineCore\Input\HEvent.cpp">
+      <Filter>EngineCore\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -173,9 +176,6 @@
     </ClInclude>
     <ClInclude Include="EngineWorker\Core\HScene.h">
       <Filter>EngineWorker\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineWorker\Input\HInput.h">
-      <Filter>EngineWorker\Input</Filter>
     </ClInclude>
     <ClInclude Include="EngineWorker\Integrators\whitted.h">
       <Filter>EngineWorker\Integrators</Filter>
@@ -246,6 +246,12 @@
     <ClInclude Include="EngineCore\global.h">
       <Filter>EngineCore</Filter>
     </ClInclude>
+    <ClInclude Include="EngineCore\Input\HListener.h">
+      <Filter>EngineCore\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\Input\HEvent.h">
+      <Filter>EngineCore\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EngineCore">
@@ -268,9 +274,6 @@
     </Filter>
     <Filter Include="EngineWorker\Core">
       <UniqueIdentifier>{aa99ae3f-61fe-426a-9231-f2a22fac6909}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EngineWorker\Input">
-      <UniqueIdentifier>{acd8700f-52da-4512-96bb-08319f1e9739}</UniqueIdentifier>
     </Filter>
     <Filter Include="EngineWorker\Integrators">
       <UniqueIdentifier>{a2198855-5e23-4999-a3cc-7026ddddf209}</UniqueIdentifier>

@@ -6,11 +6,11 @@ SceneRenderer::SceneRenderer()
 {
 }
 
-SceneRenderer::SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HInput>& input) :
+SceneRenderer::SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown) :
 	m_dxResources(dxResource),
-	m_input(input)
+	m_pEventKeyDown(pEventKeyDown)
 {
-	m_test_scene = new HScene(dxResource);
+	m_test_scene = std::make_shared<HScene>(dxResource, pEventKeyDown);
 
 	CreateSceneResources();
 }
@@ -97,7 +97,6 @@ void SceneRenderer::CreateSceneResources()
 
 	// 创建场景资源
 	m_test_scene->Init(m_commandList);
-	m_input->Attach(m_test_scene);
 	UINT primitiveCount = (UINT)m_test_scene->primitives.size();
 	UINT debugMsgLineCount = (UINT)m_test_scene->debugMsgLines.size();
 	UINT renderCount = primitiveCount + debugMsgLineCount;
@@ -246,5 +245,4 @@ void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
 
 void SceneRenderer::OnKeyDown(WPARAM wParam)
 {
-	m_input->OnKeyDown(wParam);
 }

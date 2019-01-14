@@ -9,11 +9,14 @@
 #include "ImageGenerator.h"
 #include "HSceneManager.h"
 
-class HScene : public HListener
+#include "HListener.h"
+#include "HEvent.h"
+
+class HScene : public HListener, public enable_shared_from_this<HScene>
 {
 public:
 	HScene();
-	HScene(const std::shared_ptr<DXResource>& dxResource);
+	HScene(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown);
 	~HScene();
 
 	void OnResize();
@@ -30,6 +33,7 @@ public:
 
 	void OnMouseDown(int x, int y);
 	void OnKeyDown(WPARAM wParam);
+	void OnNotify();
 
 	Camera*						CreateCamera();
 	HPointLight*				CreatePointLight();
@@ -71,6 +75,7 @@ private:
 
 private:
 	std::shared_ptr<DXResource>		m_dxResources;
+	std::shared_ptr<HEvent>			m_pEventKeyDown;
 	std::shared_ptr<HSceneManager>	m_sceneManager;
 
 	Camera*				m_mainCamera;
