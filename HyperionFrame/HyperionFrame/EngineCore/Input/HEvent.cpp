@@ -1,18 +1,52 @@
 #include "HEvent.h"
 
-void HEvent::AddListener(shared_ptr<HListener> pListener)
+void HEventOnMouseDown::AddListener(shared_ptr<HListener> pListener)
 {
-	m_listener.push_back(pListener);
+	GetInstance()->m_listener.push_back(pListener);
 }
 
-void HEvent::Notify()
+void HEventOnMouseDown::Notify(UINT x, UINT y)
 {
-	if (m_listener.empty())
+	auto vListener = GetInstance()->m_listener;
+	if (vListener.empty())
 		return;
 
-	printf("HEvent::Notify() processed.\n");
-	for (auto it = m_listener.begin(); it != m_listener.end(); it++)
+	for (auto it = vListener.begin(); it != vListener.end(); it++)
 	{
-		(*it)->OnNotify();
+		(*it)->OnMouseDown(x, y);
+	}
+}
+
+void HEventOnKeyDown::AddListener(shared_ptr<HListener> pListener)
+{
+	GetInstance()->m_listener.push_back(pListener);
+}
+
+void HEventOnKeyDown::Notify()
+{
+	auto vListener = GetInstance()->m_listener;
+	if (vListener.empty())
+		return;
+
+	for (auto it = vListener.begin(); it != vListener.end(); it++)
+	{
+		(*it)->OnKeyDown();
+	}
+}
+
+void HEventOnKeyUp::AddListener(shared_ptr<HListener> pListener)
+{
+	GetInstance()->m_listener.push_back(pListener);
+}
+
+void HEventOnKeyUp::Notify()
+{
+	auto vListener = GetInstance()->m_listener;
+	if (vListener.empty())
+		return;
+
+	for (auto it = vListener.begin(); it != vListener.end(); it++)
+	{
+		(*it)->OnKeyUp();
 	}
 }

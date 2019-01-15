@@ -8,6 +8,8 @@ public:
 	App(HWND hwnd);
 	~App();
 
+	LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 	void Init(XMFLOAT2 windowSize);
 	void Run();
 
@@ -17,13 +19,8 @@ public:
 	void SetWindow(XMFLOAT2 size);
 	void CreateRenderers();
 
-	void OnLButtonClicked(XMINT2 screenXY);
-	void OnKeyDown(WPARAM wParam);
-
 private:
 	HWND m_hwnd;
 	std::shared_ptr<DXResource> m_dxResources;
 	std::shared_ptr<SceneRenderer> m_sceneRenderer;
-
-	std::shared_ptr<HEvent> m_pEventKeyDown;
 };

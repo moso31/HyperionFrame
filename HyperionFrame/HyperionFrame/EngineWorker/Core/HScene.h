@@ -16,7 +16,7 @@ class HScene : public HListener, public enable_shared_from_this<HScene>
 {
 public:
 	HScene();
-	HScene(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown);
+	HScene(const std::shared_ptr<DXResource>& dxResource);
 	~HScene();
 
 	void OnResize();
@@ -31,9 +31,9 @@ public:
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize);
 	void Release() {}
 
-	void OnMouseDown(int x, int y);
-	void OnKeyDown(WPARAM wParam);
-	void OnNotify();
+	void OnMouseDown(UINT x, UINT y);
+	void OnKeyDown();
+	void OnKeyUp();
 
 	Camera*						CreateCamera();
 	HPointLight*				CreatePointLight();
@@ -75,7 +75,6 @@ private:
 
 private:
 	std::shared_ptr<DXResource>		m_dxResources;
-	std::shared_ptr<HEvent>			m_pEventKeyDown;
 	std::shared_ptr<HSceneManager>	m_sceneManager;
 
 	Camera*				m_mainCamera;

@@ -9,4 +9,3 @@ App* g_app;
 XMFLOAT2 g_windowSize;
 
 bool g_test = false;
-XMINT2 g_pos;

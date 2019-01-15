@@ -19,9 +19,6 @@
     <ClCompile Include="EngineCore\main.cpp">
       <Filter>EngineCore</Filter>
     </ClCompile>
-    <ClCompile Include="EngineCore\App.cpp">
-      <Filter>EngineCore</Filter>
-    </ClCompile>
     <ClCompile Include="EngineWorker\Accelerators\HBVH.cpp">
       <Filter>EngineWorker\Accelerators</Filter>
     </ClCompile>
@@ -109,16 +106,19 @@
     <ClCompile Include="EngineWorker\Scenes\HShape.cpp">
       <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="EngineCore\Input\HBInput.cpp">
+    <ClCompile Include="EngineCore\Input\HEvent.cpp">
       <Filter>EngineCore\Input</Filter>
     </ClCompile>
-    <ClCompile Include="EngineCore\global.cpp">
-      <Filter>EngineCore</Filter>
+    <ClCompile Include="EngineCore\Core\App.cpp">
+      <Filter>EngineCore\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineCore\Core\global.cpp">
+      <Filter>EngineCore\Core</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\Input\HListener.cpp">
       <Filter>EngineCore\Input</Filter>
     </ClCompile>
-    <ClCompile Include="EngineCore\Input\HEvent.cpp">
+    <ClCompile Include="EngineCore\Input\HInput.cpp">
       <Filter>EngineCore\Input</Filter>
     </ClCompile>
   </ItemGroup>
@@ -148,9 +148,6 @@
       <Filter>EngineCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\header.h">
-      <Filter>EngineCore</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineCore\App.h">
       <Filter>EngineCore</Filter>
     </ClInclude>
     <ClInclude Include="EngineWorker\Accelerators\HBVH.h">
@@ -240,16 +237,22 @@
     <ClInclude Include="EngineWorker\Scenes\HShape.h">
       <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="EngineCore\Input\HBInput.h">
-      <Filter>EngineCore\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineCore\global.h">
-      <Filter>EngineCore</Filter>
-    </ClInclude>
     <ClInclude Include="EngineCore\Input\HListener.h">
       <Filter>EngineCore\Input</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\Input\HEvent.h">
+      <Filter>EngineCore\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\Core\global.h">
+      <Filter>EngineCore\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\Core\App.h">
+      <Filter>EngineCore\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\Core\HInstance.h">
+      <Filter>EngineCore\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\Input\HInput.h">
       <Filter>EngineCore\Input</Filter>
     </ClInclude>
   </ItemGroup>
@@ -298,6 +301,9 @@
     </Filter>
     <Filter Include="EngineCore\Input">
       <UniqueIdentifier>{fb1997b2-7566-4772-9db1-9f6794ed6a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineCore\Core">
+      <UniqueIdentifier>{791ada6f-b508-4b5c-8bcf-6eeb63d10501}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

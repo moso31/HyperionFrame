@@ -11,15 +11,14 @@
 #include "HGlassMaterial.h"
 #include "HMirrorMaterial.h"
 
-#include "HBInput.h"
+#include "HInput.h"
 
 HScene::HScene()
 {
 }
 
-HScene::HScene(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown) :
-	m_dxResources(dxResource),
-	m_pEventKeyDown(pEventKeyDown)
+HScene::HScene(const std::shared_ptr<DXResource>& dxResource) :
+	m_dxResources(dxResource)
 {
 }
 
@@ -34,7 +33,9 @@ void HScene::OnResize()
 
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	m_pEventKeyDown->AddListener(shared_from_this());
+	HEventOnMouseDown::GetInstance()->AddListener(shared_from_this());
+	HEventOnKeyDown::GetInstance()->AddListener(shared_from_this());
+	HEventOnKeyUp::GetInstance()->AddListener(shared_from_this());
 
 	m_mainCamera = CreateCamera();
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
@@ -257,7 +258,7 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	}
 }
 
-void HScene::OnMouseDown(int x, int y)
+void HScene::OnMouseDown(UINT x, UINT y)
 {
 	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
@@ -267,33 +268,20 @@ void HScene::OnMouseDown(int x, int y)
 	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0, &rays);
 
 #ifdef _DEBUG
-	for (int i = 0; i < rays.size(); i++)
-	{
-		shared_ptr<HLine> pLine = m_sceneManager->CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
-		pLine->SetName("debugline");
-		debugMsgLines.push_back(pLine);
-	}
+	//for (int i = 0; i < rays.size(); i++)
+	//{
+	//	shared_ptr<HLine> pLine = m_sceneManager->CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
+	//	pLine->SetName("debugline");
+	//	debugMsgLines.push_back(pLine);
+	//}
 #endif //_DEBUG
 
 	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", x, y, L.x, L.y, L.z);
 }
 
-void HScene::OnKeyDown(WPARAM wParam)
-{
-	if (wParam == 'G')
-	{
-		MakeBMPImage();
-	}
-
-	if (HBII->KeyDown('T'))
-	{
-		MakeBMPImage();
-	}
-}
-
-void HScene::OnNotify()
+void HScene::OnKeyDown()
 {  
-	printf("Scene::OnNotify() processed.\n");
+	printf("Scene::OnNotify() processed %f.\n", xxxxx);
 
 	if (HBII->KeyDown('G'))
 		MakeBMPImage();
@@ -305,6 +293,11 @@ void HScene::OnNotify()
 			primitives[i]->SetRotation(0.0f, xxxxx, 0.0f);
 		}
 	}
+}
+
+void HScene::OnKeyUp()
+{
+	printf("-1s.\n");
 }
 
 Camera * HScene::CreateCamera()

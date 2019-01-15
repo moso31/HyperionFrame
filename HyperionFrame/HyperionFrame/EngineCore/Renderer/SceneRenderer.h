@@ -10,7 +10,7 @@ public:
 		(sizeof(CBufferMeshData) + 255)
 		) & ~255;
 	SceneRenderer();
-	SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown);
+	SceneRenderer(const std::shared_ptr<DXResource>& dxResource);
 	~SceneRenderer();
 
 	void CreateSceneResources();
@@ -19,12 +19,8 @@ public:
 	void Update();
 	bool Render();
 
-	void OnLButtonClicked(XMINT2 screenXY);
-	void OnKeyDown(WPARAM wParam);
-
 private:
 	std::shared_ptr<DXResource> m_dxResources;
-	std::shared_ptr<HEvent> m_pEventKeyDown;
 
 	ComPtr<ID3D12GraphicsCommandList>					m_commandList;
 	ComPtr<ID3D12RootSignature>							m_rootSignature;

@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -144,7 +144,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -158,13 +158,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EngineCore\App.cpp" />
+    <ClCompile Include="EngineCore\Core\App.cpp" />
+    <ClCompile Include="EngineCore\Core\global.cpp" />
     <ClCompile Include="EngineCore\DirectX\DXResource.cpp" />
     <ClCompile Include="EngineCore\File\FBXDataConvert.cpp" />
     <ClCompile Include="EngineCore\File\FBXMeshLoader.cpp" />
     <ClCompile Include="EngineCore\File\ImageGenerator.cpp" />
-    <ClCompile Include="EngineCore\global.cpp" />
-    <ClCompile Include="EngineCore\Input\HBInput.cpp" />
+    <ClCompile Include="EngineCore\Input\HInput.cpp" />
     <ClCompile Include="EngineCore\Input\HEvent.cpp" />
     <ClCompile Include="EngineCore\Input\HListener.cpp" />
     <ClCompile Include="EngineCore\main.cpp" />
@@ -200,16 +200,17 @@
     <ClCompile Include="EngineWorker\Scenes\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EngineCore\App.h" />
+    <ClInclude Include="EngineCore\Core\App.h" />
+    <ClInclude Include="EngineCore\Core\global.h" />
+    <ClInclude Include="EngineCore\Core\HInstance.h" />
     <ClInclude Include="EngineCore\DirectX\d3dx12.h" />
     <ClInclude Include="EngineCore\DirectX\DirectXHelper.h" />
     <ClInclude Include="EngineCore\DirectX\DXResource.h" />
     <ClInclude Include="EngineCore\File\FBXDataConvert.h" />
     <ClInclude Include="EngineCore\File\FBXMeshLoader.h" />
     <ClInclude Include="EngineCore\File\ImageGenerator.h" />
-    <ClInclude Include="EngineCore\global.h" />
     <ClInclude Include="EngineCore\header.h" />
-    <ClInclude Include="EngineCore\Input\HBInput.h" />
+    <ClInclude Include="EngineCore\Input\HInput.h" />
     <ClInclude Include="EngineCore\Input\HEvent.h" />
     <ClInclude Include="EngineCore\Input\HListener.h" />
     <ClInclude Include="EngineCore\Renderer\PipelineManager.h" />

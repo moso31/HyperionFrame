@@ -6,11 +6,10 @@ SceneRenderer::SceneRenderer()
 {
 }
 
-SceneRenderer::SceneRenderer(const std::shared_ptr<DXResource>& dxResource, const std::shared_ptr<HEvent>& pEventKeyDown) :
-	m_dxResources(dxResource),
-	m_pEventKeyDown(pEventKeyDown)
+SceneRenderer::SceneRenderer(const std::shared_ptr<DXResource>& dxResource) :
+	m_dxResources(dxResource)
 {
-	m_test_scene = std::make_shared<HScene>(dxResource, pEventKeyDown);
+	m_test_scene = std::make_shared<HScene>(dxResource);
 
 	CreateSceneResources();
 }
@@ -236,13 +235,4 @@ bool SceneRenderer::Render()
 	m_dxResources->GetCommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
 	return true;
-}
-
-void SceneRenderer::OnLButtonClicked(XMINT2 screenXY)
-{
-	m_test_scene->OnMouseDown(screenXY.x, screenXY.y);
-}
-
-void SceneRenderer::OnKeyDown(WPARAM wParam)
-{
 }

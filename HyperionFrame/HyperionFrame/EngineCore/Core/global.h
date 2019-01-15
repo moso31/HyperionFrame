@@ -8,6 +8,3 @@ extern HINSTANCE g_hInstance;
 
 extern App* g_app;
 extern XMFLOAT2 g_windowSize;
-
-extern bool g_test;
-extern XMINT2 g_pos;

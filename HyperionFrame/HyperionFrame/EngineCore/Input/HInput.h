@@ -1,19 +1,18 @@
 #pragma once
 #include "header.h"
+#include "HInstance.h"
 
-#define HBII HBInput::GetInstance()
+#define HBII HInput::GetInstance()
 
 #define MK_LEFT		0
 #define MK_MID		1
 #define MK_RIGHT	2
 
-class HBInput
+class HInput : public HInstance<HInput>
 {
 public:
-	HBInput();
-	~HBInput();
-
-	static HBInput* GetInstance();
+	HInput();
+	~HInput();
 
 	bool KeyDown(int key);
 	bool Key(int key);
@@ -33,8 +32,6 @@ public:
 	void Release();
 
 private:
-	static HBInput* Instance;
-
 	bool m_keyState[256];
 	bool m_keyActivite[256];
 

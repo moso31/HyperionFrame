@@ -1,44 +1,10 @@
 #include "App.h"
 #include "global.h"
-#include "HBInput.h"
+#include "HInput.h"
 
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	DWORD x = LOWORD(lParam);
-	DWORD y = HIWORD(lParam);
-
-	switch (msg)
-	{
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	case WM_INPUT:
-		HBII->UpdateRawInput(lParam);
-
-		if (HBII->KeyDown(VK_ESCAPE))
-			PostQuitMessage(0);
-		break;
-	case WM_LBUTTONDOWN:
-		g_app->OnLButtonClicked(XMINT2((int)x, (int)y));
-		break;
-	case WM_LBUTTONUP:
-		g_test = false;
-		break;
-	case WM_MOUSEMOVE:
-		g_pos = { (int)x, (int)y };
-		break;
-	case WM_MOUSEACTIVATE:
-		g_pos = { (int)x, (int)y };
-		break;
-	case WM_KEYDOWN:
-	{
-		g_app->OnKeyDown(wParam);
-		break;
-	}
-	default:
-		break;
-	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return g_app->MsgProc(hWnd, msg, wParam, lParam);
 }
 
 bool InitWindow()
@@ -121,14 +87,7 @@ int Run()
 		}
 		else
 		{
-			if (g_test)
-			{
-				g_app->OnLButtonClicked(g_pos);
-				g_test = false;
-			}
-
 			RunApp();
-
 			HBII->RestoreData(); // 清空一次鼠标位置
 		}
 	}

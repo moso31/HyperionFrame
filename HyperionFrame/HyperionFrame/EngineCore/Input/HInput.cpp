@@ -1,9 +1,7 @@
-#include "HBInput.h"
+#include "HInput.h"
 #include "global.h"
 
-HBInput* HBInput::Instance = nullptr;
-
-HBInput::HBInput()
+HInput::HInput()
 {
 	m_mouseMove = XMINT2(0, 0);
 	::ZeroMemory(m_keyState, sizeof(m_keyState));
@@ -31,52 +29,46 @@ HBInput::HBInput()
 	printf("Íê³É¡£\n");
 }
 
-HBInput::~HBInput()
+HInput::~HInput()
 {
 }
 
-HBInput* HBInput::GetInstance()
-{
-	if (!Instance) Instance = new HBInput();
-	return Instance;
-}
-
-bool HBInput::KeyDown(int key)
+bool HInput::KeyDown(int key)
 {
 	return m_keyState[key] && m_keyActivite[key];
 }
 
-bool HBInput::Key(int key)
+bool HInput::Key(int key)
 {
 	return m_keyState[key];
 }
 
-bool HBInput::KeyUp(int key)
+bool HInput::KeyUp(int key)
 {
 	return !m_keyState[key] && m_keyActivite[key];
 }
 
-bool HBInput::MouseDown(int key)
+bool HInput::MouseDown(int key)
 {
 	return m_mouseState[key] && m_mouseActivite[key];
 }
 
-bool HBInput::MousePressing(int key)
+bool HInput::MousePressing(int key)
 {
 	return m_mouseState[key];
 }
 
-bool HBInput::MouseUp(int key)
+bool HInput::MouseUp(int key)
 {
 	return !m_mouseState[key] && m_mouseActivite[key];
 }
 
-XMINT2 HBInput::MouseMove()
+XMINT2 HInput::MouseMove()
 {
 	return m_mouseMove;
 }
 
-XMINT2 HBInput::MousePosition()
+XMINT2 HInput::MousePosition()
 {
 	POINT p;
 	GetCursorPos(&p);
@@ -84,19 +76,19 @@ XMINT2 HBInput::MousePosition()
 	return XMINT2(p.x, p.y);
 }
 
-void HBInput::RestoreData()
+void HInput::RestoreData()
 {
 	m_mouseMove = XMINT2(0, 0);
 	::ZeroMemory(m_keyActivite, sizeof(m_keyActivite));
 	::ZeroMemory(m_mouseActivite, sizeof(m_mouseActivite));
 }
 
-void HBInput::Update()
+void HInput::Update()
 {
 }
 
 #define REGISTER_MKMOUSESTATE(RI_MOUSE_CODE, MK_CODE, bValue) if ((raw->data.mouse.usButtonFlags & RI_MOUSE_CODE) != 0) m_mouseKey[MK_CODE] = bValue;
-void HBInput::UpdateRawInput(LPARAM lParam)
+void HInput::UpdateRawInput(LPARAM lParam)
 {
 	UINT dwSize;
 	GetRawInputData((HRAWINPUT)lParam, RID_INPUT, nullptr, &dwSize, sizeof(RAWINPUTHEADER));
@@ -142,7 +134,7 @@ void HBInput::UpdateRawInput(LPARAM lParam)
 	delete[] lpb;
 }
 
-void HBInput::PrintMouseState()
+void HInput::PrintMouseState()
 {
 	bool flag = false;
 	for (int i = 0; i < 5; i++)
@@ -160,8 +152,6 @@ void HBInput::PrintMouseState()
 	printf("\n");
 }
 
-void HBInput::Release()
+void HInput::Release()
 {
-	delete Instance;
-	Instance = nullptr;
 }
