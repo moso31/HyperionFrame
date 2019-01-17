@@ -9,7 +9,6 @@
 #include "ImageGenerator.h"
 #include "HSceneManager.h"
 
-#include "HListener.h"
 #include "HEvent.h"
 
 class HScene : public HListener, public enable_shared_from_this<HScene>
