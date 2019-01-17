@@ -28,6 +28,11 @@ struct TriangleUV
 class HShape : public HPrimitive
 {
 public:
+	static const UINT c_alignedConstantBufferSize = (
+		(sizeof(ModelViewProjectionConstantBuffer) + 255) +
+		(sizeof(CBufferMeshData) + 255)
+		) & ~255;
+
 	HShape();
 	HShape(const shared_ptr<DXResource>& dxResources);
 	virtual ~HShape();
@@ -44,6 +49,8 @@ public:
 
 	virtual bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit) = 0;
 	virtual bool IntersectP(Ray worldRay, float* out_t0, float* out_t1) = 0;
+
+	virtual UINT GetAlignedConstantBufferSize();
 
 protected:
 	shared_ptr<DXResource>		m_dxResources;

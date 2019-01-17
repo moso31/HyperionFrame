@@ -1,4 +1,6 @@
 #include "HSceneManager.h"
+#include "DirectXHelper.h"
+
 #include "Box.h"
 #include "Sphere.h"
 #include "HMesh.h"
@@ -25,8 +27,9 @@ HSceneManager::HSceneManager()
 {
 }
 
-HSceneManager::HSceneManager(std::shared_ptr<DXResource> dxResources, ComPtr<ID3D12GraphicsCommandList> pCommandList) :
+HSceneManager::HSceneManager(std::shared_ptr<DXResource> dxResources, const ComPtr<ID3D12DescriptorHeap>& pCbvHeap, const ComPtr<ID3D12GraphicsCommandList>& pCommandList) :
 	m_dxResources(dxResources),
+	m_cbvHeap(pCbvHeap),
 	m_pCommandList(pCommandList)
 {
 }

@@ -56,8 +56,10 @@ public:
 	virtual void Update(UINT8 * destination) = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
+
+	virtual UINT GetAlignedConstantBufferSize() = 0;
 	void GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList, PrimitiveBuffer * pShapeBuffer);
-	void SetPrimitiveBuffer(PrimitiveBuffer* pShapeBuffer);
+	virtual void SetPrimitiveBuffer(PrimitiveBuffer* pShapeBuffer);
 
 protected:
 	shared_ptr<DXResource>		m_dxResources;
@@ -73,5 +75,6 @@ protected:
 	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		m_indexBufferView;
 
-	
+	ComPtr<ID3D12Resource>		m_constantBuffer;
+	UINT8*						m_mappedConstantBuffer;
 };

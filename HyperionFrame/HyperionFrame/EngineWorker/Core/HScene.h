@@ -23,8 +23,14 @@ public:
 	// 初始化场景各参数信息
 	void Init(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	// 场景初始化完毕后需要刷新一次，以提供矩阵和加速结构信息。
-	void InitSceneData();
+	// 初始化渲染器信息，主要处理描述符堆的数据。
+	void InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+
+	// 初始化图元信息。
+	void InitPrimitiveData();
+
+	// 初始化结构信息。需要在所有primitive创建之后，第一次更新前执行一次，以提供Transform和BVH加速结构信息。
+	void InitStructureData();
 
 	void Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBufferSize);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize);
@@ -33,6 +39,11 @@ public:
 	void OnMouseDown(UINT x, UINT y);
 	void OnKeyDown();
 	void OnKeyUp();
+
+	shared_ptr<Box>			CreateBox(string name, float width = 1.0f, float height = 1.0f, float depth = 1.0f);
+	shared_ptr<Sphere>		CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical);
+	shared_ptr<HMesh>		CreateMesh(string filepath);
+	shared_ptr<HSegment>	CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2);
 
 	Camera*						CreateCamera();
 	HPointLight*				CreatePointLight();
@@ -62,11 +73,14 @@ public:
 	vector<Transform*>	transformNodes;
 	vector<Camera*>		cameras;
 	vector<HLight*>		lights;
+
 	vector<shared_ptr<HPrimitive>>		primitives;
 	vector<shared_ptr<HLine>>			debugMsgLines;
 	vector<shared_ptr<HMaterial>>		materials;
 
 private:
+	void UpdateDescriptors();
+
 	// 构建并生成BVH树。
 	void UpdateAccelerateStructure();
 
@@ -82,4 +96,8 @@ private:
 
 	int					m_makingProcessIndex;
 	CBufferEyePos		m_cbEyePos;
+	
+	// 用于存放场景内primitive的描述符堆。
+	ComPtr<ID3D12DescriptorHeap>	m_cbvHeap;
+	UINT							m_cbvDescriptorSize;
 };

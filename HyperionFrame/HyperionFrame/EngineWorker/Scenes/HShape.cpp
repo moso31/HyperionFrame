@@ -1,4 +1,6 @@
 #include "HShape.h"
+#include "DirectXHelper.h"
+
 #include "HMatteMaterial.h"
 #include "HGlassMaterial.h"
 #include "HMirrorMaterial.h"
@@ -45,4 +47,9 @@ void HShape::SetMaterial(shared_ptr<HMaterial> mat)
 {
 	m_material = mat;
 	m_cbMeshData.vertColor = mat->GetDiffuse();
+}
+
+UINT HShape::GetAlignedConstantBufferSize()
+{
+	return ((sizeof(ModelViewProjectionConstantBuffer) + 255) + (sizeof(CBufferMeshData) + 255)) & ~255;
 }

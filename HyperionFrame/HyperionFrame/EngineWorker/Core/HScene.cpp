@@ -1,4 +1,6 @@
 #include "HScene.h"
+#include "DirectXHelper.h"
+
 #include "whitted.h"
 #include "HDefaultSampler.h"
 
@@ -37,6 +39,32 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	HEventOnKeyDown::GetInstance()->AddListener(shared_from_this());
 	HEventOnKeyUp::GetInstance()->AddListener(shared_from_this());
 
+	InitRendererData(pCommandList);
+	InitPrimitiveData();
+	InitStructureData();
+}
+
+void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+{
+	m_sceneManager = make_shared<HSceneManager>(m_dxResources, m_cbvHeap, pCommandList);
+
+	auto pD3DDevice = m_dxResources->GetD3DDevice();
+
+	// 为常量缓冲区创建描述符堆。
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = DXResource::c_frameCount * 0 + 1;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvHeap)));
+
+		DX::NAME_D3D12_OBJECT(m_cbvHeap);
+	}
+}
+
+void HScene::InitPrimitiveData()
+{
 	m_mainCamera = CreateCamera();
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
@@ -62,78 +90,60 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
-	m_sceneManager = make_shared<HSceneManager>(m_dxResources, pCommandList);
 
-	pShape = m_sceneManager->CreateBox();
-	pShape->SetName("wall y+");
+	pShape = CreateBox("wall y+");
 	pShape->SetTranslation(0.0f, 10.5f, 0.0f);
 	pShape->SetMaterial(mtrl[1]);
 	pShape->SetScale(20.0f, 1.0f, 20.0f);
-	primitives.push_back(pShape);
 
-	pShape = m_sceneManager->CreateBox();
-	pShape->SetName("wall x-");
+	pShape = CreateBox("wall x-");
 	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
 	pShape->SetMaterial(mtrl[2]);
 	pShape->SetScale(1.0f, 20.0f, 20.0f);
-	primitives.push_back(pShape);
 
-	pShape = m_sceneManager->CreateBox();
-	pShape->SetName("wall x+");
+	pShape = CreateBox("wall x+");
 	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
 	pShape->SetMaterial(mtrl[0]);
 	pShape->SetScale(1.0f, 20.0f, 20.0f);
-	primitives.push_back(pShape);
 
-	pShape = m_sceneManager->CreateBox();
-	pShape->SetName("wall z-");
+	pShape = CreateBox("wall z-");
 	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
 	pShape->SetMaterial(mtrl[5]);
 	pShape->SetScale(20.0f, 20.0f, 1.0f);
-	primitives.push_back(pShape);
 
-	pShape = m_sceneManager->CreateBox();
-	pShape->SetName("wall z+");
+	pShape = CreateBox("wall z+");
 	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
 	pShape->SetMaterial(mtrl[5]);
 	pShape->SetScale(20.0f, 20.0f, 1.0f);
-	primitives.push_back(pShape);
 
-	pShape = m_sceneManager->CreateMesh("D:\\test.fbx");
+	pShape = CreateMesh("D:\\test.fbx");
 	pShape->SetMaterial(mtrl[6]);
 	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	pShape->SetScale(5.0f, 5.0f, 5.0f);
 	pShape->SetRotation(0.0f, -0.3f, 0.0f);
-	primitives.push_back(pShape);
 
-	//shape = m_sceneManager->CreateBox();
-	//shape->SetName("box big");
+	//shape = CreateBox("box big");
 	//shape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	//shape->SetScale(5.0f, 5.0f, 5.0f);
 	//shape->SetRotation(0.0f, -0.3f, 0.0f);
 	//shape->SetMaterial(mtrl[4]);
-	//primitives.push_back(shape);
 
-	pShape = m_sceneManager->CreateSphere(1.0f, 64, 64);
-	pShape->SetName("sphere");
+	pShape = CreateSphere("sphere", 1.0f, 64, 64);
 	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[4]);
-	primitives.push_back(pShape);
 
-	pShape = m_sceneManager->CreateBox();
-	pShape->SetName("box small");
+	pShape = CreateBox("box small");
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[4]);
-	primitives.push_back(pShape);
 
 	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
 		{
-			pShape = m_sceneManager->CreateBox();
+			pShape = CreateBox("chess boxes");
 			if ((i + j) % 2)
 			{
 				pShape->SetTranslation(-i, -0.7f, j);
@@ -168,11 +178,9 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pointLight->SetTranslation(-lightPos.z, lightPos.y, -lightPos.x);
 	brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
-
-	InitSceneData();
 }
 
-void HScene::InitSceneData()
+void HScene::InitStructureData()
 {
 	m_mainCamera->UpdateTransformData();
 	for (int i = 0; i < primitives.size(); i++)
@@ -270,7 +278,7 @@ void HScene::OnMouseDown(UINT x, UINT y)
 #ifdef _DEBUG
 	//for (int i = 0; i < rays.size(); i++)
 	//{
-	//	shared_ptr<HLine> pLine = m_sceneManager->CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
+	//	shared_ptr<HLine> pLine = CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
 	//	pLine->SetName("debugline");
 	//	debugMsgLines.push_back(pLine);
 	//}
@@ -298,6 +306,41 @@ void HScene::OnKeyDown()
 void HScene::OnKeyUp()
 {
 	printf("-1s.\n");
+}
+
+shared_ptr<Box> HScene::CreateBox(string name, float width, float height, float depth)
+{
+	auto box = m_sceneManager->CreateBox(width, height, depth);
+	box->SetName(name);
+	primitives.push_back(box);
+	UpdateDescriptors();
+	return box;
+}
+
+shared_ptr<Sphere> HScene::CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical)
+{
+	auto sphere = m_sceneManager->CreateSphere(radius, segmentHorizontal, segmentVertical);
+	sphere->SetName(name);
+	primitives.push_back(sphere);
+	UpdateDescriptors();
+	return sphere;
+}
+
+shared_ptr<HMesh> HScene::CreateMesh(string filepath)
+{
+	auto mesh = m_sceneManager->CreateMesh(filepath);
+	primitives.push_back(mesh);
+	UpdateDescriptors();
+	return mesh;
+}
+
+shared_ptr<HSegment> HScene::CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2)
+{
+	auto segment = m_sceneManager->CreateSegment(point1, point2);
+	segment->SetName(name);
+	primitives.push_back(segment);
+	UpdateDescriptors();
+	return segment;
 }
 
 Camera * HScene::CreateCamera()
@@ -441,6 +484,52 @@ void HScene::MakeBMPImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSam
 	m_makingProcessIndex++;
 	float percent = ((float)m_makingProcessIndex / (float)tileSampleCount) * 100.0f;
 	printf("\r%.2f%%..", percent < 100.0f ? percent : 100.0f);
+}
+
+void HScene::UpdateDescriptors()
+{
+	auto pD3DDevice = m_dxResources->GetD3DDevice();
+
+	// 创建常量缓冲区视图以访问上载缓冲区。
+	auto cbvDescriptorSize = pD3DDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	for (UINT n = 0; n < DXResource::c_frameCount; n++)
+	{
+		for (UINT i = 0; i < renderCount; i++)
+		{
+			int heapIndex = n * renderCount + i;
+
+			// 获取描述符对应资源的GPU虚拟地址
+			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
+			cbvGpuAddress += heapIndex * GetAlignedConstantBufferSize();
+
+			// 获取描述符对应资源的CPU地址
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+			cbvCpuHandle.Offset(heapIndex * 2, cbvDescriptorSize);
+
+			// 将数据写入该资源
+			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+			desc.SizeInBytes = 256;
+			desc.BufferLocation = cbvGpuAddress;
+			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+
+			cbvCpuHandle.Offset(cbvDescriptorSize);
+			desc.BufferLocation += 256;
+			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+		}
+	}
+
+	int heapIndex = DXResource::c_frameCount * renderCount;
+	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
+	cbvGpuAddress += heapIndex * GetAlignedConstantBufferSize();
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+	cbvCpuHandle.Offset(heapIndex * 2, cbvDescriptorSize);
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+	desc.SizeInBytes = 256;
+	desc.BufferLocation = cbvGpuAddress;
+	pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 }
 
 void HScene::UpdateAccelerateStructure()

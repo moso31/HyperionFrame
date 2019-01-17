@@ -20,7 +20,7 @@ class HSceneManager
 {
 public:
 	HSceneManager();
-	HSceneManager(std::shared_ptr<DXResource> dxResources, ComPtr<ID3D12GraphicsCommandList> pCommandList);
+	HSceneManager(std::shared_ptr<DXResource> dxResources, const ComPtr<ID3D12DescriptorHeap>& pCbvHeap, const ComPtr<ID3D12GraphicsCommandList>& pCommandList);
 	~HSceneManager();
 
 	shared_ptr<Box>			CreateBox(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
@@ -36,5 +36,9 @@ private:
 
 	// 特征表，存储场景中每种物体的特征。
 	// 特征相同的物体会通用部分GPU数据，从而节约显存开销。
-	vector<CommonFeatureParams> m_commonFeatureTable;
+	vector<CommonFeatureParams>			m_commonFeatureTable;
+
+	// 用于存放场景内primitive的描述符堆。
+	ComPtr<ID3D12DescriptorHeap>		m_cbvHeap;
+	UINT								m_cbvDescriptorSize;
 };
