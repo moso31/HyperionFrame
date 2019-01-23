@@ -61,6 +61,8 @@ public:
 	void GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList, PrimitiveBuffer * pShapeBuffer);
 	virtual void SetPrimitiveBuffer(PrimitiveBuffer* pShapeBuffer);
 
+	ComPtr<ID3D12Resource> GetConstantBuffer() { return m_constantBuffer; }
+
 protected:
 	shared_ptr<DXResource>		m_dxResources;
 

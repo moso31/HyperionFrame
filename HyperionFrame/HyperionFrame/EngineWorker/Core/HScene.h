@@ -79,6 +79,7 @@ public:
 	vector<shared_ptr<HMaterial>>		materials;
 
 private:
+	// 在新生成物体后需要执行此方法，更新描述符的数量。
 	void UpdateDescriptors();
 
 	// 构建并生成BVH树。

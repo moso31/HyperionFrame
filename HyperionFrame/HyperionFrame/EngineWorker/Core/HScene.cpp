@@ -49,6 +49,8 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	m_sceneManager = make_shared<HSceneManager>(m_dxResources, m_cbvHeap, pCommandList);
 
 	auto pD3DDevice = m_dxResources->GetD3DDevice();
+	
+	m_cbvDescriptorSize = pD3DDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// 为常量缓冲区创建描述符堆。
 	{
@@ -490,11 +492,38 @@ void HScene::UpdateDescriptors()
 {
 	auto pD3DDevice = m_dxResources->GetD3DDevice();
 
-	// 创建常量缓冲区视图以访问上载缓冲区。
-	auto cbvDescriptorSize = pD3DDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	UINT primitiveCount = (UINT)primitives.size();
+	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
+	UINT renderCount = primitiveCount + debugMsgLineCount;
+
+	ComPtr<ID3D12DescriptorHeap>	pNewCbvHeap;
+	// 为常量缓冲区创建新的描述符堆。
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = DXResource::c_frameCount * renderCount * 2 + 1;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&pNewCbvHeap)));
+
+		DX::NAME_D3D12_OBJECT(pNewCbvHeap);
+	}
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+	pD3DDevice->CopyDescriptors(3, );
 
 	for (UINT n = 0; n < DXResource::c_frameCount; n++)
 	{
+		for (UINT i = 0; i < primitiveCount; i++)
+		{
+			int heapIndex = n * renderCount + i;
+			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = primitives[i]->GetConstantBuffer()->GetGPUVirtualAddress();
+			cbvGpuAddress += heapIndex * primitives[i]->GetAlignedConstantBufferSize();
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
+			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
+		}
+
 		for (UINT i = 0; i < renderCount; i++)
 		{
 			int heapIndex = n * renderCount + i;
@@ -505,7 +534,7 @@ void HScene::UpdateDescriptors()
 
 			// 获取描述符对应资源的CPU地址
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-			cbvCpuHandle.Offset(heapIndex * 2, cbvDescriptorSize);
+			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 			// 将数据写入该资源
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
@@ -513,7 +542,7 @@ void HScene::UpdateDescriptors()
 			desc.BufferLocation = cbvGpuAddress;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 
-			cbvCpuHandle.Offset(cbvDescriptorSize);
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 			desc.BufferLocation += 256;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 		}
@@ -524,7 +553,7 @@ void HScene::UpdateDescriptors()
 	cbvGpuAddress += heapIndex * GetAlignedConstantBufferSize();
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-	cbvCpuHandle.Offset(heapIndex * 2, cbvDescriptorSize);
+	cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 	desc.SizeInBytes = 256;
