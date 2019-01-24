@@ -14,7 +14,7 @@ public:
 	void AddIndex(USHORT index) { m_indices.push_back(index); }
 	void InitParameters(string filepath);
 
-	void Update(UINT8 * destination);
+	void Update();
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
 	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit);

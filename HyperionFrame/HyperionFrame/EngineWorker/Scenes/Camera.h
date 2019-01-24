@@ -1,5 +1,6 @@
 #pragma once
 #include "DXResource.h"
+#include "ShaderStructures.h"
 
 #include "Transform.h"
 
@@ -27,6 +28,9 @@ public:
 	XMFLOAT4X4 GetViewToWorld(XMMATRIX& out_mxResult);
 	Ray GenerateRay(float screenX, float screenY);
 
+	virtual UINT GetAlignedConstantBufferSize();
+	virtual void SetCameraBuffer();
+
 private:
 	shared_ptr<DXResource> m_dxResources;
 
@@ -38,4 +42,6 @@ private:
 	float m_fovY;
 	float m_nearZ, m_farZ;
 	XMFLOAT3 m_at, m_up;
+
+	CBufferEyePos		m_cbEyePos;
 };

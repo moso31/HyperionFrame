@@ -28,16 +28,11 @@ struct TriangleUV
 class HShape : public HPrimitive
 {
 public:
-	static const UINT c_alignedConstantBufferSize = (
-		(sizeof(ModelViewProjectionConstantBuffer) + 255) +
-		(sizeof(CBufferMeshData) + 255)
-		) & ~255;
-
 	HShape();
 	HShape(const shared_ptr<DXResource>& dxResources);
 	virtual ~HShape();
 
-	virtual void Update(UINT8 * destination) = 0;
+	virtual void Update() = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
 	UINT GetFaceCount();

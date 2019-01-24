@@ -156,7 +156,6 @@ void HScene::InitPrimitiveData()
 				pShape->SetTranslation(-i, -0.5f, j);
 				pShape->SetMaterial(mtrl[3]);
 			}
-			primitives.push_back(pShape);
 		}
 	}
 
@@ -198,59 +197,56 @@ void HScene::InitStructureData()
 }
 
 static float xxxxx = 0;
-void HScene::Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBufferSize)
+void HScene::Update()
 {
 	xxxxx += 0.01f;
 
 	m_mainCamera->UpdateTransformData();
 	m_mainCamera->Update();
-	m_cbEyePos.eyePos = m_mainCamera->GetTranslation();
 
 	UINT primitiveCount = (UINT)primitives.size();
 	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
 	UINT renderCount = primitiveCount + debugMsgLineCount;
-	UINT8* destination = pMappedConstantBuffer + (DXResource::c_frameCount * renderCount * alignedConstantBufferSize);
-	memcpy(destination, &m_cbEyePos, sizeof(m_cbEyePos));
 
 	for (UINT i = 0; i < primitiveCount; i++)
 	{
-		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * renderCount + i) * alignedConstantBufferSize);
-
 		primitives[i]->UpdateTransformData();
-		primitives[i]->Update(destination);
+		primitives[i]->Update();
 	}
 
 	for (UINT i = 0; i < debugMsgLineCount; i++)
 	{
-		UINT8* destination = pMappedConstantBuffer + ((m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i) * alignedConstantBufferSize);
-
 		if (debugMsgLines[i]->GetName() == "debugline")
 		{
 			debugMsgLines[i]->SetRotation(0.0f, xxxxx, 0.0f);
 		}
 
 		debugMsgLines[i]->UpdateTransformData();
-		debugMsgLines[i]->Update(destination);
+		debugMsgLines[i]->Update();
 	}
 }
 
-void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize)
+void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs)
 {
+	ID3D12DescriptorHeap* ppHeaps[] = { m_cbvHeap.Get() };
+	pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
 	UINT primitiveCount = (UINT)primitives.size();
 	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
 	UINT renderCount = primitiveCount + debugMsgLineCount;
 	UINT cbvIndex = DXResource::c_frameCount * renderCount;
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
-	gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+	gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 
 	for (UINT i = 0; i < primitiveCount; i++)
 	{
 		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + i;
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
-		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
-		gpuHandle.Offset(cbvDescriptorSize);
+		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
 		primitives[i]->Render(pCommandList);
 	}
@@ -259,10 +255,10 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	for (UINT i = 0; i < debugMsgLineCount; i++)
 	{
 		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i;
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(pCbvHeap->GetGPUDescriptorHandleForHeapStart());
-		gpuHandle.Offset(cbvIndex * 2, cbvDescriptorSize);
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
-		gpuHandle.Offset(cbvDescriptorSize);
+		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
 		debugMsgLines[i]->Render(pCommandList);
 	}
@@ -351,6 +347,7 @@ Camera * HScene::CreateCamera()
 	transformNodes.push_back(camera);
 	cameras.push_back(camera);
 	camera->Init(70.0f, 0.01f, 1000.0f);
+	camera->SetCameraBuffer();
 	return camera;
 }
 
@@ -509,31 +506,35 @@ void HScene::UpdateDescriptors()
 		DX::NAME_D3D12_OBJECT(pNewCbvHeap);
 	}
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-	pD3DDevice->CopyDescriptors(3, );
-
 	for (UINT n = 0; n < DXResource::c_frameCount; n++)
 	{
 		for (UINT i = 0; i < primitiveCount; i++)
 		{
 			int heapIndex = n * renderCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = primitives[i]->GetConstantBuffer()->GetGPUVirtualAddress();
-			cbvGpuAddress += heapIndex * primitives[i]->GetAlignedConstantBufferSize();
+			//cbvGpuAddress += heapIndex * primitives[i]->GetAlignedConstantBufferSize();
 
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
 			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
+
+			// 将数据写入该资源
+			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+			desc.SizeInBytes = 256;
+			desc.BufferLocation = cbvGpuAddress;
+			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
+			desc.BufferLocation += 256;
+			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 		}
 
-		for (UINT i = 0; i < renderCount; i++)
+		for (UINT i = 0; i < debugMsgLineCount; i++)
 		{
-			int heapIndex = n * renderCount + i;
+			int heapIndex = n * renderCount + primitiveCount + i;
+			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = debugMsgLines[i]->GetConstantBuffer()->GetGPUVirtualAddress();
+			//cbvGpuAddress += heapIndex * debugMsgLines[i]->GetAlignedConstantBufferSize();
 
-			// 获取描述符对应资源的GPU虚拟地址
-			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-			cbvGpuAddress += heapIndex * GetAlignedConstantBufferSize();
-
-			// 获取描述符对应资源的CPU地址
-			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
 			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 			// 将数据写入该资源
@@ -549,16 +550,19 @@ void HScene::UpdateDescriptors()
 	}
 
 	int heapIndex = DXResource::c_frameCount * renderCount;
-	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-	cbvGpuAddress += heapIndex * GetAlignedConstantBufferSize();
+	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_mainCamera->GetConstantBuffer()->GetGPUVirtualAddress();
+	//cbvGpuAddress += heapIndex * m_mainCamera->GetAlignedConstantBufferSize();
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
 	cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 	desc.SizeInBytes = 256;
 	desc.BufferLocation = cbvGpuAddress;
 	pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+
+	//m_cbvHeap->Release();
+	m_cbvHeap = pNewCbvHeap;
 }
 
 void HScene::UpdateAccelerateStructure()

@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "PipelineManager.h"
+#include "DirectXHelper.h"
 
 Camera::Camera()
 {
@@ -47,6 +48,9 @@ void Camera::OnResize()
 void Camera::Update()
 {
 	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.view, XMMatrixTranspose(XMLoadFloat4x4(&m_viewMatrix)));
+
+	m_cbEyePos.eyePos = translation;
+	memcpy(m_mappedConstantBuffer, &m_cbEyePos, sizeof(m_cbEyePos));
 }
 
 void Camera::Render()
@@ -151,4 +155,32 @@ Ray Camera::GenerateRay(float screenX, float screenY)
 
 	Ray result(origin, dir);
 	return result;
+}
+
+UINT Camera::GetAlignedConstantBufferSize()
+{
+	return (UINT)(sizeof(CBufferEyePos) + 255) & ~255;
+}
+
+void Camera::SetCameraBuffer()
+{
+	auto pD3DDevice = m_dxResources->GetD3DDevice();
+
+	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * GetAlignedConstantBufferSize());
+	DX::ThrowIfFailed(pD3DDevice->CreateCommittedResource(
+		&uploadHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&constantBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&m_constantBuffer)));
+
+	DX::NAME_D3D12_OBJECT(m_constantBuffer);
+
+	// 映射常量缓冲区。
+	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
+	DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
+	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * GetAlignedConstantBufferSize());
+	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 }

@@ -12,7 +12,7 @@ public:
 
 	void InitParameters();
 
-	void Update(UINT8 * destination);
+	void Update();
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
 	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit);

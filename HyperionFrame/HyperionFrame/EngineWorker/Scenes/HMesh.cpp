@@ -32,13 +32,13 @@ void HMesh::InitParameters(string filepath)
 	m_filepath = filepath;
 }
 
-void HMesh::Update(UINT8* destination)
+void HMesh::Update()
 {
 	// 准备将更新的模型矩阵传递到着色器。
 	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(XMLoadFloat4x4(&GetObject2World())));
 
-	memcpy(destination, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
-	memcpy(destination + 256, &m_cbMeshData, sizeof(m_cbMeshData));
+	memcpy(m_mappedConstantBuffer, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
+	memcpy(m_mappedConstantBuffer + 256, &m_cbMeshData, sizeof(m_cbMeshData));
 }
 
 void HMesh::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)

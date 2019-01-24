@@ -96,77 +96,6 @@ void SceneRenderer::CreateSceneResources()
 
 	// 创建场景资源
 	m_test_scene->Init(m_commandList);
-	UINT primitiveCount = (UINT)m_test_scene->primitives.size();
-	UINT debugMsgLineCount = (UINT)m_test_scene->debugMsgLines.size();
-	UINT renderCount = primitiveCount + debugMsgLineCount;
-
-	// 为常量缓冲区创建描述符堆。
-	{
-		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = DXResource::c_frameCount * renderCount * 2 + 1;
-		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
-		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		DX::ThrowIfFailed(d3dDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvHeap)));
-
-		DX::NAME_D3D12_OBJECT(m_cbvHeap);
-	}
-
-	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DXResource::c_frameCount * renderCount * c_alignedConstantBufferSize + 256);
-	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&constantBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_constantBuffer)));
-
-	DX::NAME_D3D12_OBJECT(m_constantBuffer);
-
-	// 映射常量缓冲区。
-	CD3DX12_RANGE readRange(0, 0);		// 我们不打算从 CPU 上的此资源中进行读取。
-	DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * renderCount * c_alignedConstantBufferSize + 256);
-	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
-
-	// 创建常量缓冲区视图以访问上载缓冲区。
-	m_cbvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	for (UINT n = 0; n < DXResource::c_frameCount; n++)
-	{
-		for (UINT i = 0; i < renderCount; i++)
-		{
-			int heapIndex = n * renderCount + i;
-
-			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-			cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
-
-			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
-
-			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
-			desc.SizeInBytes = 256;
-			desc.BufferLocation = cbvGpuAddress;
-			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
-			desc.BufferLocation += 256;
-			d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-		}
-	}
-
-	int heapIndex = DXResource::c_frameCount * renderCount;
-	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_constantBuffer->GetGPUVirtualAddress();
-	cbvGpuAddress += heapIndex * c_alignedConstantBufferSize;
-
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-	cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
-	desc.SizeInBytes = 256;
-	desc.BufferLocation = cbvGpuAddress;
-	d3dDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 
 	// 关闭命令列表并执行它，以开始将顶点/索引缓冲区复制到 GPU 的默认堆中。
 	DX::ThrowIfFailed(m_commandList->Close());
@@ -184,7 +113,7 @@ void SceneRenderer::WindowSizeChanged()
 
 void SceneRenderer::Update()
 {
-	m_test_scene->Update(m_mappedConstantBuffer, c_alignedConstantBufferSize);
+	m_test_scene->Update();
 }
 
 bool SceneRenderer::Render()
@@ -216,10 +145,8 @@ bool SceneRenderer::Render()
 
 		// 设置要由此帧使用的图形根签名和描述符堆。
 		m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-		ID3D12DescriptorHeap* ppHeaps[] = { m_cbvHeap.Get() };
-		m_commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-		m_test_scene->Render(m_commandList, m_PSOs, m_cbvHeap, m_cbvDescriptorSize);
+		m_test_scene->Render(m_commandList, m_PSOs);
 
 		// 指示呈现目标现在会用于展示命令列表完成执行的时间。
 		CD3DX12_RESOURCE_BARRIER presentResourceBarrier =

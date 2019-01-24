@@ -81,13 +81,13 @@ void Sphere::InitParameters(float radius, int segmentHorizontal, int segmentVert
 	m_segmentHorizontal = segmentHorizontal;
 }
 
-void Sphere::Update(UINT8* destination)
+void Sphere::Update()
 {
 	// 准备将更新的模型矩阵传递到着色器。
 	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(XMLoadFloat4x4(&GetObject2World())));
 
-	memcpy(destination, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
-	memcpy(destination + 256, &m_cbMeshData, sizeof(m_cbMeshData));
+	memcpy(m_mappedConstantBuffer, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
+	memcpy(m_mappedConstantBuffer + 256, &m_cbMeshData, sizeof(m_cbMeshData));
 }
 
 void Sphere::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)

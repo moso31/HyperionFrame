@@ -23,10 +23,16 @@ public:
 	XMFLOAT4X4	GetObject2World();
 	XMFLOAT4X4	GetWorld2Object();
 
+	ComPtr<ID3D12Resource>	GetConstantBuffer()			{ return m_constantBuffer; }
+	UINT8*					GetMappedConstantBuffer()	{ return m_mappedConstantBuffer; }
+
 protected:
 	XMFLOAT3 translation;
 	XMFLOAT3 rotation;
 	XMFLOAT3 scale;
 
-	XMFLOAT4X4 worldMatrix, worldMatrixInv;
+	XMFLOAT4X4	worldMatrix, worldMatrixInv;
+
+	ComPtr<ID3D12Resource>		m_constantBuffer;
+	UINT8*						m_mappedConstantBuffer;
 };

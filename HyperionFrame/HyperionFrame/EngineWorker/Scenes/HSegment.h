@@ -12,6 +12,6 @@ public:
 
 	void InitParameters(XMFLOAT3 point1, XMFLOAT3 point2);
 
-	void Update(UINT8 * destination);
+	void Update();
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 };

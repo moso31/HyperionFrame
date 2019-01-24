@@ -32,8 +32,8 @@ public:
 	// 初始化结构信息。需要在所有primitive创建之后，第一次更新前执行一次，以提供Transform和BVH加速结构信息。
 	void InitStructureData();
 
-	void Update(UINT8* pMappedConstantBuffer, const UINT alignedConstantBufferSize);
-	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs, ComPtr<ID3D12DescriptorHeap> pCbvHeap, UINT cbvDescriptorSize);
+	void Update();
+	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs);
 	void Release() {}
 
 	void OnMouseDown(UINT x, UINT y);
@@ -96,7 +96,6 @@ private:
 	HBVHTree*			m_bvhTree;
 
 	int					m_makingProcessIndex;
-	CBufferEyePos		m_cbEyePos;
 	
 	// 用于存放场景内primitive的描述符堆。
 	ComPtr<ID3D12DescriptorHeap>	m_cbvHeap;

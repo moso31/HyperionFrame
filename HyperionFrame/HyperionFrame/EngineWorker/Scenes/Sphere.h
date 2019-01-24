@@ -12,7 +12,7 @@ public:
 
 	void InitParameters(float radius = 1.0f, int segmentHorizontal = 16, int segmentVertical = 16);
 
-	void Update(UINT8 * destination);
+	void Update();
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
 	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit);
