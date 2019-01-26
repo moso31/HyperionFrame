@@ -94,35 +94,35 @@ void HScene::InitPrimitiveData()
 	shared_ptr<HLine> pLine;
 
 	pShape = CreateBox("wall y+");
-	pShape->SetTranslation(0.0f, 10.5f, 0.0f);
-	pShape->SetMaterial(mtrl[1]);
-	pShape->SetScale(20.0f, 1.0f, 20.0f);
+	//pShape->SetTranslation(0.0f, 10.5f, 0.0f);
+	//pShape->SetMaterial(mtrl[1]);
+	//pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	pShape = CreateBox("wall x-");
-	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[2]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = CreateBox("wall x-");
+	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	//pShape->SetMaterial(mtrl[2]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	pShape = CreateBox("wall x+");
-	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[0]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = CreateBox("wall x+");
+	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	//pShape->SetMaterial(mtrl[0]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	pShape = CreateBox("wall z-");
-	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	pShape->SetMaterial(mtrl[5]);
-	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	//pShape = CreateBox("wall z-");
+	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	//pShape->SetMaterial(mtrl[5]);
+	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = CreateBox("wall z+");
-	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	pShape->SetMaterial(mtrl[5]);
-	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	//pShape = CreateBox("wall z+");
+	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	//pShape->SetMaterial(mtrl[5]);
+	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = CreateMesh("D:\\test.fbx");
-	pShape->SetMaterial(mtrl[6]);
-	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	pShape->SetScale(5.0f, 5.0f, 5.0f);
-	pShape->SetRotation(0.0f, -0.3f, 0.0f);
+	//pShape = CreateMesh("D:\\test.fbx");
+	//pShape->SetMaterial(mtrl[6]);
+	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	//pShape->SetScale(5.0f, 5.0f, 5.0f);
+	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 
 	//shape = CreateBox("box big");
 	//shape->SetTranslation(-3.0f, 2.5f, -4.0f);
@@ -130,17 +130,17 @@ void HScene::InitPrimitiveData()
 	//shape->SetRotation(0.0f, -0.3f, 0.0f);
 	//shape->SetMaterial(mtrl[4]);
 
-	pShape = CreateSphere("sphere", 1.0f, 64, 64);
-	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[4]);
+	//pShape = CreateSphere("sphere", 1.0f, 64, 64);
+	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetMaterial(mtrl[4]);
 
-	pShape = CreateBox("box small");
-	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[4]);
+	//pShape = CreateBox("box small");
+	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetMaterial(mtrl[4]);
 
-	int chessSize = 9;
+	int chessSize = -1;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
@@ -288,6 +288,16 @@ void HScene::OnMouseDown(UINT x, UINT y)
 void HScene::OnKeyDown()
 {  
 	printf("Scene::OnNotify() processed %f.\n", xxxxx);
+
+	if (HBII->KeyDown('B'))
+	{
+		auto pShape = CreateBox("box big");
+		pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+		pShape->SetScale(5.0f, 5.0f, 5.0f);
+		pShape->SetRotation(0.0f, -0.3f, 0.0f);
+		pShape->SetMaterial(CreateMatteMaterial(XMFLOAT3(1.0f, 0.8f, 0.6f), 90.0f));
+		return;
+	}
 
 	if (HBII->KeyDown('G'))
 		MakeBMPImage();
@@ -562,6 +572,7 @@ void HScene::UpdateDescriptors()
 	pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 
 	//m_cbvHeap->Release();
+	m_dxResources->WaitForGpu();
 	m_cbvHeap = pNewCbvHeap;
 }
 
