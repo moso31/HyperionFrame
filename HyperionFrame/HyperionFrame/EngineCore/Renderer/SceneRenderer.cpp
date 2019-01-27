@@ -113,16 +113,15 @@ void SceneRenderer::WindowSizeChanged()
 
 void SceneRenderer::Update()
 {
+	// 调用 ExecuteCommandList() 后可随时重置命令列表。
+	DX::ThrowIfFailed(m_dxResources->GetCommandAllocator()->Reset());
+	DX::ThrowIfFailed(m_commandList->Reset(m_dxResources->GetCommandAllocator(), m_PSOs["default"].Get()));
+
 	m_test_scene->Update();
 }
 
 bool SceneRenderer::Render()
 {
-	DX::ThrowIfFailed(m_dxResources->GetCommandAllocator()->Reset());
-
-	// 调用 ExecuteCommandList() 后可随时重置命令列表。
-	DX::ThrowIfFailed(m_commandList->Reset(m_dxResources->GetCommandAllocator(), m_PSOs["default"].Get()));
-
 	PIXBeginEvent(m_commandList.Get(), 0, L"Draw the scene");
 	{
 		// 设置视区和剪刀矩形。

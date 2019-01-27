@@ -93,7 +93,7 @@ void HScene::InitPrimitiveData()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	pShape = CreateBox("wall y+");
+	//pShape = CreateBox("wall y+");
 	//pShape->SetTranslation(0.0f, 10.5f, 0.0f);
 	//pShape->SetMaterial(mtrl[1]);
 	//pShape->SetScale(20.0f, 1.0f, 20.0f);
@@ -124,23 +124,23 @@ void HScene::InitPrimitiveData()
 	//pShape->SetScale(5.0f, 5.0f, 5.0f);
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 
-	//shape = CreateBox("box big");
-	//shape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	//shape->SetScale(5.0f, 5.0f, 5.0f);
-	//shape->SetRotation(0.0f, -0.3f, 0.0f);
-	//shape->SetMaterial(mtrl[4]);
-
-	//pShape = CreateSphere("sphere", 1.0f, 64, 64);
-	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape = CreateBox("box big");
+	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	//pShape->SetScale(5.0f, 5.0f, 5.0f);
+	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	//pShape = CreateBox("box small");
-	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
-	//pShape->SetMaterial(mtrl[4]);
+	pShape = CreateSphere("sphere", 1.0f, 64, 64);
+	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[4]);
 
-	int chessSize = -1;
+	pShape = CreateBox("box small");
+	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[4]);
+
+	int chessSize = 7;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
@@ -201,29 +201,9 @@ void HScene::Update()
 {
 	xxxxx += 0.01f;
 
-	m_mainCamera->UpdateTransformData();
-	m_mainCamera->Update();
-
-	UINT primitiveCount = (UINT)primitives.size();
-	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
-	UINT renderCount = primitiveCount + debugMsgLineCount;
-
-	for (UINT i = 0; i < primitiveCount; i++)
-	{
-		primitives[i]->UpdateTransformData();
-		primitives[i]->Update();
-	}
-
-	for (UINT i = 0; i < debugMsgLineCount; i++)
-	{
-		if (debugMsgLines[i]->GetName() == "debugline")
-		{
-			debugMsgLines[i]->SetRotation(0.0f, xxxxx, 0.0f);
-		}
-
-		debugMsgLines[i]->UpdateTransformData();
-		debugMsgLines[i]->Update();
-	}
+	UpdatePrimitive();
+	UpdateTransform();
+	UpdateConstantBuffer();
 }
 
 void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs)
@@ -287,7 +267,7 @@ void HScene::OnMouseDown(UINT x, UINT y)
 
 void HScene::OnKeyDown()
 {  
-	printf("Scene::OnNotify() processed %f.\n", xxxxx);
+	printf("Scene::OnNotify() processed.\n");
 
 	if (HBII->KeyDown('B'))
 	{
@@ -580,4 +560,43 @@ void HScene::UpdateAccelerateStructure()
 {
 	m_bvhTree = new HBVHTree(shared_from_this());
 	m_bvhTree->BuildTreesWithScene(HBVHSplitMode::SplitCount);
+}
+
+void HScene::UpdatePrimitive()
+{
+}
+
+void HScene::UpdateTransform()
+{
+	m_mainCamera->UpdateTransformData();
+
+	UINT primitiveCount = (UINT)primitives.size();
+	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
+	UINT renderCount = primitiveCount + debugMsgLineCount;
+
+	for (UINT i = 0; i < primitiveCount; i++)
+	{
+		primitives[i]->UpdateTransformData();
+	}
+
+	for (UINT i = 0; i < debugMsgLineCount; i++)
+	{
+		if (debugMsgLines[i]->GetName() == "debugline")
+		{
+			debugMsgLines[i]->SetRotation(0.0f, xxxxx, 0.0f);
+		}
+
+		debugMsgLines[i]->UpdateTransformData();
+	}
+}
+
+void HScene::UpdateConstantBuffer()
+{
+	m_mainCamera->Update();
+
+	UINT primitiveCount = (UINT)primitives.size();
+	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
+
+	for (UINT i = 0; i < primitiveCount; i++) primitives[i]->Update();
+	for (UINT i = 0; i < debugMsgLineCount; i++) debugMsgLines[i]->Update();
 }

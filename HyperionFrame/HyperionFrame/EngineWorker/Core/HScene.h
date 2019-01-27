@@ -52,7 +52,6 @@ public:
 	shared_ptr<HGlassMaterial>	CreateGlassMaterial(const XMCOLOR3& Kr, const XMCOLOR3& Kt, const float eta);
 
 	Camera*		GetMainCamera()					{ return m_mainCamera; }
-	int			GetCommonFeatureTableCount()	{ return (int)m_sceneManager->GetCommonFeatureTableCount(); }
 	AABB		GetAABB()						{ return m_aabb; }
 
 	// 场景射线碰撞检测。
@@ -86,6 +85,15 @@ private:
 	void UpdateAccelerateStructure();
 
 	void CreateRayTracingLine();
+
+	// 如果场景图元信息发生变更，执行此方法。
+	void UpdatePrimitive();
+
+	// 更新所有的Transform信息。
+	void UpdateTransform();
+
+	// 更新所有的Buffer信息。需要在更新Transform之后进行。
+	void UpdateConstantBuffer();
 
 private:
 	std::shared_ptr<DXResource>		m_dxResources;
