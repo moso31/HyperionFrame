@@ -32,8 +32,9 @@ public:
 	// 初始化结构信息。需要在所有primitive创建之后，第一次更新前执行一次，以提供Transform和BVH加速结构信息。
 	void InitStructureData();
 
-	void Update();
+	void Update(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs);
+	void Flush();
 	void Release() {}
 
 	void OnMouseDown(UINT x, UINT y);
@@ -84,10 +85,8 @@ private:
 	// 构建并生成BVH树。
 	void UpdateAccelerateStructure();
 
-	void CreateRayTracingLine();
-
 	// 如果场景图元信息发生变更，执行此方法。
-	void UpdatePrimitive();
+	void UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
 	// 更新所有的Transform信息。
 	void UpdateTransform();
@@ -108,4 +107,6 @@ private:
 	// 用于存放场景内primitive的描述符堆。
 	ComPtr<ID3D12DescriptorHeap>	m_cbvHeap;
 	UINT							m_cbvDescriptorSize;
+
+	vector<shared_ptr<HPrimitive>> m_prepareToLoadList;
 };

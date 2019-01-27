@@ -130,17 +130,17 @@ void HScene::InitPrimitiveData()
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	pShape = CreateSphere("sphere", 1.0f, 64, 64);
-	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[4]);
+	//pShape = CreateSphere("sphere", 1.0f, 64, 64);
+	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetMaterial(mtrl[4]);
 
-	pShape = CreateBox("box small");
-	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[4]);
+	//pShape = CreateBox("box small");
+	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetMaterial(mtrl[4]);
 
-	int chessSize = 7;
+	int chessSize = -1;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
@@ -197,11 +197,11 @@ void HScene::InitStructureData()
 }
 
 static float xxxxx = 0;
-void HScene::Update()
+void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	xxxxx += 0.01f;
 
-	UpdatePrimitive();
+	UpdatePrimitive(pCommandList);
 	UpdateTransform();
 	UpdateConstantBuffer();
 }
@@ -272,7 +272,7 @@ void HScene::OnKeyDown()
 	if (HBII->KeyDown('B'))
 	{
 		auto pShape = CreateBox("box big");
-		pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+		pShape->SetTranslation(-3.0f, 2.5f, -4.0f + xxxxx * 1.0f);
 		pShape->SetScale(5.0f, 5.0f, 5.0f);
 		pShape->SetRotation(0.0f, -0.3f, 0.0f);
 		pShape->SetMaterial(CreateMatteMaterial(XMFLOAT3(1.0f, 0.8f, 0.6f), 90.0f));
@@ -301,7 +301,8 @@ shared_ptr<Box> HScene::CreateBox(string name, float width, float height, float 
 	auto box = m_sceneManager->CreateBox(width, height, depth);
 	box->SetName(name);
 	primitives.push_back(box);
-	UpdateDescriptors();
+
+	m_prepareToLoadList.push_back(box);
 	return box;
 }
 
@@ -310,7 +311,8 @@ shared_ptr<Sphere> HScene::CreateSphere(string name, float radius, int segmentHo
 	auto sphere = m_sceneManager->CreateSphere(radius, segmentHorizontal, segmentVertical);
 	sphere->SetName(name);
 	primitives.push_back(sphere);
-	UpdateDescriptors();
+
+	m_prepareToLoadList.push_back(sphere);
 	return sphere;
 }
 
@@ -318,7 +320,8 @@ shared_ptr<HMesh> HScene::CreateMesh(string filepath)
 {
 	auto mesh = m_sceneManager->CreateMesh(filepath);
 	primitives.push_back(mesh);
-	UpdateDescriptors();
+
+	m_prepareToLoadList.push_back(mesh);
 	return mesh;
 }
 
@@ -327,7 +330,8 @@ shared_ptr<HSegment> HScene::CreateSegment(string name, XMFLOAT3 point1, XMFLOAT
 	auto segment = m_sceneManager->CreateSegment(point1, point2);
 	segment->SetName(name);
 	primitives.push_back(segment);
-	UpdateDescriptors();
+
+	m_prepareToLoadList.push_back(segment);
 	return segment;
 }
 
@@ -562,8 +566,16 @@ void HScene::UpdateAccelerateStructure()
 	m_bvhTree->BuildTreesWithScene(HBVHSplitMode::SplitCount);
 }
 
-void HScene::UpdatePrimitive()
+void HScene::UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
+	for (auto it = m_prepareToLoadList.begin(); it != m_prepareToLoadList.end(); it++)
+	{
+		(*it)->GeneratePrimitiveBuffer(pCommandList);
+	}
+
+	m_prepareToLoadList.clear();
+
+	UpdateDescriptors();
 }
 
 void HScene::UpdateTransform()

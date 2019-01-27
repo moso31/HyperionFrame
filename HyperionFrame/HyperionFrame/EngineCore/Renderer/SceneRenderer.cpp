@@ -117,7 +117,7 @@ void SceneRenderer::Update()
 	DX::ThrowIfFailed(m_dxResources->GetCommandAllocator()->Reset());
 	DX::ThrowIfFailed(m_commandList->Reset(m_dxResources->GetCommandAllocator(), m_PSOs["default"].Get()));
 
-	m_test_scene->Update();
+	m_test_scene->Update(m_commandList);
 }
 
 bool SceneRenderer::Render()

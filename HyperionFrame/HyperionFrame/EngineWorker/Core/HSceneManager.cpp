@@ -23,35 +23,31 @@ HSceneManager::~HSceneManager()
 shared_ptr<Box> HSceneManager::CreateBox(float width, float height, float depth)
 {
 	auto box = make_shared<Box>(m_dxResources);
-
 	box->InitParameters();
-	box->GeneratePrimitiveBuffer(m_pCommandList);
+	//box->GeneratePrimitiveBuffer(m_pCommandList);
 	return box;
 }
 
 shared_ptr<Sphere> HSceneManager::CreateSphere(float radius, int segmentHorizontal, int segmentVertical)
 {
 	auto sphere = make_shared<Sphere>(m_dxResources);
-
 	sphere->InitParameters(radius, segmentHorizontal, segmentVertical);
-	sphere->GeneratePrimitiveBuffer(m_pCommandList);
+	//sphere->GeneratePrimitiveBuffer(m_pCommandList);
 	return sphere;
 }
 
 shared_ptr<HMesh> HSceneManager::CreateMesh(string filepath)
 {
 	auto mesh = make_shared<HMesh>(m_dxResources);
-
 	mesh->InitParameters(filepath);
-	mesh->GeneratePrimitiveBuffer(m_pCommandList);
+	//mesh->GeneratePrimitiveBuffer(m_pCommandList);
 	return mesh;
 }
 
 shared_ptr<HSegment> HSceneManager::CreateSegment(XMFLOAT3 point1, XMFLOAT3 point2)
 {
 	auto segment = make_shared<HSegment>(m_dxResources);
-
 	segment->InitParameters(point1, point2);
-	segment->GeneratePrimitiveBuffer(m_pCommandList);
+	//segment->GeneratePrimitiveBuffer(m_pCommandList);
 	return segment;
 }
