@@ -1,6 +1,6 @@
 #include "HMath.h"
 
-Ray::Ray(const XMFLOAT3 _orig, const XMFLOAT3 _dir) :
+Ray::Ray(const XMFLOAT3& _orig, const XMFLOAT3& _dir) :
 	origin(_orig),
 	direction(_dir)
 {
@@ -24,6 +24,12 @@ XMFLOAT3 Ray::GetT(float t)
 	XMFLOAT3 result;
 	XMStoreFloat3(&result, pV);
 	return result;
+}
+
+Segment::Segment(const XMFLOAT3 & point1, const XMFLOAT3 & point2) :
+	point1(point1),
+	point2(point2)
+{
 }
 
 AABB::AABB() :

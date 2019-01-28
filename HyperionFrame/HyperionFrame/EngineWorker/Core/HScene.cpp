@@ -93,36 +93,36 @@ void HScene::InitPrimitiveData()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	//pShape = CreateBox("wall y+");
-	//pShape->SetTranslation(0.0f, 10.5f, 0.0f);
-	//pShape->SetMaterial(mtrl[1]);
-	//pShape->SetScale(20.0f, 1.0f, 20.0f);
+	pShape = CreateBox("wall y+");
+	pShape->SetTranslation(0.0f, 10.5f, 0.0f);
+	pShape->SetMaterial(mtrl[1]);
+	pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	//pShape = CreateBox("wall x-");
-	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	//pShape->SetMaterial(mtrl[2]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = CreateBox("wall x-");
+	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[2]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = CreateBox("wall x+");
-	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	//pShape->SetMaterial(mtrl[0]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = CreateBox("wall x+");
+	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[0]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = CreateBox("wall z-");
-	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	//pShape->SetMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = CreateBox("wall z-");
+	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = CreateBox("wall z+");
-	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	//pShape->SetMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = CreateBox("wall z+");
+	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = CreateMesh("D:\\test.fbx");
-	//pShape->SetMaterial(mtrl[6]);
-	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	//pShape->SetScale(5.0f, 5.0f, 5.0f);
-	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
+	pShape = CreateMesh("D:\\test.fbx");
+	pShape->SetMaterial(mtrl[6]);
+	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	pShape->SetScale(5.0f, 5.0f, 5.0f);
+	pShape->SetRotation(0.0f, -0.3f, 0.0f);
 
 	//pShape = CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
@@ -130,17 +130,17 @@ void HScene::InitPrimitiveData()
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	//pShape = CreateSphere("sphere", 1.0f, 64, 64);
-	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
-	//pShape->SetMaterial(mtrl[4]);
+	pShape = CreateSphere("sphere", 1.0f, 64, 64);
+	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[6]);
 
-	//pShape = CreateBox("box small");
-	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
-	//pShape->SetMaterial(mtrl[4]);
+	pShape = CreateBox("box small");
+	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[4]);
 
-	int chessSize = -1;
+	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
@@ -201,6 +201,14 @@ void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	xxxxx += 0.01f;
 
+	for (int i = 0; i < (int)debugMsgLines.size(); i++)
+	{
+		//if (debugMsgLines[i]->GetName() == "debugLine")
+		//{
+		//	debugMsgLines[i]->SetRotation(0.0f, xxxxx + (float)i * 0.1f, 0.0f);
+		//}
+	}
+
 	UpdatePrimitive(pCommandList);
 	UpdateTransform();
 	UpdateConstantBuffer();
@@ -250,16 +258,15 @@ void HScene::OnMouseDown(UINT x, UINT y)
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;
-	vector<Ray> rays;
-	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0, &rays);
+	vector<Segment> rayTracePath;
+	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0, &rayTracePath);
 
 #ifdef _DEBUG
-	//for (int i = 0; i < rays.size(); i++)
-	//{
-	//	shared_ptr<HLine> pLine = CreateSegment({ 0.0f, 0.0f, 0.0f }, { 13.0f, 13.0f, 13.0f });
-	//	pLine->SetName("debugline");
-	//	debugMsgLines.push_back(pLine);
-	//}
+	for (int i = 0; i < rayTracePath.size(); i++)
+	{
+		shared_ptr<HLine> pLine = CreateSegment("debugLine", rayTracePath[i].point1, rayTracePath[i].point2);
+		debugMsgLines.push_back(pLine);
+	}
 #endif //_DEBUG
 
 	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", x, y, L.x, L.y, L.z);
@@ -293,7 +300,7 @@ void HScene::OnKeyDown()
 
 void HScene::OnKeyUp()
 {
-	printf("-1s.\n");
+	//printf("-1s.\n");
 }
 
 shared_ptr<Box> HScene::CreateBox(string name, float width, float height, float depth)
@@ -593,11 +600,6 @@ void HScene::UpdateTransform()
 
 	for (UINT i = 0; i < debugMsgLineCount; i++)
 	{
-		if (debugMsgLines[i]->GetName() == "debugline")
-		{
-			debugMsgLines[i]->SetRotation(0.0f, xxxxx, 0.0f);
-		}
-
 		debugMsgLines[i]->UpdateTransformData();
 	}
 }

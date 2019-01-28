@@ -11,7 +11,7 @@ inline T Clamp(T val, U low, V high) {
 class Ray
 {
 public:
-	Ray(const XMFLOAT3 _orig = { 0.0f, 0.0f, 0.0f }, const XMFLOAT3 _dir = { 0.0f, 0.0f, 0.0f });
+	Ray(const XMFLOAT3& _orig = { 0.0f, 0.0f, 0.0f }, const XMFLOAT3& _dir = { 0.0f, 0.0f, 0.0f });
 	~Ray() {}
 
 	XMFLOAT3 GetOrigin();
@@ -21,6 +21,16 @@ public:
 private:
 	XMFLOAT3 origin;
 	XMFLOAT3 direction;
+};
+
+class Segment
+{
+public:
+	Segment(const XMFLOAT3& point1, const XMFLOAT3& point2);
+	~Segment() {}
+
+	XMFLOAT3 point1;
+	XMFLOAT3 point2;
 };
 
 class AABB
