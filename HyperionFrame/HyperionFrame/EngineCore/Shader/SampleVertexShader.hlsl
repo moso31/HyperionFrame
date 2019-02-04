@@ -44,7 +44,8 @@ PixelShaderInput main(VertexShaderInput input)
 
 	// 不加修改地传递颜色。
 	output.color = vertColor;
-	output.norm = input.norm;
+	float4 norm = float4(input.norm, 0.0f);
+	output.norm = normalize(mul(norm, model).xyz);
 	output.uv = input.uv;
 
 	return output;

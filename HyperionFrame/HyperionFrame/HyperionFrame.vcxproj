@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -144,7 +144,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -175,6 +175,7 @@
     <ClCompile Include="EngineWorker\Core\HSampler.cpp" />
     <ClCompile Include="EngineWorker\Core\HScene.cpp" />
     <ClCompile Include="EngineWorker\Core\HSceneManager.cpp" />
+    <ClCompile Include="EngineWorker\Core\HScript.cpp" />
     <ClCompile Include="EngineWorker\Core\Integrator.cpp" />
     <ClCompile Include="EngineWorker\Core\Interaction.cpp" />
     <ClCompile Include="EngineWorker\Core\Reflection.cpp" />
@@ -198,6 +199,7 @@
     <ClCompile Include="EngineWorker\Scenes\HShape.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Sphere.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Transform.cpp" />
+    <ClCompile Include="EngineWorker\Scripts\HSTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\Core\App.h" />
@@ -221,6 +223,7 @@
     <ClInclude Include="EngineWorker\Core\HSampler.h" />
     <ClInclude Include="EngineWorker\Core\HScene.h" />
     <ClInclude Include="EngineWorker\Core\HSceneManager.h" />
+    <ClInclude Include="EngineWorker\Core\HScript.h" />
     <ClInclude Include="EngineWorker\Core\Integrator.h" />
     <ClInclude Include="EngineWorker\Core\Interaction.h" />
     <ClInclude Include="EngineWorker\Core\Reflection.h" />
@@ -244,6 +247,7 @@
     <ClInclude Include="EngineWorker\Scenes\HShape.h" />
     <ClInclude Include="EngineWorker\Scenes\Sphere.h" />
     <ClInclude Include="EngineWorker\Scenes\Transform.h" />
+    <ClInclude Include="EngineWorker\Scripts\HSTest.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\HyperionFrame Include Hierarchy.vsdx" />

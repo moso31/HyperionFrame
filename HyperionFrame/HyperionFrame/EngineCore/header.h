@@ -41,12 +41,15 @@ class HScene;
 class HBVHTree;
 
 class HShape;
+class HObject;
 class Transform;
 class Camera;
 class Box;
 class Sphere;
 class HMesh;
 class HSegment;
+
+class HScript;
 
 class HMaterial;
 class HMatteMaterial;

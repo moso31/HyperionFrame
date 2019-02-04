@@ -121,6 +121,12 @@
     <ClCompile Include="EngineCore\Input\HInput.cpp">
       <Filter>EngineCore\Input</Filter>
     </ClCompile>
+    <ClCompile Include="EngineWorker\Core\HScript.cpp">
+      <Filter>EngineWorker\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Scripts\HSTest.cpp">
+      <Filter>EngineWorker\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -255,6 +261,12 @@
     <ClInclude Include="EngineCore\Input\HInput.h">
       <Filter>EngineCore\Input</Filter>
     </ClInclude>
+    <ClInclude Include="EngineWorker\Core\HScript.h">
+      <Filter>EngineWorker\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Scripts\HSTest.h">
+      <Filter>EngineWorker\Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EngineCore">
@@ -304,6 +316,9 @@
     </Filter>
     <Filter Include="EngineCore\Core">
       <UniqueIdentifier>{791ada6f-b508-4b5c-8bcf-6eeb63d10501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorker\Scripts">
+      <UniqueIdentifier>{d8cdd7ef-7ae2-4f3a-80d3-4a04ba788dbb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

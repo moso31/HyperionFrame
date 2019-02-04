@@ -90,6 +90,8 @@ void HScene::InitPrimitiveData()
 		CreateMirrorMaterial(mirror_white),
 	};
 
+	shared_ptr<HSTest> pScript;
+
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
@@ -123,6 +125,7 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	pShape->SetScale(5.0f, 5.0f, 5.0f);
 	pShape->SetRotation(0.0f, -0.3f, 0.0f);
+	pScript = CreateScript0(pShape);
 
 	//pShape = CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
@@ -134,11 +137,13 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[6]);
+	pScript = CreateScript0(pShape);
 
 	pShape = CreateBox("box small");
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[4]);
+	pScript = CreateScript0(pShape);
 
 	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)
@@ -210,6 +215,7 @@ void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	}
 
 	UpdatePrimitive(pCommandList);
+	UpdateScripts();
 	UpdateTransform();
 	UpdateConstantBuffer();
 }
@@ -340,6 +346,13 @@ shared_ptr<HSegment> HScene::CreateSegment(string name, XMFLOAT3 point1, XMFLOAT
 
 	m_prepareToLoadList.push_back(segment);
 	return segment;
+}
+
+shared_ptr<HSTest> HScene::CreateScript0(shared_ptr<HObject> pObject)
+{
+	shared_ptr<HSTest> pScript = make_shared<HSTest>(pObject);
+	scripts.push_back(pScript);
+	return pScript;
 }
 
 Camera * HScene::CreateCamera()
@@ -583,6 +596,14 @@ void HScene::UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	m_prepareToLoadList.clear();
 
 	UpdateDescriptors();
+}
+
+void HScene::UpdateScripts()
+{
+	for (auto it = scripts.begin(); it != scripts.end(); it++)
+	{
+		(*it)->Update();
+	}
 }
 
 void HScene::UpdateTransform()

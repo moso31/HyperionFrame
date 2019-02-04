@@ -7,7 +7,7 @@ class HObject
 {
 public:
 	HObject() {}
-	~HObject() {}
+	virtual ~HObject() {}
 
 	string GetName();
 	void SetName(string name);

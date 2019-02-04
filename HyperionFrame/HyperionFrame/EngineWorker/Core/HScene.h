@@ -11,6 +11,8 @@
 
 #include "HEvent.h"
 
+#include "HSTest.h"
+
 class HScene : public HListener, public enable_shared_from_this<HScene>
 {
 public:
@@ -34,7 +36,6 @@ public:
 
 	void Update(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs);
-	void Flush();
 	void Release() {}
 
 	void OnMouseDown(UINT x, UINT y);
@@ -45,6 +46,8 @@ public:
 	shared_ptr<Sphere>		CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical);
 	shared_ptr<HMesh>		CreateMesh(string filepath);
 	shared_ptr<HSegment>	CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2);
+
+	shared_ptr<HSTest>		CreateScript0(shared_ptr<HObject> pObject);
 
 	Camera*						CreateCamera();
 	HPointLight*				CreatePointLight();
@@ -78,6 +81,8 @@ public:
 	vector<shared_ptr<HLine>>			debugMsgLines;
 	vector<shared_ptr<HMaterial>>		materials;
 
+	vector<shared_ptr<HScript>>			scripts;
+
 private:
 	// 在新生成物体后需要执行此方法，更新描述符的数量。
 	void UpdateDescriptors();
@@ -87,6 +92,9 @@ private:
 
 	// 如果场景图元信息发生变更，执行此方法。
 	void UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+
+	// 更新脚本信息
+	void UpdateScripts();
 
 	// 更新所有的Transform信息。
 	void UpdateTransform();
