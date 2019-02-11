@@ -47,7 +47,7 @@ public:
 	shared_ptr<HMesh>		CreateMesh(string filepath);
 	shared_ptr<HSegment>	CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2);
 
-	shared_ptr<HSTest>		CreateScript0(shared_ptr<HObject> pObject);
+	shared_ptr<HScript>		CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject);
 
 	Camera*						CreateCamera();
 	HPointLight*				CreatePointLight();
@@ -90,7 +90,7 @@ private:
 	// 构建并生成BVH树。
 	void UpdateAccelerateStructure();
 
-	// 如果场景图元信息发生变更，执行此方法。
+	// 负责场景中图元信息的 延迟加载。
 	void UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
 	// 更新脚本信息
@@ -116,5 +116,9 @@ private:
 	ComPtr<ID3D12DescriptorHeap>	m_cbvHeap;
 	UINT							m_cbvDescriptorSize;
 
+	// Hyperion 中的场景实时变更采用的方法是 延迟加载。
+	// 即新添加物体的指令当前帧并不执行，而是交由此 预载列表 按序存储。
+	// 预载列表 中的物体会在下一帧UpdateTransform之前加载到场景中。之后会清空预载列表以防重复添加。
+	// Hyperion 采用这种 延迟加载 方案的原因是，只有在每帧 CommandList 关闭时才能对场景的 Buffer 进行变更。
 	vector<shared_ptr<HPrimitive>> m_prepareToLoadList;
 };

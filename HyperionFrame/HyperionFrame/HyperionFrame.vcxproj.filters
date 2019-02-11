@@ -106,17 +106,11 @@
     <ClCompile Include="EngineWorker\Scenes\HShape.cpp">
       <Filter>EngineWorker\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="EngineCore\Input\HEvent.cpp">
-      <Filter>EngineCore\Input</Filter>
-    </ClCompile>
     <ClCompile Include="EngineCore\Core\App.cpp">
       <Filter>EngineCore\Core</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\Core\global.cpp">
       <Filter>EngineCore\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineCore\Input\HListener.cpp">
-      <Filter>EngineCore\Input</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\Input\HInput.cpp">
       <Filter>EngineCore\Input</Filter>
@@ -126,6 +120,12 @@
     </ClCompile>
     <ClCompile Include="EngineWorker\Scripts\HSTest.cpp">
       <Filter>EngineWorker\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Core\HListener.cpp">
+      <Filter>EngineWorker\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Core\HEvent.cpp">
+      <Filter>EngineWorker\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -243,12 +243,6 @@
     <ClInclude Include="EngineWorker\Scenes\HShape.h">
       <Filter>EngineWorker\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="EngineCore\Input\HListener.h">
-      <Filter>EngineCore\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineCore\Input\HEvent.h">
-      <Filter>EngineCore\Input</Filter>
-    </ClInclude>
     <ClInclude Include="EngineCore\Core\global.h">
       <Filter>EngineCore\Core</Filter>
     </ClInclude>
@@ -266,6 +260,15 @@
     </ClInclude>
     <ClInclude Include="EngineWorker\Scripts\HSTest.h">
       <Filter>EngineWorker\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Scripts\HScriptType.h">
+      <Filter>EngineWorker\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Core\HListener.h">
+      <Filter>EngineWorker\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Core\HEvent.h">
+      <Filter>EngineWorker\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

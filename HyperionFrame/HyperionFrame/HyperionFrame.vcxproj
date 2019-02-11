@@ -165,12 +165,12 @@
     <ClCompile Include="EngineCore\File\FBXMeshLoader.cpp" />
     <ClCompile Include="EngineCore\File\ImageGenerator.cpp" />
     <ClCompile Include="EngineCore\Input\HInput.cpp" />
-    <ClCompile Include="EngineCore\Input\HEvent.cpp" />
-    <ClCompile Include="EngineCore\Input\HListener.cpp" />
     <ClCompile Include="EngineCore\main.cpp" />
     <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp" />
     <ClCompile Include="EngineCore\Renderer\SceneRenderer.cpp" />
     <ClCompile Include="EngineWorker\Accelerators\HBVH.cpp" />
+    <ClCompile Include="EngineWorker\Core\HEvent.cpp" />
+    <ClCompile Include="EngineWorker\Core\HListener.cpp" />
     <ClCompile Include="EngineWorker\Core\HObject.cpp" />
     <ClCompile Include="EngineWorker\Core\HSampler.cpp" />
     <ClCompile Include="EngineWorker\Core\HScene.cpp" />
@@ -213,12 +213,12 @@
     <ClInclude Include="EngineCore\File\ImageGenerator.h" />
     <ClInclude Include="EngineCore\header.h" />
     <ClInclude Include="EngineCore\Input\HInput.h" />
-    <ClInclude Include="EngineCore\Input\HEvent.h" />
-    <ClInclude Include="EngineCore\Input\HListener.h" />
     <ClInclude Include="EngineCore\Renderer\PipelineManager.h" />
     <ClInclude Include="EngineCore\Renderer\SceneRenderer.h" />
     <ClInclude Include="EngineCore\Renderer\ShaderStructures.h" />
     <ClInclude Include="EngineWorker\Accelerators\HBVH.h" />
+    <ClInclude Include="EngineWorker\Core\HEvent.h" />
+    <ClInclude Include="EngineWorker\Core\HListener.h" />
     <ClInclude Include="EngineWorker\Core\HObject.h" />
     <ClInclude Include="EngineWorker\Core\HSampler.h" />
     <ClInclude Include="EngineWorker\Core\HScene.h" />
@@ -247,6 +247,7 @@
     <ClInclude Include="EngineWorker\Scenes\HShape.h" />
     <ClInclude Include="EngineWorker\Scenes\Sphere.h" />
     <ClInclude Include="EngineWorker\Scenes\Transform.h" />
+    <ClInclude Include="EngineWorker\Scripts\HScriptType.h" />
     <ClInclude Include="EngineWorker\Scripts\HSTest.h" />
   </ItemGroup>
   <ItemGroup>

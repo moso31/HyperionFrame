@@ -15,6 +15,8 @@
 
 #include "HInput.h"
 
+#define CreateScriptConverted(classType, scriptType, pObject) dynamic_pointer_cast<classType>(CreateScript(scriptType, pObject))
+
 HScene::HScene()
 {
 }
@@ -124,8 +126,8 @@ void HScene::InitPrimitiveData()
 	pShape->SetMaterial(mtrl[6]);
 	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	pShape->SetScale(5.0f, 5.0f, 5.0f);
-	pShape->SetRotation(0.0f, -0.3f, 0.0f);
-	pScript = CreateScript0(pShape);
+	pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HST_TEST, pShape);
 
 	//pShape = CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
@@ -137,13 +139,13 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[6]);
-	pScript = CreateScript0(pShape);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HST_TEST, pShape);
 
 	pShape = CreateBox("box small");
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[4]);
-	pScript = CreateScript0(pShape);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HST_TEST, pShape);
 
 	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)
@@ -348,9 +350,9 @@ shared_ptr<HSegment> HScene::CreateSegment(string name, XMFLOAT3 point1, XMFLOAT
 	return segment;
 }
 
-shared_ptr<HSTest> HScene::CreateScript0(shared_ptr<HObject> pObject)
+shared_ptr<HScript> HScene::CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject)
 {
-	shared_ptr<HSTest> pScript = make_shared<HSTest>(pObject);
+	auto pScript = m_sceneManager->CreateScript(scriptType, pObject);
 	scripts.push_back(pScript);
 	return pScript;
 }

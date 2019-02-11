@@ -1,13 +1,14 @@
 #pragma once
 #include "header.h"
+#include "HScriptType.h"
 
 class HScript
 {
 public:
-	HScript(shared_ptr<HObject>& pObject);
+	HScript(const shared_ptr<HObject>& pObject);
 	virtual ~HScript() {}
 
-	void SetObject(shared_ptr<HObject> pObject) { m_pObject = pObject; }
+	void SetObject(shared_ptr<HObject>& pObject) { m_pObject = pObject; }
 
 	virtual void Update() {};
 

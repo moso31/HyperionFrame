@@ -6,6 +6,9 @@
 #include "HMesh.h"
 #include "HSegment.h"
 
+#include "HScriptType.h"
+#include "HSTest.h"
+
 HSceneManager::HSceneManager()
 {
 }
@@ -50,4 +53,18 @@ shared_ptr<HSegment> HSceneManager::CreateSegment(XMFLOAT3 point1, XMFLOAT3 poin
 	segment->InitParameters(point1, point2);
 	//segment->GeneratePrimitiveBuffer(m_pCommandList);
 	return segment;
+}
+
+shared_ptr<HScript> HSceneManager::CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject)
+{
+	switch (scriptType)
+	{
+	case HST_TEST:
+	{
+		auto pScript = make_shared<HSTest>(pObject);
+		return pScript;
+	}
+	default:
+		return nullptr;
+	}
 }

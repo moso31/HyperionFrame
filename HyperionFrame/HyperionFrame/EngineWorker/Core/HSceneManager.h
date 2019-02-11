@@ -13,6 +13,8 @@ public:
 	shared_ptr<HMesh>		CreateMesh(string filepath);
 	shared_ptr<HSegment>	CreateSegment(XMFLOAT3 point1, XMFLOAT3 point2);
 
+	shared_ptr<HScript>		CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject);
+
 private:
 	std::shared_ptr<DXResource>			m_dxResources;
 	ComPtr<ID3D12GraphicsCommandList>	m_pCommandList;

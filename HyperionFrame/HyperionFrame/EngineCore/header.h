@@ -33,6 +33,8 @@ using namespace std;
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+class HListener;
+
 class SurfaceInteraction;
 class VisibilityTester;
 class BSDF;
@@ -49,6 +51,7 @@ class Sphere;
 class HMesh;
 class HSegment;
 
+enum HSCRIPTTYPE;
 class HScript;
 
 class HMaterial;
