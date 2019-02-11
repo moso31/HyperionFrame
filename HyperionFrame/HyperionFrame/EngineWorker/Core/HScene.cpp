@@ -37,11 +37,12 @@ void HScene::OnResize()
 
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	HEventOnMouseDown::GetInstance()->AddListener(shared_from_this());
-	HEventOnKeyDown::GetInstance()->AddListener(shared_from_this());
-	HEventOnKeyUp::GetInstance()->AddListener(shared_from_this());
-
 	InitRendererData(pCommandList);
+
+	//HEventOnMouseDown::GetInstance()->AddListener(shared_from_this());
+
+	m_sceneManager->AddEventListener(HEVENTTYPE::HEVENT_KEYDOWN, shared_from_this(), std::bind(&HScene::OnKeyDown, shared_from_this()));
+
 	InitPrimitiveData();
 	InitStructureData();
 }
@@ -122,12 +123,12 @@ void HScene::InitPrimitiveData()
 	pShape->SetMaterial(mtrl[5]);
 	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = CreateMesh("D:\\test.fbx");
-	pShape->SetMaterial(mtrl[6]);
-	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	pShape->SetScale(5.0f, 5.0f, 5.0f);
-	pShape->SetRotation(0.0f, 0.3f, 0.0f);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HST_TEST, pShape);
+	//pShape = CreateMesh("D:\\test.fbx");
+	//pShape->SetMaterial(mtrl[6]);
+	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	//pShape->SetScale(5.0f, 5.0f, 5.0f);
+	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//pShape = CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
@@ -139,13 +140,13 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[6]);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HST_TEST, pShape);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	pShape = CreateBox("box small");
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[4]);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HST_TEST, pShape);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	int chessSize = 9;
 	for (int i = -chessSize; i <= chessSize; i++)

@@ -1,5 +1,6 @@
 #pragma once
 #include "HPrimitive.h"
+#include "HEvent.h"
 
 class HSceneManager
 {
@@ -14,6 +15,8 @@ public:
 	shared_ptr<HSegment>	CreateSegment(XMFLOAT3 point1, XMFLOAT3 point2);
 
 	shared_ptr<HScript>		CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject);
+
+	shared_ptr<HListener>	AddEventListener(const HEVENTTYPE eventType, const shared_ptr<HObject>& pObject, const function<void(void)>& pFunc);
 
 private:
 	std::shared_ptr<DXResource>			m_dxResources;

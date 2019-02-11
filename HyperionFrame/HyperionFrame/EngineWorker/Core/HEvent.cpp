@@ -9,6 +9,6 @@ void HEvent::OnNotify()
 {
 	for (auto it = m_listeners.begin(); it != m_listeners.end(); it++)
 	{
-		(*it)->GetFunc();
+		(*it)->GetFunc()();
 	}
 }

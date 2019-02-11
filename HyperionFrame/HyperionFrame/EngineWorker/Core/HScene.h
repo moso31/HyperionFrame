@@ -13,7 +13,7 @@
 
 #include "HSTest.h"
 
-class HScene : public HListener, public enable_shared_from_this<HScene>
+class HScene : public HObject, public enable_shared_from_this<HScene>
 {
 public:
 	HScene();
@@ -49,11 +49,11 @@ public:
 
 	shared_ptr<HScript>		CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject);
 
-	Camera*						CreateCamera();
-	HPointLight*				CreatePointLight();
-	shared_ptr<HMatteMaterial>	CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
-	shared_ptr<HMirrorMaterial> CreateMirrorMaterial(const XMCOLOR3& kr);
-	shared_ptr<HGlassMaterial>	CreateGlassMaterial(const XMCOLOR3& Kr, const XMCOLOR3& Kt, const float eta);
+	Camera*							CreateCamera();
+	HPointLight*					CreatePointLight();
+	shared_ptr<HMatteMaterial>		CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
+	shared_ptr<HMirrorMaterial>		CreateMirrorMaterial(const XMCOLOR3& kr);
+	shared_ptr<HGlassMaterial>		CreateGlassMaterial(const XMCOLOR3& Kr, const XMCOLOR3& Kt, const float eta);
 
 	Camera*		GetMainCamera()					{ return m_mainCamera; }
 	AABB		GetAABB()						{ return m_aabb; }

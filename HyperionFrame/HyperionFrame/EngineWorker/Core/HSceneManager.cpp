@@ -59,7 +59,7 @@ shared_ptr<HScript> HSceneManager::CreateScript(const HSCRIPTTYPE scriptType, co
 {
 	switch (scriptType)
 	{
-	case HST_TEST:
+	case HSCRIPTTYPE::HSCRIPT_TEST:
 	{
 		auto pScript = make_shared<HSTest>(pObject);
 		return pScript;
@@ -67,4 +67,19 @@ shared_ptr<HScript> HSceneManager::CreateScript(const HSCRIPTTYPE scriptType, co
 	default:
 		return nullptr;
 	}
+}
+
+shared_ptr<HListener> HSceneManager::AddEventListener(const HEVENTTYPE eventType, const shared_ptr<HObject>& pObject, const function<void(void)>& pFunc)
+{
+	switch (eventType)
+	{
+	case HEVENTTYPE::HEVENT_KEYDOWN:
+	{
+		auto pListener = make_shared<HListener>(pObject, pFunc);
+		HKeyDownEvent::GetInstance()->AddListener(pListener);
+	}
+	default:
+		return nullptr;
+	}
+	return shared_ptr<HListener>();
 }

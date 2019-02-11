@@ -34,7 +34,7 @@ LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_LBUTTONDOWN:
 	{
-		HEventOnMouseDown::GetInstance()->Notify(x, y);
+		//HMouseDownEvent::GetInstance()->Notify(x, y);
 		break;
 	}
 	case WM_LBUTTONUP:
@@ -45,12 +45,12 @@ LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:
 	{
-		HEventOnKeyDown::GetInstance()->Notify();
+		HKeyDownEvent::GetInstance()->OnNotify();
 		break;
 	}
 	case WM_KEYUP:
 	{
-		HEventOnKeyUp::GetInstance()->Notify();
+		//HKeyUpEvent::GetInstance()->Notify();
 		break;
 	}
 	default:

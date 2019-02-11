@@ -1,5 +1,9 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <memory>
+
+#include "HListener.h"
 
 using namespace std;
 
@@ -12,6 +16,6 @@ public:
 	string GetName();
 	void SetName(string name);
 
-private:
+protected:
 	string name;
 };
