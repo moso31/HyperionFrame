@@ -1,16 +1,21 @@
 #pragma once
 #include "header.h"
 
+struct HEventArg
+{
+	UINT X, Y;
+};
+
 class HListener
 {
 public:
-	HListener(const shared_ptr<HObject>& pObject, const function<void(void)>& pFunc);
+	HListener(const shared_ptr<HObject>& pObject, const function<void(HEventArg)>& pFunc);
 	virtual ~HListener() {}
 
-	void SetFunc(const function<void(void)>& pFunc);
-	function<void(void)> GetFunc() const;
+	void SetFunc(const function<void(HEventArg)>& pFunc);
+	function<void(HEventArg)> GetFunc() const;
 
 private:
 	shared_ptr<HObject> m_pObject;
-	function<void(void)> m_pFunc;
+	function<void(HEventArg)> m_pFunc;
 };

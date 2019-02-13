@@ -18,8 +18,9 @@ App::~App()
 
 LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	UINT x = (UINT)LOWORD(lParam);
-	UINT y = (UINT)HIWORD(lParam);
+	HEventArg eArg;
+	eArg.X = (UINT)LOWORD(lParam);
+	eArg.Y = (UINT)HIWORD(lParam);
 
 	switch (msg)
 	{
@@ -34,7 +35,7 @@ LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_LBUTTONDOWN:
 	{
-		//HMouseDownEvent::GetInstance()->Notify(x, y);
+		HMouseDownEvent::GetInstance()->OnNotify(eArg);
 		break;
 	}
 	case WM_LBUTTONUP:
@@ -45,12 +46,12 @@ LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:
 	{
-		HKeyDownEvent::GetInstance()->OnNotify();
+		HKeyDownEvent::GetInstance()->OnNotify(eArg);
 		break;
 	}
 	case WM_KEYUP:
 	{
-		//HKeyUpEvent::GetInstance()->Notify();
+		//HKeyUpEvent::GetInstance()->OnNotify(eArg);
 		break;
 	}
 	default:

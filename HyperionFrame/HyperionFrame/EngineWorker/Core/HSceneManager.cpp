@@ -69,17 +69,23 @@ shared_ptr<HScript> HSceneManager::CreateScript(const HSCRIPTTYPE scriptType, co
 	}
 }
 
-shared_ptr<HListener> HSceneManager::AddEventListener(const HEVENTTYPE eventType, const shared_ptr<HObject>& pObject, const function<void(void)>& pFunc)
+shared_ptr<HListener> HSceneManager::AddEventListener(const HEVENTTYPE eventType, const shared_ptr<HObject>& pObject, const function<void(HEventArg)>& pFunc)
 {
+	auto pListener = make_shared<HListener>(pObject, pFunc);
 	switch (eventType)
 	{
 	case HEVENTTYPE::HEVENT_KEYDOWN:
 	{
-		auto pListener = make_shared<HListener>(pObject, pFunc);
 		HKeyDownEvent::GetInstance()->AddListener(pListener);
+		break;
+	}
+	case HEVENTTYPE::HEVENT_MOUSEDOWN:
+	{
+		HMouseDownEvent::GetInstance()->AddListener(pListener);
+		break;
 	}
 	default:
 		return nullptr;
 	}
-	return shared_ptr<HListener>();
+	return pListener;
 }

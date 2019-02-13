@@ -38,7 +38,7 @@ public:
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs);
 	void Release() {}
 
-	void OnMouseDown(UINT x, UINT y);
+	void OnMouseDown(HEventArg eArg);
 	void OnKeyDown();
 	void OnKeyUp();
 

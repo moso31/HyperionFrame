@@ -42,6 +42,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//HEventOnMouseDown::GetInstance()->AddListener(shared_from_this());
 
 	m_sceneManager->AddEventListener(HEVENTTYPE::HEVENT_KEYDOWN, shared_from_this(), std::bind(&HScene::OnKeyDown, shared_from_this()));
+	m_sceneManager->AddEventListener(HEVENTTYPE::HEVENT_MOUSEDOWN, shared_from_this(), std::bind(&HScene::OnMouseDown, shared_from_this(), std::placeholders::_1));
 
 	InitPrimitiveData();
 	InitStructureData();
@@ -261,9 +262,9 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	}
 }
 
-void HScene::OnMouseDown(UINT x, UINT y)
+void HScene::OnMouseDown(HEventArg eArg)
 {
-	Ray ray = m_mainCamera->GenerateRay(float(x), float(y));
+	Ray ray = m_mainCamera->GenerateRay(float(eArg.X), float(eArg.Y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;
@@ -278,7 +279,7 @@ void HScene::OnMouseDown(UINT x, UINT y)
 	}
 #endif //_DEBUG
 
-	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", x, y, L.x, L.y, L.z);
+	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", eArg.X, eArg.Y, L.x, L.y, L.z);
 }
 
 void HScene::OnKeyDown()
