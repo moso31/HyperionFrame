@@ -100,8 +100,9 @@ void HInput::UpdateRawInput(LPARAM lParam)
 		printf("注意：GetRawInputData返回的数据值和预计的长度不匹配！这可能会造成未知错误\n");
 
 	HEventArg eArg;
-	eArg.X = LOWORD(lParam);
-	eArg.Y = HIWORD(lParam);
+	XMINT2 cursor = MousePosition();
+	eArg.X = cursor.x;
+	eArg.Y = cursor.y;
 
 	RAWINPUT* raw = (RAWINPUT*)lpb;
 
@@ -114,14 +115,8 @@ void HInput::UpdateRawInput(LPARAM lParam)
 		m_keyState[eArg.VKey] = bIsPressing;
 		m_keyActivite[eArg.VKey] = true;
 
-		if (bIsPressing)
-		{
-			HKeyDownEvent::GetInstance()->OnNotify(eArg);
-		}
-		else
-		{
-			//HKeyUpEvent::GetInstance()->OnNotify(eArg);
-		}
+		if (bIsPressing) HKeyDownEvent::GetInstance()->OnNotify(eArg);
+		else HKeyUpEvent::GetInstance()->OnNotify(eArg);
 	}
 	else if (raw->header.dwType == RIM_TYPEMOUSE)
 	{
@@ -149,14 +144,11 @@ void HInput::UpdateRawInput(LPARAM lParam)
 		m_mouseMove.x = eArg.LastX;
 		m_mouseMove.y = eArg.LastY;
 
-		if (bIsPressing)
-		{
-			HMouseDownEvent::GetInstance()->OnNotify(eArg);
-		}
-		else
-		{
-			//HMouseUpEvent::GetInstance()->OnNotify(eArg);
-		}
+		if (bIsPressing) HMouseDownEvent::GetInstance()->OnNotify(eArg);
+		else HMouseUpEvent::GetInstance()->OnNotify(eArg);
+
+		if (eArg.LastX && eArg.LastY)
+			HMouseMoveEvent::GetInstance()->OnNotify(eArg);
 	}
 
 	//PrintMouseState();

@@ -11,8 +11,6 @@
 
 #include "HEvent.h"
 
-#include "HSTest.h"
-
 class HScene : public HObject, public enable_shared_from_this<HScene>
 {
 public:
@@ -39,8 +37,8 @@ public:
 	void Release() {}
 
 	void OnMouseDown(HEventArg eArg);
-	void OnKeyDown();
-	void OnKeyUp();
+	void OnKeyDown(HEventArg eArg);
+	void OnKeyUp(HEventArg eArg);
 
 	shared_ptr<Box>			CreateBox(string name, float width = 1.0f, float height = 1.0f, float depth = 1.0f);
 	shared_ptr<Sphere>		CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical);
@@ -49,14 +47,14 @@ public:
 
 	shared_ptr<HScript>		CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject);
 
-	Camera*							CreateCamera();
-	HPointLight*					CreatePointLight();
+	shared_ptr<Camera>				CreateCamera();
+	shared_ptr<HPointLight>			CreatePointLight();
 	shared_ptr<HMatteMaterial>		CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
 	shared_ptr<HMirrorMaterial>		CreateMirrorMaterial(const XMCOLOR3& kr);
 	shared_ptr<HGlassMaterial>		CreateGlassMaterial(const XMCOLOR3& Kr, const XMCOLOR3& Kt, const float eta);
 
-	Camera*		GetMainCamera()					{ return m_mainCamera; }
-	AABB		GetAABB()						{ return m_aabb; }
+	shared_ptr<Camera>				GetMainCamera()					{ return m_mainCamera; }
+	AABB							GetAABB()						{ return m_aabb; }
 
 	// 场景射线碰撞检测。
 	// 返回较具体的内容，包括射线和相交处物体的具体信息。
@@ -73,9 +71,9 @@ public:
 public:
 	// 下列参数负责记录场景内常用的交互数据信息。
 	// 和其他类相互结合使用的情况比较多见，故直接暴露在外。
-	vector<Transform*>	transformNodes;
-	vector<Camera*>		cameras;
-	vector<HLight*>		lights;
+	vector<shared_ptr<Transform>>	transformNodes;
+	vector<shared_ptr<Camera>>		cameras;
+	vector<shared_ptr<HLight>>		lights;
 
 	vector<shared_ptr<HPrimitive>>		primitives;
 	vector<shared_ptr<HLine>>			debugMsgLines;
@@ -106,7 +104,7 @@ private:
 	std::shared_ptr<DXResource>		m_dxResources;
 	std::shared_ptr<HSceneManager>	m_sceneManager;
 
-	Camera*				m_mainCamera;
+	shared_ptr<Camera>				m_mainCamera;
 	AABB				m_aabb;
 	HBVHTree*			m_bvhTree;
 

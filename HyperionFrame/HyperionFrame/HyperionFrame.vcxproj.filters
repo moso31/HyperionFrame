@@ -127,6 +127,7 @@
     <ClCompile Include="EngineWorker\Core\HEvent.cpp">
       <Filter>EngineWorker\Core</Filter>
     </ClCompile>
+    <ClCompile Include="EngineWorker\Scripts\HSFirstPersonalCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -270,6 +271,7 @@
     <ClInclude Include="EngineWorker\Core\HEvent.h">
       <Filter>EngineWorker\Core</Filter>
     </ClInclude>
+    <ClInclude Include="EngineWorker\Scripts\HSFirstPersonalCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EngineCore">

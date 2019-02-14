@@ -15,7 +15,10 @@
 
 #include "HInput.h"
 
+#include "HSTest.h"
+#include "HSFirstPersonalCamera.h"
 #define CreateScriptConverted(classType, scriptType, pObject) dynamic_pointer_cast<classType>(CreateScript(scriptType, pObject))
+#define RegisterEventListener(object, script, eventType, pFunction) m_sceneManager->AddEventListener(eventType, object, std::bind(&pFunction, script, std::placeholders::_1));
 
 HScene::HScene()
 {
@@ -39,10 +42,8 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	InitRendererData(pCommandList);
 
-	//HEventOnMouseDown::GetInstance()->AddListener(shared_from_this());
-
-	m_sceneManager->AddEventListener(HEVENTTYPE::HEVENT_KEYDOWN, shared_from_this(), std::bind(&HScene::OnKeyDown, shared_from_this()));
-	m_sceneManager->AddEventListener(HEVENTTYPE::HEVENT_MOUSEDOWN, shared_from_this(), std::bind(&HScene::OnMouseDown, shared_from_this(), std::placeholders::_1));
+	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_KEYDOWN, HScene::OnKeyDown);
+	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_MOUSEDOWN, HScene::OnMouseDown);
 
 	InitPrimitiveData();
 	InitStructureData();
@@ -75,6 +76,9 @@ void HScene::InitPrimitiveData()
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
+	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = 
+		CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
+	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::KeyDownTest);
 
 	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
@@ -95,34 +99,34 @@ void HScene::InitPrimitiveData()
 	};
 
 	shared_ptr<HSTest> pScript;
-
+	
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	pShape = CreateBox("wall y+");
-	pShape->SetTranslation(0.0f, 10.5f, 0.0f);
-	pShape->SetMaterial(mtrl[1]);
-	pShape->SetScale(20.0f, 1.0f, 20.0f);
+	//pShape = CreateBox("wall y+");
+	//pShape->SetTranslation(0.0f, 10.5f, 0.0f);
+	//pShape->SetMaterial(mtrl[1]);
+	//pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	pShape = CreateBox("wall x-");
-	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[2]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = CreateBox("wall x-");
+	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	//pShape->SetMaterial(mtrl[2]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	pShape = CreateBox("wall x+");
-	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[0]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = CreateBox("wall x+");
+	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	//pShape->SetMaterial(mtrl[0]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	pShape = CreateBox("wall z-");
-	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	pShape->SetMaterial(mtrl[5]);
-	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	//pShape = CreateBox("wall z-");
+	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	//pShape->SetMaterial(mtrl[5]);
+	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = CreateBox("wall z+");
-	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	pShape->SetMaterial(mtrl[5]);
-	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	//pShape = CreateBox("wall z+");
+	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	//pShape->SetMaterial(mtrl[5]);
+	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
 	//pShape = CreateMesh("D:\\test.fbx");
 	//pShape->SetMaterial(mtrl[6]);
@@ -137,19 +141,19 @@ void HScene::InitPrimitiveData()
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	pShape = CreateSphere("sphere", 1.0f, 64, 64);
-	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[6]);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
+	//pShape = CreateSphere("sphere", 1.0f, 64, 64);
+	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetMaterial(mtrl[6]);
+	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	pShape = CreateBox("box small");
-	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[4]);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
+	//pShape = CreateBox("box small");
+	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetMaterial(mtrl[4]);
+	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	int chessSize = 9;
+	int chessSize = -1;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
@@ -282,7 +286,7 @@ void HScene::OnMouseDown(HEventArg eArg)
 	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", eArg.X, eArg.Y, L.x, L.y, L.z);
 }
 
-void HScene::OnKeyDown()
+void HScene::OnKeyDown(HEventArg eArg)
 {  
 	printf("Scene::OnNotify() processed.\n");
 
@@ -308,7 +312,7 @@ void HScene::OnKeyDown()
 	}
 }
 
-void HScene::OnKeyUp()
+void HScene::OnKeyUp(HEventArg eArg)
 {
 	//printf("-1s.\n");
 }
@@ -359,9 +363,9 @@ shared_ptr<HScript> HScene::CreateScript(const HSCRIPTTYPE scriptType, const sha
 	return pScript;
 }
 
-Camera * HScene::CreateCamera()
+shared_ptr<Camera> HScene::CreateCamera()
 {
-	auto camera = new Camera(m_dxResources);
+	auto camera = make_shared<Camera>(m_dxResources);
 	transformNodes.push_back(camera);
 	cameras.push_back(camera);
 	camera->Init(70.0f, 0.01f, 1000.0f);
@@ -369,9 +373,9 @@ Camera * HScene::CreateCamera()
 	return camera;
 }
 
-HPointLight * HScene::CreatePointLight()
+shared_ptr<HPointLight> HScene::CreatePointLight()
 {
-	auto pointLight = new HPointLight();
+	auto pointLight = make_shared<HPointLight>();
 	transformNodes.push_back(pointLight);
 	lights.push_back(pointLight);
 	return pointLight;

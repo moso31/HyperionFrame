@@ -199,6 +199,7 @@
     <ClCompile Include="EngineWorker\Scenes\HShape.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Sphere.cpp" />
     <ClCompile Include="EngineWorker\Scenes\Transform.cpp" />
+    <ClCompile Include="EngineWorker\Scripts\HSFirstPersonalCamera.cpp" />
     <ClCompile Include="EngineWorker\Scripts\HSTest.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -248,6 +249,7 @@
     <ClInclude Include="EngineWorker\Scenes\Sphere.h" />
     <ClInclude Include="EngineWorker\Scenes\Transform.h" />
     <ClInclude Include="EngineWorker\Scripts\HScriptType.h" />
+    <ClInclude Include="EngineWorker\Scripts\HSFirstPersonalCamera.h" />
     <ClInclude Include="EngineWorker\Scripts\HSTest.h" />
   </ItemGroup>
   <ItemGroup>

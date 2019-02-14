@@ -33,6 +33,18 @@ using namespace std;
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+struct HEventArg
+{
+	USHORT X, Y;
+	union
+	{
+		USHORT VKey;
+		USHORT VMouse;
+	};
+	LONG LastX, LastY;
+	USHORT VWheel;
+};
+
 class HListener;
 
 class SurfaceInteraction;

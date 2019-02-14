@@ -29,27 +29,6 @@ LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		if (HBII->KeyDown(VK_ESCAPE))
 			PostQuitMessage(0);
 		break;
-	case WM_LBUTTONDOWN:
-	{
-		HMouseDownEvent::GetInstance()->OnNotify(eArg);
-		break;
-	}
-	case WM_LBUTTONUP:
-		break;
-	case WM_MOUSEMOVE:
-		break;
-	case WM_MOUSEACTIVATE:
-		break;
-	case WM_KEYDOWN:
-	{
-		HKeyDownEvent::GetInstance()->OnNotify(eArg);
-		break;
-	}
-	case WM_KEYUP:
-	{
-		//HKeyUpEvent::GetInstance()->OnNotify(eArg);
-		break;
-	}
 	default:
 		break;
 	}

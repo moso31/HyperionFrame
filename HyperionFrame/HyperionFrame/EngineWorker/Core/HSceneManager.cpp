@@ -8,6 +8,7 @@
 
 #include "HScriptType.h"
 #include "HSTest.h"
+#include "HSFirstPersonalCamera.h"
 
 HSceneManager::HSceneManager()
 {
@@ -64,6 +65,11 @@ shared_ptr<HScript> HSceneManager::CreateScript(const HSCRIPTTYPE scriptType, co
 		auto pScript = make_shared<HSTest>(pObject);
 		return pScript;
 	}
+	case HSCRIPTTYPE::HSCRIPT_FIRST_PERSONAL_CAMERA:
+	{
+		auto pScript = make_shared<HSFirstPersonalCamera>(pObject);
+		return pScript;
+	}
 	default:
 		return nullptr;
 	}
@@ -79,9 +85,24 @@ shared_ptr<HListener> HSceneManager::AddEventListener(const HEVENTTYPE eventType
 		HKeyDownEvent::GetInstance()->AddListener(pListener);
 		break;
 	}
+	case HEVENTTYPE::HEVENT_KEYUP:
+	{
+		HKeyUpEvent::GetInstance()->AddListener(pListener);
+		break;
+	}
 	case HEVENTTYPE::HEVENT_MOUSEDOWN:
 	{
 		HMouseDownEvent::GetInstance()->AddListener(pListener);
+		break;
+	}
+	case HEVENTTYPE::HEVENT_MOUSEUP:
+	{
+		HMouseUpEvent::GetInstance()->AddListener(pListener);
+		break;
+	}
+	case HEVENTTYPE::HEVENT_MOUSEMOVE:
+	{
+		HMouseMoveEvent::GetInstance()->AddListener(pListener);
 		break;
 	}
 	default:

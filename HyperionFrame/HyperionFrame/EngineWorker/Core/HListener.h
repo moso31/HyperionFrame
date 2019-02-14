@@ -1,18 +1,6 @@
 #pragma once
 #include "header.h"
 
-struct HEventArg
-{
-	USHORT X, Y;
-	union
-	{
-		USHORT VKey;
-		USHORT VMouse;
-	};
-	LONG LastX, LastY;
-	USHORT VWheel;
-};
-
 class HListener
 {
 public:
