@@ -99,34 +99,64 @@ void HInput::UpdateRawInput(LPARAM lParam)
 	if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER)) != dwSize)
 		printf("注意：GetRawInputData返回的数据值和预计的长度不匹配！这可能会造成未知错误\n");
 
+	HEventArg eArg;
+	eArg.X = LOWORD(lParam);
+	eArg.Y = HIWORD(lParam);
+
 	RAWINPUT* raw = (RAWINPUT*)lpb;
 
 	if (raw->header.dwType == RIM_TYPEKEYBOARD)
 	{
 		//LOGMSG(raw->data.keyboard.MakeCode, raw->data.keyboard.Flags, raw->data.keyboard.Reserved, raw->data.keyboard.ExtraInformation, raw->data.keyboard.Message, raw->data.keyboard.VKey);
-		USHORT	iKeyCode = raw->data.keyboard.VKey;
-		bool	bIsKeyPressing = (raw->data.keyboard.Flags & 1) == 0;
+		eArg.VKey = raw->data.keyboard.VKey;
+		bool bIsPressing = (raw->data.keyboard.Flags & 1) == 0;
 
-		m_keyState[iKeyCode] = bIsKeyPressing;
-		m_keyActivite[iKeyCode] = true;
+		m_keyState[eArg.VKey] = bIsPressing;
+		m_keyActivite[eArg.VKey] = true;
+
+		if (bIsPressing)
+		{
+			HKeyDownEvent::GetInstance()->OnNotify(eArg);
+		}
+		else
+		{
+			//HKeyUpEvent::GetInstance()->OnNotify(eArg);
+		}
 	}
 	else if (raw->header.dwType == RIM_TYPEMOUSE)
 	{
 		//LOGMSG(raw->data.mouse.usFlags, raw->data.mouse.ulButtons, raw->data.mouse.usButtonFlags, raw->data.mouse.usButtonData, raw->data.mouse.ulRawButtons, raw->data.mouse.lLastX, raw->data.mouse.lLastY, raw->data.mouse.ulExtraInformation);
 
-		int iMousePressing = raw->data.mouse.usButtonFlags;
+		eArg.VMouse = raw->data.mouse.usButtonFlags;
+		eArg.VWheel = raw->data.mouse.usButtonData;
+		int iMousePressing = eArg.VMouse;
 		int count = 0;
 
+		bool bIsPressing = false;
 		while (iMousePressing)
 		{
 			m_mouseState[count] = (iMousePressing & 3) == 1;
 			m_mouseActivite[count] = iMousePressing & 3;
+
+			if (m_mouseState[count]) 
+				bIsPressing = true;
 			iMousePressing >>= 2;
 			count++;
 		}
 
-		m_mouseMove.x = raw->data.mouse.lLastX;
-		m_mouseMove.y = raw->data.mouse.lLastY;
+		eArg.LastX = raw->data.mouse.lLastX;
+		eArg.LastY = raw->data.mouse.lLastY;
+		m_mouseMove.x = eArg.LastX;
+		m_mouseMove.y = eArg.LastY;
+
+		if (bIsPressing)
+		{
+			HMouseDownEvent::GetInstance()->OnNotify(eArg);
+		}
+		else
+		{
+			//HMouseUpEvent::GetInstance()->OnNotify(eArg);
+		}
 	}
 
 	//PrintMouseState();

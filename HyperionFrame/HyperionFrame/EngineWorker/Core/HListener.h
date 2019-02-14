@@ -3,7 +3,14 @@
 
 struct HEventArg
 {
-	UINT X, Y;
+	USHORT X, Y;
+	union
+	{
+		USHORT VKey;
+		USHORT VMouse;
+	};
+	LONG LastX, LastY;
+	USHORT VWheel;
 };
 
 class HListener

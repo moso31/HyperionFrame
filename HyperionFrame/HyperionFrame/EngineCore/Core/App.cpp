@@ -18,10 +18,6 @@ App::~App()
 
 LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	HEventArg eArg;
-	eArg.X = (UINT)LOWORD(lParam);
-	eArg.Y = (UINT)HIWORD(lParam);
-
 	switch (msg)
 	{
 	case WM_DESTROY:
