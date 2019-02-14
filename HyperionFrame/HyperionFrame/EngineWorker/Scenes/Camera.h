@@ -22,6 +22,8 @@ public:
 	void SetRotation(float x, float y, float z);
 	void SetLookAt(float x, float y, float z);
 	
+	XMFLOAT3 GetForward();
+	XMFLOAT3 GetLeft();
 	XMFLOAT3 GetAt();
 	XMFLOAT3 GetUp();
 

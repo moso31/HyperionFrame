@@ -104,6 +104,28 @@ void Camera::SetLookAt(float x, float y, float z)
 	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
 }
 
+XMFLOAT3 Camera::GetForward()
+{
+	XMVECTOR vTranslation = XMLoadFloat3(&translation);
+	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&m_at) - vTranslation);
+
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vDir);
+	return result;
+}
+
+XMFLOAT3 Camera::GetLeft()
+{
+	XMVECTOR vTranslation = XMLoadFloat3(&translation);
+	XMVECTOR vDir = XMLoadFloat3(&m_at) - vTranslation;
+	XMVECTOR vUp = XMLoadFloat3(&m_up);
+	XMVECTOR vLeft = XMVector3Normalize(XMVector3Cross(vDir, vUp));
+
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vLeft);
+	return result;
+}
+
 XMFLOAT3 Camera::GetAt()
 {
 	return m_at;
