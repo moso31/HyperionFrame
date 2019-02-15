@@ -1,10 +1,17 @@
 #include "HSceneManager.h"
 #include "DirectXHelper.h"
 
+#include "HScene.h"
+
 #include "Box.h"
 #include "Sphere.h"
 #include "HMesh.h"
 #include "HSegment.h"
+#include "Camera.h"
+#include "HPointLight.h"
+#include "HMatteMaterial.h"
+#include "HGlassMaterial.h"
+#include "HMirrorMaterial.h"
 
 #include "HScriptType.h"
 #include "HSTest.h"
@@ -14,9 +21,9 @@ HSceneManager::HSceneManager()
 {
 }
 
-HSceneManager::HSceneManager(std::shared_ptr<DXResource> dxResources, const ComPtr<ID3D12DescriptorHeap>& pCbvHeap, const ComPtr<ID3D12GraphicsCommandList>& pCommandList) :
+HSceneManager::HSceneManager(std::shared_ptr<DXResource> dxResources, const shared_ptr<HScene>& pTargetScene) :
 	m_dxResources(dxResources),
-	m_pCommandList(pCommandList)
+	m_pTargetScene(pTargetScene)
 {
 }
 
@@ -24,36 +31,94 @@ HSceneManager::~HSceneManager()
 {
 }
 
-shared_ptr<Box> HSceneManager::CreateBox(float width, float height, float depth)
+void HSceneManager::SetTargetScene(shared_ptr<HScene> pTargetScene)
+{
+	m_pTargetScene = pTargetScene;
+}
+
+shared_ptr<Box> HSceneManager::CreateBox(string name, float width, float height, float depth)
 {
 	auto box = make_shared<Box>(m_dxResources);
 	box->InitParameters();
-	//box->GeneratePrimitiveBuffer(m_pCommandList);
+	box->SetName(name);
+
+	m_pTargetScene->primitives.push_back(box);
+	m_pTargetScene->m_prepareToLoadList.push_back(box);
+
 	return box;
 }
 
-shared_ptr<Sphere> HSceneManager::CreateSphere(float radius, int segmentHorizontal, int segmentVertical)
+shared_ptr<Sphere> HSceneManager::CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical)
 {
 	auto sphere = make_shared<Sphere>(m_dxResources);
 	sphere->InitParameters(radius, segmentHorizontal, segmentVertical);
-	//sphere->GeneratePrimitiveBuffer(m_pCommandList);
+	sphere->SetName(name);
+
+	m_pTargetScene->primitives.push_back(sphere);
+	m_pTargetScene->m_prepareToLoadList.push_back(sphere);
+
 	return sphere;
 }
 
-shared_ptr<HMesh> HSceneManager::CreateMesh(string filepath)
+shared_ptr<HMesh> HSceneManager::CreateMesh(string name, string filepath)
 {
 	auto mesh = make_shared<HMesh>(m_dxResources);
 	mesh->InitParameters(filepath);
-	//mesh->GeneratePrimitiveBuffer(m_pCommandList);
+	mesh->SetName(name);
+
+	m_pTargetScene->primitives.push_back(mesh);
+	m_pTargetScene->m_prepareToLoadList.push_back(mesh);
+
 	return mesh;
 }
 
-shared_ptr<HSegment> HSceneManager::CreateSegment(XMFLOAT3 point1, XMFLOAT3 point2)
+shared_ptr<HSegment> HSceneManager::CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2)
 {
 	auto segment = make_shared<HSegment>(m_dxResources);
 	segment->InitParameters(point1, point2);
-	//segment->GeneratePrimitiveBuffer(m_pCommandList);
+	segment->SetName(name);
+
+	m_pTargetScene->primitives.push_back(segment);
+	m_pTargetScene->m_prepareToLoadList.push_back(segment);
+
 	return segment;
+}
+
+shared_ptr<Camera> HSceneManager::CreateCamera()
+{
+	auto camera = make_shared<Camera>(m_dxResources);
+	m_pTargetScene->cameras.push_back(camera);
+	camera->Init(70.0f, 0.01f, 1000.0f);
+	camera->SetCameraBuffer();
+	return camera;
+}
+
+shared_ptr<HPointLight> HSceneManager::CreatePointLight()
+{
+	auto pointLight = make_shared<HPointLight>();
+	m_pTargetScene->lights.push_back(pointLight);
+	return pointLight;
+}
+
+shared_ptr<HMatteMaterial> HSceneManager::CreateMatteMaterial(const XMCOLOR3& kd, const float sigma)
+{
+	auto mat = make_shared<HMatteMaterial>(kd, sigma);
+	m_pTargetScene->materials.push_back(mat);
+	return mat;
+}
+
+shared_ptr<HMirrorMaterial> HSceneManager::CreateMirrorMaterial(const XMCOLOR3 & kr)
+{
+	auto mat = make_shared<HMirrorMaterial>(kr);
+	m_pTargetScene->materials.push_back(mat);
+	return mat;
+}
+
+shared_ptr<HGlassMaterial> HSceneManager::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3 & Kt, const float eta)
+{
+	auto mat = make_shared<HGlassMaterial>(Kr, Kt, eta);
+	m_pTargetScene->materials.push_back(mat);
+	return mat;
 }
 
 shared_ptr<HScript> HSceneManager::CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject)
@@ -63,11 +128,13 @@ shared_ptr<HScript> HSceneManager::CreateScript(const HSCRIPTTYPE scriptType, co
 	case HSCRIPTTYPE::HSCRIPT_TEST:
 	{
 		auto pScript = make_shared<HSTest>(pObject);
+		m_pTargetScene->scripts.push_back(pScript);
 		return pScript;
 	}
 	case HSCRIPTTYPE::HSCRIPT_FIRST_PERSONAL_CAMERA:
 	{
 		auto pScript = make_shared<HSFirstPersonalCamera>(pObject);
+		m_pTargetScene->scripts.push_back(pScript);
 		return pScript;
 	}
 	default:

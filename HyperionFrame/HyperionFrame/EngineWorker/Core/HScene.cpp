@@ -17,7 +17,7 @@
 
 #include "HSTest.h"
 #include "HSFirstPersonalCamera.h"
-#define CreateScriptConverted(classType, scriptType, pObject) dynamic_pointer_cast<classType>(CreateScript(scriptType, pObject))
+#define CreateScriptConverted(classType, scriptType, pObject) dynamic_pointer_cast<classType>(m_sceneManager->CreateScript(scriptType, pObject))
 #define RegisterEventListener(object, script, eventType, pFunction) m_sceneManager->AddEventListener(eventType, object, std::bind(&pFunction, script, std::placeholders::_1));
 
 HScene::HScene()
@@ -51,7 +51,7 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	m_sceneManager = make_shared<HSceneManager>(m_dxResources, m_cbvHeap, pCommandList);
+	m_sceneManager = make_shared<HSceneManager>(m_dxResources, shared_from_this());
 
 	auto pD3DDevice = m_dxResources->GetD3DDevice();
 	
@@ -72,7 +72,7 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 void HScene::InitPrimitiveData()
 {
-	m_mainCamera = CreateCamera();
+	m_mainCamera = m_sceneManager->CreateCamera();
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
@@ -89,13 +89,13 @@ void HScene::InitPrimitiveData()
 		gray = { 0.8f, 0.8f, 0.8f };
 	float sig = 90.0f;
 	shared_ptr<HMaterial> mtrl[7] = {
-		CreateMatteMaterial(green, sig),
-		CreateMatteMaterial(red, sig),
-		CreateMatteMaterial(blue, sig),
-		CreateMatteMaterial(yellow, sig),
-		CreateGlassMaterial(white, white, 1.55f),
-		CreateMatteMaterial(gray, sig),
-		CreateMirrorMaterial(mirror_white),
+		m_sceneManager->CreateMatteMaterial(green, sig),
+		m_sceneManager->CreateMatteMaterial(red, sig),
+		m_sceneManager->CreateMatteMaterial(blue, sig),
+		m_sceneManager->CreateMatteMaterial(yellow, sig),
+		m_sceneManager->CreateGlassMaterial(white, white, 1.55f),
+		m_sceneManager->CreateMatteMaterial(gray, sig),
+		m_sceneManager->CreateMirrorMaterial(mirror_white),
 	};
 
 	shared_ptr<HSTest> pScript;
@@ -103,62 +103,62 @@ void HScene::InitPrimitiveData()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	//pShape = CreateBox("wall y+");
+	//pShape = m_sceneManager->CreateBox("wall y+");
 	//pShape->SetTranslation(0.0f, 10.5f, 0.0f);
 	//pShape->SetMaterial(mtrl[1]);
 	//pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	//pShape = CreateBox("wall x-");
+	//pShape = m_sceneManager->CreateBox("wall x-");
 	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
 	//pShape->SetMaterial(mtrl[2]);
 	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = CreateBox("wall x+");
+	//pShape = m_sceneManager->CreateBox("wall x+");
 	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
 	//pShape->SetMaterial(mtrl[0]);
 	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = CreateBox("wall z-");
+	//pShape = m_sceneManager->CreateBox("wall z-");
 	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
 	//pShape->SetMaterial(mtrl[5]);
 	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = CreateBox("wall z+");
+	//pShape = m_sceneManager->CreateBox("wall z+");
 	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
 	//pShape->SetMaterial(mtrl[5]);
 	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = CreateMesh("D:\\test.fbx");
+	//pShape = m_sceneManager->CreateMesh("D:\\test.fbx");
 	//pShape->SetMaterial(mtrl[6]);
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	//pShape->SetScale(5.0f, 5.0f, 5.0f);
 	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
 	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	//pShape = CreateBox("box big");
+	//pShape = m_sceneManager->CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	//pShape->SetScale(5.0f, 5.0f, 5.0f);
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	//pShape = CreateSphere("sphere", 1.0f, 64, 64);
+	//pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
 	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
 	//pShape->SetScale(2.0f, 2.0f, 2.0f);
 	//pShape->SetMaterial(mtrl[6]);
 	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	//pShape = CreateBox("box small");
+	//pShape = m_sceneManager->CreateBox("box small");
 	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	//pShape->SetScale(2.0f, 2.0f, 2.0f);
 	//pShape->SetMaterial(mtrl[4]);
 	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	int chessSize = 1;
+	int chessSize = 0;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)
 		{
-			pShape = CreateBox("chess boxes");
+			pShape = m_sceneManager->CreateBox("chess boxes");
 			if ((i + j) % 2)
 			{
 				pShape->SetTranslation(-i, -0.7f, j);
@@ -172,23 +172,23 @@ void HScene::InitPrimitiveData()
 		}
 	}
 
-	auto pointLight = CreatePointLight();
+	auto pointLight = m_sceneManager->CreatePointLight();
 	XMFLOAT3 lightPos = { 0.0f, 10.0f, 5.0f };
 	pointLight->SetTranslation(lightPos.x, lightPos.y, lightPos.z);
 	float brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
 
-	pointLight = CreatePointLight();
+	pointLight = m_sceneManager->CreatePointLight();
 	pointLight->SetTranslation(-lightPos.x, lightPos.y, -lightPos.z);
 	brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
 
-	pointLight = CreatePointLight();
+	pointLight = m_sceneManager->CreatePointLight();
 	pointLight->SetTranslation(lightPos.z, lightPos.y, lightPos.x);
 	brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
 
-	pointLight = CreatePointLight();
+	pointLight = m_sceneManager->CreatePointLight();
 	pointLight->SetTranslation(-lightPos.z, lightPos.y, -lightPos.x);
 	brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
@@ -278,7 +278,7 @@ void HScene::OnMouseDown(HEventArg eArg)
 #ifdef _DEBUG
 	for (int i = 0; i < rayTracePath.size(); i++)
 	{
-		shared_ptr<HLine> pLine = CreateSegment("debugLine", rayTracePath[i].point1, rayTracePath[i].point2);
+		shared_ptr<HLine> pLine = m_sceneManager->CreateSegment("debugLine", rayTracePath[i].point1, rayTracePath[i].point2);
 		debugMsgLines.push_back(pLine);
 	}
 #endif //_DEBUG
@@ -292,11 +292,11 @@ void HScene::OnKeyDown(HEventArg eArg)
 
 	if (HBII->KeyDown('B'))
 	{
-		auto pShape = CreateBox("box big");
+		auto pShape = m_sceneManager->CreateBox("box big");
 		pShape->SetTranslation(-3.0f, 2.5f, -4.0f + xxxxx * 1.0f);
 		pShape->SetScale(5.0f, 5.0f, 5.0f);
 		pShape->SetRotation(0.0f, -0.3f, 0.0f);
-		pShape->SetMaterial(CreateMatteMaterial(XMFLOAT3(1.0f, 0.8f, 0.6f), 90.0f));
+		pShape->SetMaterial(m_sceneManager->CreateMatteMaterial(XMFLOAT3(1.0f, 0.8f, 0.6f), 90.0f));
 		return;
 	}
 
@@ -315,91 +315,6 @@ void HScene::OnKeyDown(HEventArg eArg)
 void HScene::OnKeyUp(HEventArg eArg)
 {
 	//printf("-1s.\n");
-}
-
-shared_ptr<Box> HScene::CreateBox(string name, float width, float height, float depth)
-{
-	auto box = m_sceneManager->CreateBox(width, height, depth);
-	box->SetName(name);
-	primitives.push_back(box);
-
-	m_prepareToLoadList.push_back(box);
-	return box;
-}
-
-shared_ptr<Sphere> HScene::CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical)
-{
-	auto sphere = m_sceneManager->CreateSphere(radius, segmentHorizontal, segmentVertical);
-	sphere->SetName(name);
-	primitives.push_back(sphere);
-
-	m_prepareToLoadList.push_back(sphere);
-	return sphere;
-}
-
-shared_ptr<HMesh> HScene::CreateMesh(string filepath)
-{
-	auto mesh = m_sceneManager->CreateMesh(filepath);
-	primitives.push_back(mesh);
-
-	m_prepareToLoadList.push_back(mesh);
-	return mesh;
-}
-
-shared_ptr<HSegment> HScene::CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2)
-{
-	auto segment = m_sceneManager->CreateSegment(point1, point2);
-	segment->SetName(name);
-	primitives.push_back(segment);
-
-	m_prepareToLoadList.push_back(segment);
-	return segment;
-}
-
-shared_ptr<HScript> HScene::CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject)
-{
-	auto pScript = m_sceneManager->CreateScript(scriptType, pObject);
-	scripts.push_back(pScript);
-	return pScript;
-}
-
-shared_ptr<Camera> HScene::CreateCamera()
-{
-	auto camera = make_shared<Camera>(m_dxResources);
-	transformNodes.push_back(camera);
-	cameras.push_back(camera);
-	camera->Init(70.0f, 0.01f, 1000.0f);
-	camera->SetCameraBuffer();
-	return camera;
-}
-
-shared_ptr<HPointLight> HScene::CreatePointLight()
-{
-	auto pointLight = make_shared<HPointLight>();
-	transformNodes.push_back(pointLight);
-	lights.push_back(pointLight);
-	return pointLight;
-}
-
-shared_ptr<HMatteMaterial> HScene::CreateMatteMaterial(const XMCOLOR3& kd, const float sigma)
-{
-	auto mat = make_shared<HMatteMaterial>(kd, sigma);
-	materials.push_back(mat);
-	return mat;
-}
-
-shared_ptr<HMirrorMaterial> HScene::CreateMirrorMaterial(const XMCOLOR3 & kr)
-{
-	auto mat = make_shared<HMirrorMaterial>(kr);
-	materials.push_back(mat);
-	return mat;
-}
-
-shared_ptr<HGlassMaterial> HScene::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3 & Kt, const float eta)
-{
-	auto mat = make_shared<HGlassMaterial>(Kr, Kt, eta);
-	materials.push_back(mat);
-	return mat;
 }
 
 bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex, float tMax) const

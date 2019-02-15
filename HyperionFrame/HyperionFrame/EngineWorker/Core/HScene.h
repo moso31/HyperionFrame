@@ -40,19 +40,6 @@ public:
 	void OnKeyDown(HEventArg eArg);
 	void OnKeyUp(HEventArg eArg);
 
-	shared_ptr<Box>			CreateBox(string name, float width = 1.0f, float height = 1.0f, float depth = 1.0f);
-	shared_ptr<Sphere>		CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical);
-	shared_ptr<HMesh>		CreateMesh(string filepath);
-	shared_ptr<HSegment>	CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2);
-
-	shared_ptr<HScript>		CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject);
-
-	shared_ptr<Camera>				CreateCamera();
-	shared_ptr<HPointLight>			CreatePointLight();
-	shared_ptr<HMatteMaterial>		CreateMatteMaterial(const XMCOLOR3& kd, const float sigma);
-	shared_ptr<HMirrorMaterial>		CreateMirrorMaterial(const XMCOLOR3& kr);
-	shared_ptr<HGlassMaterial>		CreateGlassMaterial(const XMCOLOR3& Kr, const XMCOLOR3& Kt, const float eta);
-
 	shared_ptr<Camera>				GetMainCamera()					{ return m_mainCamera; }
 	AABB							GetAABB()						{ return m_aabb; }
 
@@ -68,17 +55,18 @@ public:
 	void MakeBMPImage();
 	void MakeBMPImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
 
+	// 允许 场景管理器类 成为友元。
+	// 因为 场景管理器 在管理场景时，使用了一些 场景类 的私有成员变量。
+	friend class HSceneManager;
+
 public:
 	// 下列参数负责记录场景内常用的交互数据信息。
 	// 和其他类相互结合使用的情况比较多见，故直接暴露在外。
-	vector<shared_ptr<Transform>>	transformNodes;
-	vector<shared_ptr<Camera>>		cameras;
-	vector<shared_ptr<HLight>>		lights;
-
+	vector<shared_ptr<Camera>>			cameras;
+	vector<shared_ptr<HLight>>			lights;
+	vector<shared_ptr<HMaterial>>		materials;
 	vector<shared_ptr<HPrimitive>>		primitives;
 	vector<shared_ptr<HLine>>			debugMsgLines;
-	vector<shared_ptr<HMaterial>>		materials;
-
 	vector<shared_ptr<HScript>>			scripts;
 
 private:
