@@ -57,6 +57,26 @@ void Camera::Render()
 {
 }
 
+void Camera::SetTranslation(float x, float y, float z)
+{
+	translation = { x, y, z };
+
+	XMVECTOR eye = XMLoadFloat3(&translation);
+	XMVECTOR dir = XMVector4Transform(
+		XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
+		XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation))
+	);
+
+	XMVECTOR at = eye + dir;
+	XMVECTOR up = { 0.0f, 1.0f, 0.0f, 0.0f };
+
+	XMStoreFloat3(&m_at, at);
+	XMStoreFloat3(&m_up, up);
+
+	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, at, up);
+	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
+}
+
 void Camera::SetRotation(float x, float y, float z)
 {
 	rotation = { x, y, z };
@@ -205,4 +225,8 @@ void Camera::SetCameraBuffer()
 	DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
 	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * GetAlignedConstantBufferSize());
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
+}
+
+void Camera::ValueChangedAdjust()
+{
 }

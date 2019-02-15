@@ -15,7 +15,7 @@ public:
 	XMFLOAT3 GetTranslation();
 	XMFLOAT3 GetRotation();
 	XMFLOAT3 GetScale();
-	void SetTranslation(float x, float y, float z);
+	virtual void SetTranslation(float x, float y, float z);
 	virtual void SetRotation(float x, float y, float z);
 	void SetScale(float x, float y, float z);
 

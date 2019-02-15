@@ -155,7 +155,17 @@ void HScene::InitPrimitiveData()
 	//pShape->SetMaterial(mtrl[4]);
 	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	int chessSize = 0;
+	//for (float i = 0.0f; i < 3.0f; i++)
+	//{
+	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3( 10.0f, i,  10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3( 10.0f, i, -10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3(-10.0f, i,  10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3(-10.0f, i, -10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3(-10.0f, i, -10.0f));
+	//	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pLine);
+	//}
+
+	int chessSize = -1;
 	for (int i = -chessSize; i <= chessSize; i++)
 	{
 		for (int j = -chessSize; j <= chessSize; j++)

@@ -19,7 +19,8 @@ public:
 	void Update();
 	void Render();
 
-	void SetRotation(float x, float y, float z);
+	void SetTranslation(float x, float y, float z) override;
+	void SetRotation(float x, float y, float z) override;
 	void SetLookAt(float x, float y, float z);
 	
 	XMFLOAT3 GetForward();

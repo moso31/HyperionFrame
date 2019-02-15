@@ -79,10 +79,10 @@ private:
 	// 负责场景中图元信息的 延迟加载。
 	void UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	// 更新脚本信息
+	// 脚本执行Update()。
 	void UpdateScripts();
 
-	// 更新所有的Transform信息。
+	// 更新Transform信息并写入各图元。
 	void UpdateTransform();
 
 	// 更新所有的Buffer信息。需要在更新Transform之后进行。
