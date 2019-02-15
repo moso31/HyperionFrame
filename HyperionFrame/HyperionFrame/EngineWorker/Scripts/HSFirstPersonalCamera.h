@@ -1,6 +1,13 @@
 #pragma once
 #include "HScript.h"
 
+#define POSITIVE_X 0
+#define POSITIVE_Y 1
+#define POSITIVE_Z 2
+#define NEGATIVE_X 3
+#define NEGATIVE_Y 4
+#define NEGATIVE_Z 5
+
 class HSFirstPersonalCamera : public HScript
 {
 public:
@@ -14,5 +21,7 @@ public:
 
 private:
 	shared_ptr<Camera> m_pCamera;
-	XMFLOAT3 m_command;
+
+	// +X, +Y, +Z, -X, -Y, -Z
+	bool m_bMoveState[6]; 
 };

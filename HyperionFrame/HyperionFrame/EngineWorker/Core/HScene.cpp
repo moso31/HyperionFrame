@@ -76,8 +76,10 @@ void HScene::InitPrimitiveData()
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
-	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = 
-		CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
+	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
+
+	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
+	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
 	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f },
@@ -288,8 +290,6 @@ void HScene::OnMouseDown(HEventArg eArg)
 
 void HScene::OnKeyDown(HEventArg eArg)
 {  
-	printf("Scene::OnNotify() processed.\n");
-
 	if (HBII->KeyDown('B'))
 	{
 		auto pShape = m_sceneManager->CreateBox("box big");
