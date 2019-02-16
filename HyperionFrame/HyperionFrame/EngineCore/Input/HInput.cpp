@@ -147,7 +147,7 @@ void HInput::UpdateRawInput(LPARAM lParam)
 		if (bIsPressing) HMouseDownEvent::GetInstance()->OnNotify(eArg);
 		else HMouseUpEvent::GetInstance()->OnNotify(eArg);
 
-		if (eArg.LastX && eArg.LastY)
+		if (eArg.LastX || eArg.LastY)
 			HMouseMoveEvent::GetInstance()->OnNotify(eArg);
 	}
 

@@ -4,7 +4,7 @@
 HSFirstPersonalCamera::HSFirstPersonalCamera(shared_ptr<HObject> pObject) :
 	HScript(pObject),
 	m_fMoveSpeed(0.3f),
-	m_fSensitivity(0.01f)
+	m_fSensitivity(0.005f)
 {
 	m_pCamera = dynamic_pointer_cast<Camera>(pObject);
 	memset(m_bMoveState, false, sizeof(m_bMoveState));

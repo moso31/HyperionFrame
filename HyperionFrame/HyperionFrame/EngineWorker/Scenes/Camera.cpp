@@ -226,7 +226,3 @@ void Camera::SetCameraBuffer()
 	ZeroMemory(m_mappedConstantBuffer, DXResource::c_frameCount * GetAlignedConstantBufferSize());
 	// 应用关闭之前，我们不会对此取消映射。在资源生命周期内使对象保持映射状态是可行的。
 }
-
-void Camera::ValueChangedAdjust()
-{
-}

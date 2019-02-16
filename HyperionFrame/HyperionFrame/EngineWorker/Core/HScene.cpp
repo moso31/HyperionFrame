@@ -105,37 +105,37 @@ void HScene::InitPrimitiveData()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	//pShape = m_sceneManager->CreateBox("wall y+");
-	//pShape->SetTranslation(0.0f, 10.5f, 0.0f);
-	//pShape->SetMaterial(mtrl[1]);
-	//pShape->SetScale(20.0f, 1.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall y+");
+	pShape->SetTranslation(0.0f, 10.5f, 0.0f);
+	pShape->SetMaterial(mtrl[1]);
+	pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall x-");
-	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	//pShape->SetMaterial(mtrl[2]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall x-");
+	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[2]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall x+");
-	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	//pShape->SetMaterial(mtrl[0]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall x+");
+	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[0]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall z-");
-	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	//pShape->SetMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = m_sceneManager->CreateBox("wall z-");
+	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall z+");
-	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	//pShape->SetMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = m_sceneManager->CreateBox("wall z+");
+	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = m_sceneManager->CreateMesh("D:\\test.fbx");
-	//pShape->SetMaterial(mtrl[6]);
-	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	//pShape->SetScale(5.0f, 5.0f, 5.0f);
-	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
-	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
+	pShape = m_sceneManager->CreateMesh("", "D:\\test.fbx");
+	pShape->SetMaterial(mtrl[6]);
+	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	pShape->SetScale(5.0f, 5.0f, 5.0f);
+	pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//pShape = m_sceneManager->CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
@@ -143,17 +143,17 @@ void HScene::InitPrimitiveData()
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	//pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
-	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
-	//pShape->SetMaterial(mtrl[6]);
-	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
+	pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
+	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[6]);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	//pShape = m_sceneManager->CreateBox("box small");
-	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
-	//pShape->SetMaterial(mtrl[4]);
-	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
+	pShape = m_sceneManager->CreateBox("box small");
+	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[4]);
+	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//for (float i = 0.0f; i < 3.0f; i++)
 	//{

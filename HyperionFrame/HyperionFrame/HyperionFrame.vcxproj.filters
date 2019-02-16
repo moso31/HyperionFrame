@@ -127,7 +127,9 @@
     <ClCompile Include="EngineWorker\Core\HEvent.cpp">
       <Filter>EngineWorker\Core</Filter>
     </ClCompile>
-    <ClCompile Include="EngineWorker\Scripts\HSFirstPersonalCamera.cpp" />
+    <ClCompile Include="EngineWorker\Scripts\HSFirstPersonalCamera.cpp">
+      <Filter>EngineWorker\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -271,7 +273,9 @@
     <ClInclude Include="EngineWorker\Core\HEvent.h">
       <Filter>EngineWorker\Core</Filter>
     </ClInclude>
-    <ClInclude Include="EngineWorker\Scripts\HSFirstPersonalCamera.h" />
+    <ClInclude Include="EngineWorker\Scripts\HSFirstPersonalCamera.h">
+      <Filter>EngineWorker\Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EngineCore">
