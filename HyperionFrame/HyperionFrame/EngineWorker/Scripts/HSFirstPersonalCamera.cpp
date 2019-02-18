@@ -36,6 +36,16 @@ void HSFirstPersonalCamera::OnKeyDown(HEventArg eArg)
 	if (eArg.VKey == 'S') m_bMoveState[NEGATIVE_Z] = true;
 	if (eArg.VKey == 'D') m_bMoveState[POSITIVE_X] = true;
 	if (eArg.VKey == 'A') m_bMoveState[NEGATIVE_X] = true;
+
+	// 输出Camera当前transform信息
+	if (eArg.VKey == 'P')
+	{
+		string name = m_pCamera->GetName();
+		XMFLOAT3 t = m_pCamera->GetTransform().GetTranslation();
+		XMFLOAT3 r = m_pCamera->GetTransform().GetRotation();
+		printf("Camera info: name: %s translation: %.3f, %.3f, %.3f rotation: %.3f, %.3f, %.3f\n", 
+			name.c_str(), t.x, t.y, t.z, r.x, r.y, r.z);
+	}
 }
 
 void HSFirstPersonalCamera::OnKeyUp(HEventArg eArg)

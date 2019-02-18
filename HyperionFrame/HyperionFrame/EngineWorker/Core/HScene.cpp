@@ -75,12 +75,16 @@ void HScene::InitPrimitiveData()
 	m_mainCamera = m_sceneManager->CreateCamera();
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
-	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
-	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
 
-	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
-	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
-	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
+	m_mainCamera->SetTranslation(-2.042f, 4.674f, 2.112f);
+	m_mainCamera->SetRotation(0.737f, -3.653f, 0.000f);
+	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
+
+	//shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
+
+	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
+	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
+	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
 	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
@@ -105,37 +109,36 @@ void HScene::InitPrimitiveData()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	pShape = m_sceneManager->CreateBox("wall y+");
-	pShape->SetTranslation(0.0f, 10.5f, 0.0f);
-	pShape->SetMaterial(mtrl[1]);
-	pShape->SetScale(20.0f, 1.0f, 20.0f);
+	//pShape = m_sceneManager->CreateBox("wall y+");
+	//pShape->SetTranslation(0.0f, 10.6f, 0.0f);
+	//pShape->SetMaterial(mtrl[1]);
+	//pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	pShape = m_sceneManager->CreateBox("wall x-");
-	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[2]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = m_sceneManager->CreateBox("wall x-");
+	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	//pShape->SetMaterial(mtrl[2]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	pShape = m_sceneManager->CreateBox("wall x+");
-	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[0]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = m_sceneManager->CreateBox("wall x+");
+	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	//pShape->SetMaterial(mtrl[0]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
 	pShape = m_sceneManager->CreateBox("wall z-");
 	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
 	pShape->SetMaterial(mtrl[5]);
 	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = m_sceneManager->CreateBox("wall z+");
-	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	pShape->SetMaterial(mtrl[5]);
-	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	//pShape = m_sceneManager->CreateBox("wall z+");
+	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	//pShape->SetMaterial(mtrl[5]);
+	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = m_sceneManager->CreateMesh("", "D:\\test.fbx");
+	pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
 	pShape->SetMaterial(mtrl[6]);
 	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	pShape->SetScale(5.0f, 5.0f, 5.0f);
 	pShape->SetRotation(0.0f, 0.3f, 0.0f);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//pShape = m_sceneManager->CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
@@ -147,13 +150,11 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[6]);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	pShape = m_sceneManager->CreateBox("box small");
-	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[4]);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
+	//pShape = m_sceneManager->CreateBox("box small");
+	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetMaterial(mtrl[4]);
 
 	//for (float i = 0.0f; i < 3.0f; i++)
 	//{
@@ -288,11 +289,11 @@ void HScene::OnMouseDown(HEventArg eArg)
 	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0, &rayTracePath);
 
 #ifdef _DEBUG
-	for (int i = 0; i < rayTracePath.size(); i++)
-	{
-		shared_ptr<HLine> pLine = m_sceneManager->CreateSegment("debugLine", rayTracePath[i].point1, rayTracePath[i].point2);
-		debugMsgLines.push_back(pLine);
-	}
+	//for (int i = 0; i < rayTracePath.size(); i++)
+	//{
+	//	shared_ptr<HLine> pLine = m_sceneManager->CreateSegment("debugLine", rayTracePath[i].point1, rayTracePath[i].point2);
+	//	debugMsgLines.push_back(pLine);
+	//}
 #endif //_DEBUG
 
 	printf("X: %d, Y: %d, R: %f, G: %f, B: %f\n", eArg.X, eArg.Y, L.x, L.y, L.z);
@@ -300,26 +301,18 @@ void HScene::OnMouseDown(HEventArg eArg)
 
 void HScene::OnKeyDown(HEventArg eArg)
 {  
-	if (HBII->KeyDown('B'))
-	{
-		auto pShape = m_sceneManager->CreateBox("box big");
-		pShape->SetTranslation(-3.0f, 2.5f, -4.0f + xxxxx * 1.0f);
-		pShape->SetScale(5.0f, 5.0f, 5.0f);
-		pShape->SetRotation(0.0f, -0.3f, 0.0f);
-		pShape->SetMaterial(m_sceneManager->CreateMatteMaterial(XMFLOAT3(1.0f, 0.8f, 0.6f), 90.0f));
-		return;
-	}
+	//if (HBII->KeyDown('B'))
+	//{
+	//	auto pShape = m_sceneManager->CreateBox("box big");
+	//	pShape->SetTranslation(-3.0f, 2.5f, -4.0f + xxxxx * 1.0f);
+	//	pShape->SetScale(5.0f, 5.0f, 5.0f);
+	//	pShape->SetRotation(0.0f, -0.3f, 0.0f);
+	//	pShape->SetMaterial(m_sceneManager->CreateMatteMaterial(XMFLOAT3(1.0f, 0.8f, 0.6f), 90.0f));
+	//	return;
+	//}
 
 	if (HBII->KeyDown('G'))
 		MakeBMPImage();
-	else
-	for (int i = 0; i < primitives.size(); i++)
-	{
-		if (primitives[i]->GetName() == "box small")
-		{
-			primitives[i]->SetRotation(0.0f, xxxxx, 0.0f);
-		}
-	}
 }
 
 void HScene::OnKeyUp(HEventArg eArg)
