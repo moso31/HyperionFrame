@@ -73,7 +73,7 @@ bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tH
 
 	SurfaceInteraction record;
 	*out_tHit = FLT_MAX;
-	if (tNear < tFar && tNear > H_EPSILON)
+	if (tNear < tFar)// && tNear > H_EPSILON)
 	{
 		for (UINT i = 0; i < GetFaceCount(); i++)
 		{

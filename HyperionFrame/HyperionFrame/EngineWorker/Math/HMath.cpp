@@ -114,8 +114,8 @@ bool AABB::IntersectP(Ray ray, float* hit0, float* hit1)
 	XMStoreFloat3(&t1, XMVectorMin(tMin, tMax));
 	XMStoreFloat3(&t2, XMVectorMax(tMin, tMax));
 
-	float tNear = std::max(t1.x, std::max(t1.y, t1.z));
-	float tFar = std::min(t2.x, std::min(t2.y, t2.z));
+	float tNear = max(t1.x, max(t1.y, t1.z));
+	float tFar = min(t2.x, min(t2.y, t2.z));
 
 	*hit0 = tNear;
 	*hit1 = tFar;
@@ -155,10 +155,10 @@ bool Quadratic(float a, float b, float c, float& out_t0, float& out_t1)
 	float sqrtdt = sqrt(dt);
 	float q0 = b + sqrtdt, q1 = b - sqrtdt;
 
-	float onediv2a = -0.5f / a;
+	float inv2a = -0.5f / a;
 
-	out_t0 = q0 * onediv2a;
-	out_t1 = q1 * onediv2a;
+	out_t0 = q0 * inv2a;
+	out_t1 = q1 * inv2a;
 
 	if (out_t0 > out_t1) 
 		swap(out_t0, out_t1);
@@ -187,4 +187,112 @@ bool RayIntersectP(Ray ray, AABB aabb)
 	float tFar = min(t2.x, min(t2.y, t2.z));
 
 	return tNear < tFar;
+}
+
+EFloat::EFloat(float v, float err) :
+	v(v)
+{
+	if (err == 0.) low = high = v;
+	else
+	{
+		low = NextFloatDown(err);
+		high = NextFloatUp(err);
+	}
+	ld = v;
+	Check();
+}
+
+EFloat::EFloat(float v, long double ld, float err) : 
+	EFloat(v, err)
+{
+	this->ld = ld;
+	Check();
+}
+
+EFloat::EFloat(const EFloat & ef)
+{
+	ef.Check();
+	v = ef.v;
+	ld = ef.ld;
+	low = ef.low;
+	high = ef.high;
+}
+
+EFloat EFloat::operator+(EFloat other) const
+{
+	EFloat result;
+	result.v = v + other.v;
+	result.ld = ld + other.ld;
+
+	result.low = NextFloatDown(low + other.low);
+	result.high = NextFloatUp(high + other.high);
+	result.Check();
+	return result;
+}
+
+EFloat EFloat::operator-(EFloat other) const
+{
+	EFloat result;
+	result.v = v - other.v;
+	result.ld = ld - other.ld;
+
+	result.low = NextFloatDown(low - other.low);
+	result.high = NextFloatUp(high - other.high);
+	result.Check();
+	return result;
+}
+
+EFloat EFloat::operator*(EFloat other) const
+{
+	EFloat result;
+	result.v = v * other.v;
+	result.ld = ld * other.ld;
+
+	float pro[4] = { low * other.low, low * other.high, high * other.low, high * other.high };
+	result.low = NextFloatDown((min(pro[0], pro[1]), min(pro[2], pro[3])));
+	result.high = NextFloatUp((max(pro[0], pro[1]), max(pro[2], pro[3])));
+	result.Check();
+	return result;
+}
+
+EFloat EFloat::operator/(EFloat other) const
+{
+	EFloat result;
+	result.v = v / other.v;
+	result.ld = ld / other.ld;
+
+	if (other.low < 0 && other.high > 0)
+		result.low = result.high = INFINITY;
+	else
+	{
+		float div[4] = { low / other.low, low / other.high, high / other.low, high / other.high };
+		result.low = NextFloatDown((min(div[0], div[1]), min(div[2], div[3])));
+		result.high = NextFloatUp((max(div[0], div[1]), max(div[2], div[3])));
+	}
+	result.Check();
+	return result;
+}
+
+EFloat EFloat::operator-() const
+{
+	EFloat result;
+	result.v = -v;
+	result.ld = -ld;
+	result.low = -high;
+	result.high = -low;
+	result.Check();
+	return EFloat();
+}
+
+bool EFloat::operator==(EFloat other) const
+{
+	return v == other.v;
+}
+
+void EFloat::Check() const
+{
+	if (!isinf(low) && !isnan(low) && !isinf(high) && !isnan(high))
+		assert(low < high);
+	assert(low, ld);
+	assert(ld, high);
 }

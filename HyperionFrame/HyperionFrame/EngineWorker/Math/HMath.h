@@ -1,12 +1,109 @@
 #pragma once
 #include "header.h"
 
+static const float H_MACHINEEPSLION = numeric_limits<float>::epsilon() * 0.5f;
+
 template <typename T, typename U, typename V>
 inline T Clamp(T val, U low, V high) {
 	if ((T)val < (T)low) return (T)low;
 	else if ((T)val > (T)high) return (T)high;
 	else return (T)val;
 }
+
+inline float gamma(int n)
+{
+	return (n * H_MACHINEEPSLION) / (1 - n * H_MACHINEEPSLION);
+}
+
+inline uint32_t FloatToBits(float f) 
+{
+	uint32_t ui;
+	memcpy(&ui, &f, sizeof(float));
+	return ui;
+}
+
+inline float BitsToFloat(uint32_t ui)
+{
+	float f;
+	memcpy(&f, &ui, sizeof(uint32_t));
+	return f;
+}
+
+inline uint64_t FloatToBits(double f) 
+{
+	uint64_t ui;
+	memcpy(&ui, &f, sizeof(double));
+	return ui;
+}
+
+inline double BitsToFloat(uint64_t ui) 
+{
+	double f;
+	memcpy(&f, &ui, sizeof(uint64_t));
+	return f;
+}
+
+inline float NextFloatUp(float v) {
+	if (std::isinf(v) && v > 0.) return v;
+	if (v == -0.f) v = 0.f;
+	uint32_t ui = FloatToBits(v);
+	if (v >= 0) ++ui;
+	else --ui;
+	return BitsToFloat(ui);
+}
+
+inline float NextFloatDown(float v) 
+{
+	if (std::isinf(v) && v < 0.) return v;
+	if (v == 0.f) v = -0.f;
+	uint32_t ui = FloatToBits(v);
+	if (v > 0) --ui;
+	else ++ui;
+	return BitsToFloat(ui);
+}
+
+inline double NextFloatUp(double v, int delta = 1) 
+{
+	if (std::isinf(v) && v > 0.) return v;
+	if (v == -0.f) v = 0.f;
+	uint64_t ui = FloatToBits(v);
+	if (v >= 0.) ui += delta;
+	else ui -= delta;
+	return BitsToFloat(ui);
+}
+
+inline double NextFloatDown(double v, int delta = 1) 
+{
+	if (std::isinf(v) && v < 0.) return v;
+	if (v == 0.f) v = -0.f;
+	uint64_t ui = FloatToBits(v);
+	if (v > 0.) ui -= delta;
+	else ui += delta;
+	return BitsToFloat(ui);
+}
+
+class EFloat
+{
+public:
+	EFloat() {}
+	EFloat(float v, float err = 0.0f);
+	EFloat(float v, long double ld, float err = 0.0f);
+	EFloat(const EFloat& ef);
+
+	EFloat operator+(EFloat other) const;
+	EFloat operator-(EFloat other) const;
+	EFloat operator*(EFloat other) const;
+	EFloat operator/(EFloat other) const;
+	EFloat operator-() const;
+	bool operator==(EFloat other) const;
+
+	void Check() const;
+
+private:
+	float v;	// value
+	float low, high;	// absolute error
+	long double ld;		// long double value, for more precision.
+};
 
 class Ray
 {

@@ -336,10 +336,10 @@ void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, Sur
 				// leaf
 				for (int i = node->index; i < node->index + node->offset; i++)
 				{
+					auto str = m_scene->primitives[m_primitiveInfo[i].index]->GetName();
+
 					if (m_scene->primitives[m_primitiveInfo[i].index]->GetRenderType() == eRenderType::Shape)
 					{
-						auto str = m_scene->primitives[m_primitiveInfo[i].index]->GetName();
-
 						if (m_primitiveInfo[i].aabb.IntersectP(worldRay, &t0, &t1))
 						{
 							float tHit;
