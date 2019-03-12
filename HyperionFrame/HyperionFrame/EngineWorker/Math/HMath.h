@@ -44,7 +44,7 @@ inline double BitsToFloat(uint64_t ui)
 }
 
 inline float NextFloatUp(float v) {
-	if (std::isinf(v) && v > 0.) return v;
+	if (isinf(v) && v > 0.) return v;
 	if (v == -0.f) v = 0.f;
 	uint32_t ui = FloatToBits(v);
 	if (v >= 0) ++ui;
@@ -54,7 +54,7 @@ inline float NextFloatUp(float v) {
 
 inline float NextFloatDown(float v) 
 {
-	if (std::isinf(v) && v < 0.) return v;
+	if (isinf(v) && v < 0.) return v;
 	if (v == 0.f) v = -0.f;
 	uint32_t ui = FloatToBits(v);
 	if (v > 0) --ui;
@@ -64,7 +64,7 @@ inline float NextFloatDown(float v)
 
 inline double NextFloatUp(double v, int delta = 1) 
 {
-	if (std::isinf(v) && v > 0.) return v;
+	if (isinf(v) && v > 0.) return v;
 	if (v == -0.f) v = 0.f;
 	uint64_t ui = FloatToBits(v);
 	if (v >= 0.) ui += delta;
@@ -74,7 +74,7 @@ inline double NextFloatUp(double v, int delta = 1)
 
 inline double NextFloatDown(double v, int delta = 1) 
 {
-	if (std::isinf(v) && v < 0.) return v;
+	if (isinf(v) && v < 0.) return v;
 	if (v == 0.f) v = -0.f;
 	uint64_t ui = FloatToBits(v);
 	if (v > 0.) ui -= delta;
@@ -87,7 +87,7 @@ class EFloat
 public:
 	EFloat() {}
 	EFloat(float v, float err = 0.0f);
-	EFloat(float v, long double ld, float err = 0.0f);
+	EFloat(float v, long double ld, float err);
 	EFloat(const EFloat& ef);
 
 	EFloat operator+(EFloat other) const;
@@ -96,14 +96,92 @@ public:
 	EFloat operator/(EFloat other) const;
 	EFloat operator-() const;
 	bool operator==(EFloat other) const;
+	explicit operator float() const { return v; }
+	explicit operator double() const { return ld; }
 
 	void Check() const;
+	float AbsoluteError() { return high - low; }
+	float RelativeError() { return abs((ld - v) / ld); }
 
 private:
 	float v;	// value
 	float low, high;	// absolute error
 	long double ld;		// long double value, for more precision.
+
+	friend inline EFloat sqrt(EFloat other);
+	friend inline EFloat abs(EFloat other);
+	friend inline bool Quadratic(EFloat A, EFloat B, EFloat C, EFloat *t0, EFloat *t1);
 };
+
+// EFloat Inline Functions
+inline EFloat operator*(float f, EFloat other) { return EFloat(f) * other; }
+
+inline EFloat operator/(float f, EFloat other) { return EFloat(f) / other; }
+
+inline EFloat operator+(float f, EFloat other) { return EFloat(f) + other; }
+
+inline EFloat operator-(float f, EFloat other) { return EFloat(f) - other; }
+
+inline EFloat sqrt(EFloat other) 
+{
+	EFloat r;
+	r.v = sqrt(other.v);
+	r.ld = sqrt(other.ld);
+	r.low = NextFloatDown(sqrt(other.low));
+	r.high = NextFloatUp(sqrt(other.high));
+	r.Check();
+	return r;
+}
+
+inline EFloat abs(EFloat other)
+{
+	if (other.low >= 0)
+	{
+		// 浮点范围全部>=0，肯定为正，返回原值。
+		return other;
+	}
+	else if (other.high <= 0)
+	{
+		// 浮点范围全部<=0，肯定为负，全部加符号，返回原值。
+		EFloat result;
+		result.v = -other.v;
+		result.ld = -other.ld;
+		result.low = -other.low;
+		result.high = -other.high;
+		result.Check();
+		return result;
+	}
+	else
+	{
+		// 浮点范围同时涵盖正负数：
+		// 取绝对值后，最小值肯定为0，最大值是正负数中实数值最大的那个。
+		EFloat result;
+		result.v = abs(other.v);
+		result.ld = abs(other.ld);
+		result.low = 0;
+		result.high = max(-other.low, other.high);
+		result.Check();
+		return result;
+	}
+}
+
+inline bool Quadratic(EFloat A, EFloat B, EFloat C, EFloat * t0, EFloat * t1)
+{
+	double delta = (double)B.v * (double)B.v - 4.0 * (double)A.v * double(C.v);
+	if (delta < 0.0) 
+		return false;
+	double sqrtDelta = sqrt(delta);
+	EFloat sqrtDeltaFlt(sqrtDelta, H_MACHINEEPSLION * sqrtDelta);
+
+	EFloat q;
+	if ((float)B < 0) q = -0.5 * (B - sqrtDeltaFlt);
+	else q = -0.5 * (B + sqrtDeltaFlt);
+	*t0 = q / A;
+	*t1 = C / q;
+	if ((float)*t0 > (float)*t1) 
+		swap(*t0, *t1);
+	return true;
+}
 
 class Ray
 {
