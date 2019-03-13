@@ -101,7 +101,7 @@ public:
 
 	void Check() const;
 	float AbsoluteError() { return high - low; }
-	float RelativeError() { return abs((ld - v) / ld); }
+	float RelativeError() { return (float)(abs((ld - v) / ld)); }
 
 private:
 	float v;	// value
@@ -171,7 +171,7 @@ inline bool Quadratic(EFloat A, EFloat B, EFloat C, EFloat * t0, EFloat * t1)
 	if (delta < 0.0) 
 		return false;
 	double sqrtDelta = sqrt(delta);
-	EFloat sqrtDeltaFlt(sqrtDelta, H_MACHINEEPSLION * sqrtDelta);
+	EFloat sqrtDeltaFlt((float)sqrtDelta, H_MACHINEEPSLION * (float)sqrtDelta);
 
 	EFloat q;
 	if ((float)B < 0) q = -0.5 * (B - sqrtDeltaFlt);

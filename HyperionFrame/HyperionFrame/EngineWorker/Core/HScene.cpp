@@ -76,8 +76,8 @@ void HScene::InitPrimitiveData()
 	m_mainCamera->SetTranslation(9.0f, 6.0f, -4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
-	m_mainCamera->SetTranslation(6.853, 3.138, -0.139);
-	m_mainCamera->SetRotation(0.682, 3.897, 0.000);
+	m_mainCamera->SetTranslation(6.853f, 3.138f, -0.139f);
+	m_mainCamera->SetRotation(0.682f, 3.897f, 0.000f);
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
 
 	//shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);

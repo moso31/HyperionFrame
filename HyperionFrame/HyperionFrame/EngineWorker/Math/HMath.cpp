@@ -114,11 +114,11 @@ bool AABB::IntersectP(Ray ray, float* hit0, float* hit1)
 	XMStoreFloat3(&t1, XMVectorMin(tMin, tMax));
 	XMStoreFloat3(&t2, XMVectorMax(tMin, tMax));
 
-	float tNear = max(t1.x, max(t1.y, t1.z));
-	float tFar = min(t2.x, min(t2.y, t2.z));
+	float tNear = std::max(t1.x, std::max(t1.y, t1.z));
+	float tFar = std::min(t2.x, std::min(t2.y, t2.z));
 
 	*hit0 = tNear;
-	*hit1 = tFar;
+	*hit1 = tFar * (1 + gamma(3));
 	return tFar > 0 && tNear < tFar;
 }
 
@@ -293,6 +293,6 @@ void EFloat::Check() const
 {
 	if (!isinf(low) && !isnan(low) && !isinf(high) && !isnan(high))
 		assert(low < high);
-	assert(low, ld);
-	assert(ld, high);
+	assert(low < ld);
+	assert(ld < high);
 }
