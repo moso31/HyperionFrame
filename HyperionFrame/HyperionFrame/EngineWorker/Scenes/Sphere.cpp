@@ -99,7 +99,7 @@ void Sphere::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced((UINT)m_indices.size(), 1, 0, 0, 0);
 }
 
-bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit)
+bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit)
 {
 	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetObject2World());
 	XMMATRIX mxWorld2Object = XMLoadFloat4x4(&GetWorld2Object());
@@ -109,21 +109,29 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_t
 	XMStoreFloat3(&rd, XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), mxWorld2Object));
 	Ray ray(ro, rd);
 
-	float a = rd.x * rd.x + rd.y * rd.y + rd.z * rd.z;
-	float b = 2.0f * (rd.x * ro.x + rd.y * ro.y + rd.z * ro.z);
-	float c = ro.x * ro.x + ro.y * ro.y + ro.z * ro.z - m_radius * m_radius;
+	EFloat dx(rd.x), dy(rd.y), dz(rd.z);
+	EFloat ox(ro.x), oy(ro.y), oz(ro.z);
 
-	float t0, t1;
-	if (!Quadratic(a, b, c, t0, t1)) 
-		return false;
+	EFloat a = dx * dx + dy * dy + dz * dz;
+	EFloat b = 2.0f * (dx * ox + dy * oy + dz * oz);
+	EFloat c = ox * ox + oy * oy + oz * oz - m_radius * m_radius;
 
-	if (t1 < H_EPSILON)
-		return false;
-	*out_tHit = t0;
-	if (*out_tHit <= 0.0f)
-		*out_tHit = t1;
+	EFloat t0, t1;
+	if (!Quadratic(a, b, c, &t0, &t1)) return false;
 
-	XMFLOAT3 pHit = ray.GetT(*out_tHit);
+	//if (t0.high > ray.tMax) return false;
+	if (t1.low < 0) return false;
+
+	EFloat tShapeHit;
+	tShapeHit = t0;
+	if (tShapeHit.low <= 0.0f)
+	{
+		tShapeHit = t1;
+		//if (tShapeHit.high > ray.tMax) return false;
+	}
+	*out_tHit = tShapeHit;
+
+	XMFLOAT3 pHit = ray.GetT(tShapeHit.v);
 	XMVECTOR pHitV = XMLoadFloat3(&pHit);
 	pHitV *= XMVectorReplicate(m_radius) / XMVector3Length(pHitV);
 	XMStoreFloat3(&pHit, pHitV);
@@ -163,18 +171,18 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_t
 	return true;
 }
 
-bool Sphere::IntersectP(Ray worldRay, float* out_t0, float* out_t1)
+bool Sphere::IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1)
 {
 	XMFLOAT3 ro, rd;
 	XMStoreFloat3(&ro, XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), XMLoadFloat4x4(&GetWorld2Object())));
 	XMStoreFloat3(&rd, XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), XMLoadFloat4x4(&GetWorld2Object())));
 	Ray ray(ro, rd);
 
-	float a = rd.x * rd.x + rd.y * rd.y + rd.z * rd.z;
-	float b = 2 * (rd.x * ro.x + rd.y * ro.y + rd.z * ro.z);
-	float c = ro.x * ro.x + ro.y * ro.y + ro.z * ro.z - m_radius * m_radius;
+	EFloat a = rd.x * rd.x + rd.y * rd.y + rd.z * rd.z;
+	EFloat b = 2.0f * (rd.x * ro.x + rd.y * ro.y + rd.z * ro.z);
+	EFloat c = ro.x * ro.x + ro.y * ro.y + ro.z * ro.z - m_radius * m_radius;
 
-	if (!Quadratic(a, b, c, *out_t0, *out_t1)) return false;
+	if (!Quadratic(a, b, c, out_t0, out_t1)) return false;
 
-	return *out_t1 > H_EPSILON;
+	return out_t1->low > 0.0f;
 }

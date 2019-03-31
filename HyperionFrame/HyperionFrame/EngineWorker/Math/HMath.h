@@ -103,11 +103,12 @@ public:
 	float AbsoluteError() { return high - low; }
 	float RelativeError() { return (float)(abs((ld - v) / ld)); }
 
-private:
+public:
 	float v;	// value
 	float low, high;	// absolute error
 	long double ld;		// long double value, for more precision.
 
+private:
 	friend inline EFloat sqrt(EFloat other);
 	friend inline EFloat abs(EFloat other);
 	friend inline bool Quadratic(EFloat A, EFloat B, EFloat C, EFloat *t0, EFloat *t1);

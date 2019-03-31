@@ -50,7 +50,7 @@ void HMesh::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced((int)m_indices.size(), 1, 0, 0, 0);
 }
 
-bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit)
+bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
@@ -175,7 +175,7 @@ bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tH
 			XMFLOAT2 uvHit;
 			XMStoreFloat2(&uvHit, b0 * XMLoadFloat2(&uv.p[0]) + b1 * XMLoadFloat2(&uv.p[1]) + b2 * XMLoadFloat2(&uv.p[2]));
 
-			if (*out_tHit > t && t > 1e-5f)
+			if (out_tHit->v > t && t > 1e-5f)
 			{
 				*out_tHit = t;
 				XMFLOAT3 hitPos, wo;
@@ -212,7 +212,7 @@ bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tH
 	return false;
 }
 
-bool HMesh::IntersectP(Ray worldRay, float* out_t0, float* out_t1)
+bool HMesh::IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());

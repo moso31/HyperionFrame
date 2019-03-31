@@ -42,8 +42,8 @@ public:
 	shared_ptr<HMaterial> GetMaterial() { return m_material; }
 	void SetMaterial(shared_ptr<HMaterial> mat);
 
-	virtual bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit) = 0;
-	virtual bool IntersectP(Ray worldRay, float* out_t0, float* out_t1) = 0;
+	virtual bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit) = 0;
+	virtual bool IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1) = 0;
 
 	virtual UINT GetAlignedConstantBufferSize();
 

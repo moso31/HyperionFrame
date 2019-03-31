@@ -17,8 +17,8 @@ public:
 	void Update();
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit);
-	bool IntersectP(Ray worldRay, float* out_t0, float* out_t1);
+	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit);
+	bool IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1);
 
 private:
 	string m_filepath;

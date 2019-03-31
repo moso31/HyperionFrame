@@ -314,14 +314,14 @@ void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, Sur
 
 							if (m_mortonPrimitiveInfo[idx].aabb.IntersectP(worldRay, &t0, &t1))
 							{
-								float tHit;
+								EFloat tHit;
 								SurfaceInteraction temp_si;
 								shared_ptr<HShape> pCurrentShape = dynamic_pointer_cast<HShape>(m_scene->primitives[m_mortonPrimitiveInfo[idx].index]);
 								if (pCurrentShape->Intersect(worldRay, &temp_si, &tHit))
 								{
-									if (*out_tResult > tHit)
+									if (*out_tResult > tHit.v)
 									{
-										*out_tResult = tHit;
+										*out_tResult = tHit.v;
 										*si = temp_si;
 										*out_hitIndex = m_mortonPrimitiveInfo[idx].index;
 									}
@@ -342,15 +342,15 @@ void HBVHTree::RecursiveIntersect(HBVHTreeNode * node, const Ray & worldRay, Sur
 					{
 						if (m_primitiveInfo[i].aabb.IntersectP(worldRay, &t0, &t1))
 						{
-							float tHit;
+							EFloat tHit;
 							SurfaceInteraction temp_si;
 							shared_ptr<HShape> pCurrentShape = dynamic_pointer_cast<HShape>(m_scene->primitives[m_primitiveInfo[i].index]);
 							auto t = pCurrentShape->GetAABBWorld();
 							if (pCurrentShape->Intersect(worldRay, &temp_si, &tHit))
 							{
-								if (*out_tResult > tHit)
+								if (*out_tResult > tHit.v)
 								{
-									*out_tResult = tHit;
+									*out_tResult = tHit.v;
 									*si = temp_si;
 									*out_hitIndex = m_primitiveInfo[i].index;
 								}

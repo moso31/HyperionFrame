@@ -118,7 +118,7 @@ bool AABB::IntersectP(Ray ray, float* hit0, float* hit1)
 	float tFar = std::min(t2.x, std::min(t2.y, t2.z));
 
 	*hit0 = tNear;
-	*hit1 = tFar * (1 + gamma(3));
+	*hit1 = tFar * (1 + 2 * gamma(3));
 	return tFar > 0 && tNear < tFar;
 }
 
@@ -185,7 +185,8 @@ bool RayIntersectP(Ray ray, AABB aabb)
 
 	float tNear = max(t1.x, max(t1.y, t1.z));
 	float tFar = min(t2.x, min(t2.y, t2.z));
-
+	
+	tFar *= (1 + 2 * gamma(3));
 	return tNear < tFar;
 }
 
@@ -195,8 +196,8 @@ EFloat::EFloat(float v, float err) :
 	if (err == 0.) low = high = v;
 	else
 	{
-		low = NextFloatDown(err);
-		high = NextFloatUp(err);
+		low = NextFloatDown(v - err);
+		high = NextFloatUp(v + err);
 	}
 	ld = v;
 	Check();
@@ -262,7 +263,10 @@ EFloat EFloat::operator/(EFloat other) const
 	result.ld = ld / other.ld;
 
 	if (other.low < 0 && other.high > 0)
-		result.low = result.high = INFINITY;
+	{
+		result.low = -INFINITY;
+		result.high = INFINITY;
+	}
 	else
 	{
 		float div[4] = { low / other.low, low / other.high, high / other.low, high / other.high };
@@ -292,7 +296,10 @@ bool EFloat::operator==(EFloat other) const
 void EFloat::Check() const
 {
 	if (!isinf(low) && !isnan(low) && !isinf(high) && !isnan(high))
-		assert(low < high);
-	assert(low < ld);
-	assert(ld < high);
+		assert(low <= high);
+	if (!isinf(v) && !isnan(v)) 
+	{
+		assert(low <= ld);
+		assert(ld <= high);
+	}
 }

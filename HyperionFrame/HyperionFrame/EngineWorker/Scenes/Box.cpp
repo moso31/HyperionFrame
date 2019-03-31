@@ -101,7 +101,7 @@ void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
 }
 
-bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit)
+bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
@@ -226,7 +226,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit
 			XMFLOAT2 uvHit;
 			XMStoreFloat2(&uvHit, b0 * XMLoadFloat2(&uv.p[0]) + b1 * XMLoadFloat2(&uv.p[1]) + b2 * XMLoadFloat2(&uv.p[2]));
 
-			if (*out_tHit > t && t > 1e-5f)
+			if (out_tHit->v > t && t > 1e-5f)
 			{
 				*out_tHit = t;
 				XMFLOAT3 hitPos, wo;
@@ -263,7 +263,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, float* out_tHit
 	return false;
 }
 
-bool Box::IntersectP(Ray worldRay, float* out_t0, float* out_t1)
+bool Box::IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1)
 {
 	XMVECTOR vMax = XMLoadFloat3(&m_aabb.GetVecMax());
 	XMVECTOR vMin = XMLoadFloat3(&m_aabb.GetVecMin());
