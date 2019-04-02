@@ -5,7 +5,7 @@
 class HVector2
 {
 public:
-	HVector2(HFloat value = 0.0f) : x(value), y(value) {}
+	HVector2(HFloat value) : x(value), y(value) {}
 
 public:
 	union
@@ -19,9 +19,10 @@ public:
 class HVector3
 {
 public:
-	HVector3(HFloat value = 0.0f) : x(value), y(value), z(value) {};
-	HVector3(HFloat x, HFloat y, HFloat z) : x(x), y(y), z(z) {};
-	~HVector3() {};
+	HVector3() {}
+	HVector3(HFloat value) : x(value), y(value), z(value) {}
+	HVector3(HFloat x, HFloat y, HFloat z) : x(x), y(y), z(z) {}
+	~HVector3() {}
 
 	HVector3 operator+ (const HVector3& v);
 	HVector3 operator+ (const HFloat& f);
@@ -33,11 +34,11 @@ public:
 	HVector3 operator/ (const HFloat& f);
 	HFloat operator[] (const HInt& index) { return v[index]; }
 
-	HFloat Dot(const HVector3& v);
-	HVector3 Cross(const HVector3& v);
-	HFloat LengthSq();
-	HFloat Length();
-	HVector3 Normalize();
+	HFloat Dot(const HVector3& v) const;
+	HVector3 Cross(const HVector3& v) const;
+	HFloat LengthSq() const;
+	HFloat Length() const;
+	HVector3 Normalize() const;
 	HVector3 TransformCoord(const HMatrix4x4& m);
 	HVector3 TransformNormal(const HMatrix4x4& m);
 
@@ -55,7 +56,7 @@ public:
 class HVector4
 {
 public:
-	HVector4(HFloat value = 0.0f) : x(value), y(value), z(value), w(value) {}
+	HVector4(HFloat value) : x(value), y(value), z(value), w(value) {}
 
 public:
 	union

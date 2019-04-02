@@ -14,6 +14,7 @@ typedef double HDouble;
 class HVector2;
 class HVector3;
 class HVector4;
+class HQuaternion;
 class HMatrix4x4;
 
 const HFloat H_PI = 3.1415926535897932384626433832795f;
