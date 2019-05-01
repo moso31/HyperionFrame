@@ -7,15 +7,27 @@ class HMatrix4x4
 public:
 	HMatrix4x4() {}
 	HMatrix4x4(HFloat _00, HFloat _01, HFloat _02, HFloat _03, HFloat _10, HFloat _11, HFloat _12, HFloat _13, HFloat _20, HFloat _21, HFloat _22, HFloat _23, HFloat _30, HFloat _31, HFloat _32, HFloat _33);
+	HMatrix4x4(const HMatrix4x4& m);
 	~HMatrix4x4() {}
+	
+	HMatrix4x4 operator+ (const HMatrix4x4& m) const;
+	HMatrix4x4 operator- (const HMatrix4x4& m) const;
+	HMatrix4x4 operator* (const HMatrix4x4& m) const;
+	HVector4 operator[] (const HInt& index) { return v[index]; }
 
 	HMatrix4x4 SetIdentity();
+	HMatrix4x4 SetZero();
+	HMatrix4x4 SetNaN();
+
 	HMatrix4x4 SetTranslation(HFloat x, HFloat y, HFloat z);
 	HMatrix4x4 SetRotationAxis(const HVector3& axis, HFloat angle);
 	HMatrix4x4 SetRotationNormal(const HVector3& normal, HFloat angle);
 	HMatrix4x4 SetRotationQuaternion(const HQuaternion& q);
 	HMatrix4x4 SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll);
 	HMatrix4x4 SetScale(HFloat x, HFloat y, HFloat z);
+	
+	HMatrix4x4 Transpose() const;
+	HMatrix4x4 Inverse() const;
 
 public:
 	union

@@ -9,6 +9,46 @@ HMatrix4x4::HMatrix4x4(HFloat _00, HFloat _01, HFloat _02, HFloat _03, HFloat _1
 {
 }
 
+HMatrix4x4::HMatrix4x4(const HMatrix4x4 & m) :
+	_00(m._00), _01(m._01), _02(m._02), _03(m._03),
+	_10(m._10), _11(m._11), _12(m._12), _13(m._13),
+	_20(m._20), _21(m._21), _22(m._22), _23(m._23),
+	_30(m._30), _31(m._31), _32(m._32), _33(m._33)
+{
+}
+
+HMatrix4x4 HMatrix4x4::operator+(const HMatrix4x4 & m) const
+{
+	HMatrix4x4 r;
+	for (int i = 0; i < 4; i++)
+		r[i] = v[i] + m.v[i];
+	return r;
+}
+
+HMatrix4x4 HMatrix4x4::operator-(const HMatrix4x4 & m) const
+{
+	HMatrix4x4 r;
+	for (int i = 0; i < 4; i++)
+		r[i] = v[i] - m.v[i];
+	return r;
+}
+
+HMatrix4x4 HMatrix4x4::operator*(const HMatrix4x4 & m) const
+{
+	HMatrix4x4 r;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				r.v[i].v[j] += v[i].v[k] + m.v[k].v[j];
+			}
+		}
+	}
+	return r;
+}
+
 HMatrix4x4 HMatrix4x4::SetIdentity()
 {
 	_00 = 1.0f; _01 = 0.0f; _02 = 0.0f; _03 = 0.0f;
@@ -17,12 +57,30 @@ HMatrix4x4 HMatrix4x4::SetIdentity()
 	_30 = 0.0f; _31 = 0.0f; _32 = 0.0f; _33 = 1.0f;
 }
 
+HMatrix4x4 HMatrix4x4::SetZero()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			v[i].v[j] = 0.0f;
+	}
+}
+
+HMatrix4x4 HMatrix4x4::SetNaN()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			v[i].v[j] = NAN;
+	}
+}
+
 HMatrix4x4 HMatrix4x4::SetTranslation(HFloat x, HFloat y, HFloat z)
 {
-	return HMatrix4x4(1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f, 
-		0.0f, 0.0f, 1.0f, 0.0f,
-		x, y, z, 1.0f);
+	return HMatrix4x4(1.0f, 0.0f, 0.0f, x,
+		0.0f, 1.0f, 0.0f, y,
+		0.0f, 0.0f, 1.0f, z,
+		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 HMatrix4x4 HMatrix4x4::SetRotationAxis(const HVector3 & axis, HFloat angle)
@@ -91,4 +149,85 @@ HMatrix4x4 HMatrix4x4::SetScale(HFloat x, HFloat y, HFloat z)
 		0.0f, y, 0.0f, 0.0f,
 		0.0f, 0.0f, z, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+HMatrix4x4 HMatrix4x4::Transpose() const
+{
+	return HMatrix4x4(_00, _10, _20, _30,
+		_01, _11, _21, _31,
+		_02, _12, _22, _32,
+		_03, _13, _23, _33);
+}
+
+HMatrix4x4 HMatrix4x4::Inverse() const
+{
+	int b[4] = { 0, 0, 0, 0 };
+	int sq[4] = { 0, 1, 2, 3 };
+	HMatrix4x4 mCopy(*this);
+	HMatrix4x4 result;
+	for (int i = 0; i < 4; i++)
+	{
+		int ix = 0, iy = 0;
+		HFloat big = 0.0f;
+		for (int j = 0; j < 4; j++)
+		{
+			if (b[j] != 1)
+			{
+				for (int k = 0; k < 4; k++)
+				{
+					HFloat val = abs(mCopy[j][k]);
+					if (b[k] == 0 && val > big)
+					{
+						big = val;
+						ix = j;
+						iy = k;
+					}
+					else if (b[k] > 1)
+					{
+						result.SetNaN();
+						return result;
+					}
+				}
+			}
+		}
+		b[iy]++;
+
+		int sqt = sq[ix];
+		sq[ix] = sq[iy];
+		sq[iy] = sqt;
+		if (ix != iy) {
+			for (int k = 0; k < 4; ++k)
+			{
+				HFloat t = mCopy[ix][k];
+				mCopy.v[ix].v[k] = mCopy[iy][k];
+				mCopy.v[iy].v[k] = t;
+			}
+		}
+
+		if (mCopy[iy][iy] == 0.0f)
+		{
+			result.SetNaN();
+			return result;
+		}
+
+		HFloat reci = 1.0f / mCopy[iy][iy];
+		mCopy.v[iy].v[iy] = 1.0f;
+		for (int j = 0; j < 4; j++) mCopy.v[iy].v[j] *= reci;
+
+		for (int j = 0; j < 4; j++)
+		{
+			if (j != iy)
+			{
+				HFloat save = mCopy.v[j].v[iy];
+				mCopy.v[j].v[iy] = 0.0f;
+				for (int k = 0; k < 4; k++)
+					mCopy.v[j].v[k] -= mCopy.v[iy].v[k] * save;
+			}
+		}
+	}
+
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			result.v[i].v[sq[j]] = mCopy[i][j];
+	return result;
 }

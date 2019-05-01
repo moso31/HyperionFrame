@@ -5,10 +5,12 @@
     <ClInclude Include="HMathType.h" />
     <ClInclude Include="HMatrix.h" />
     <ClInclude Include="HQuaternion.h" />
+    <ClInclude Include="HMathBasic.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HMatrix.cpp" />
     <ClCompile Include="HQuaternion.cpp" />
     <ClCompile Include="HVector.cpp" />
+    <ClCompile Include="HMathBasic.cpp" />
   </ItemGroup>
 </Project>
