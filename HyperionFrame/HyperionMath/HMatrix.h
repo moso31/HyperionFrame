@@ -29,6 +29,12 @@ public:
 	HMatrix4x4 Transpose() const;
 	HMatrix4x4 Inverse() const;
 
+	// 下列摄像机相关函数均采用左手坐标系。
+	HMatrix4x4 LookAt(const HVector3& eyePos, const HVector3& focusPos, const HVector3& upDir) const;
+	HMatrix4x4 LookTo(const HVector3& eyePos, const HVector3& eyeDir, const HVector3& upDir) const;
+	HMatrix4x4 Ortho() const;
+	HMatrix4x4 Persp() const;
+
 public:
 	union
 	{

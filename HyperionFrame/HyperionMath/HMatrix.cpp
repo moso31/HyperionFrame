@@ -231,3 +231,22 @@ HMatrix4x4 HMatrix4x4::Inverse() const
 			result.v[i].v[sq[j]] = mCopy[i][j];
 	return result;
 }
+
+HMatrix4x4 HMatrix4x4::LookAt(const HVector3 & eyePos, const HVector3 & focusPos, const HVector3 & upDir) const
+{
+	return LookTo(eyePos, focusPos - eyePos, upDir);
+}
+
+HMatrix4x4 HMatrix4x4::LookTo(const HVector3 & eyePos, const HVector3 & eyeDir, const HVector3 & upDir) const
+{
+	HVector3 dir = eyeDir.Normalize();
+	HVector3 left = upDir.Cross(dir).Normalize();
+	HVector3 up = dir.Cross(left);
+
+	return HMatrix4x4(
+		left.x, up.x, dir.x, 0.0f,
+		left.y, up.y, dir.y, 0.0f,
+		left.z, up.z, dir.z, 0.0f,
+		-left.Dot(eyePos), -up.Dot(eyePos), -dir.Dot(eyePos), 1.0f
+	);
+}
