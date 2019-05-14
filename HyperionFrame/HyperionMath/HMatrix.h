@@ -20,9 +20,13 @@ public:
 	HMatrix4x4 SetNaN();
 
 	HMatrix4x4 SetTranslation(HFloat x, HFloat y, HFloat z);
+	// 绕轴顺时针旋转。
 	HMatrix4x4 SetRotationAxis(const HVector3& axis, HFloat angle);
+	// 绕法向量顺时针旋转。需要保证旋转轴必须是单位向量。可以节省一次初始化运算。
 	HMatrix4x4 SetRotationNormal(const HVector3& normal, HFloat angle);
+	// 绕四元数旋转。
 	HMatrix4x4 SetRotationQuaternion(const HQuaternion& q);
+	// 依次绕XYZ轴顺时针旋转对应的度数。x-pitch, y-yaw, z-roll
 	HMatrix4x4 SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll);
 	HMatrix4x4 SetScale(HFloat x, HFloat y, HFloat z);
 	
