@@ -112,16 +112,16 @@ HVector3 HVector3::Normalize() const
 
 HVector3 HVector3::TransformCoord(const HMatrix4x4 & m) const
 {
-	return HVector3(m._00 * x + m._01 * y + m._02 * z + m._03,
-			m._10 * x + m._11 * y + m._12 * z + m._13,
-			m._20 * x + m._21 * y + m._22 * z + m._23);
+	return HVector3(m._11 * x + m._12 * y + m._13 * z + m._14,
+			m._21 * x + m._22 * y + m._23 * z + m._24,
+			m._31 * x + m._32 * y + m._33 * z + m._33);
 }
 
 HVector3 HVector3::TransformNormal(const HMatrix4x4 & m) const
 {
-	return HVector3(m._00 * x + m._01 * y + m._02 * z,
-		m._10 * x + m._11 * y + m._12 * z,
-		m._20 * x + m._21 * y + m._22 * z);
+	return HVector3(m._11 * x + m._12 * y + m._13 * z,
+		m._21 * x + m._22 * y + m._23 * z,
+		m._31 * x + m._32 * y + m._33 * z);
 }
 
 HVector4 HVector4::operator+(const HVector4 & v) const

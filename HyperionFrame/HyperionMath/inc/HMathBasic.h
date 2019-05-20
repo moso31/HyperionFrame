@@ -4,7 +4,7 @@
 
 using namespace std;
 
-HFloat Clamp(HFloat value, HFloat left, HFloat right)
+inline HFloat Clamp(HFloat value, HFloat left, HFloat right)
 {
 	if (value < left) return left;
 	if (value > right) return right;

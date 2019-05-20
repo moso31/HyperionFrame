@@ -1,12 +1,11 @@
 #pragma once
-#include "HMathType.h"
 #include "HVector.h"
 
 class HMatrix4x4
 {
 public:
 	HMatrix4x4() {}
-	HMatrix4x4(HFloat _00, HFloat _01, HFloat _02, HFloat _03, HFloat _10, HFloat _11, HFloat _12, HFloat _13, HFloat _20, HFloat _21, HFloat _22, HFloat _23, HFloat _30, HFloat _31, HFloat _32, HFloat _33);
+	HMatrix4x4(HFloat _11, HFloat _12, HFloat _13, HFloat _14, HFloat _21, HFloat _22, HFloat _23, HFloat _24, HFloat _31, HFloat _32, HFloat _33, HFloat _34, HFloat _41, HFloat _42, HFloat _43, HFloat _44);
 	HMatrix4x4(const HMatrix4x4& m);
 	~HMatrix4x4() {}
 	
@@ -15,19 +14,29 @@ public:
 	HMatrix4x4 operator* (const HMatrix4x4& m) const;
 	HVector4 operator[] (const HInt& index) { return v[index]; }
 
-	HMatrix4x4 SetIdentity();
-	HMatrix4x4 SetZero();
-	HMatrix4x4 SetNaN();
+	void SetIdentity();
+	void SetZero();
+	void SetNaN();
+
+	HMatrix4x4 Set(HFloat m11, HFloat m12, HFloat m13, HFloat m14, HFloat m21, HFloat m22, HFloat m23, HFloat m24, HFloat m31, HFloat m32, HFloat m33, HFloat m34, HFloat m41, HFloat m42, HFloat m43, HFloat m44);
 
 	HMatrix4x4 SetTranslation(HFloat x, HFloat y, HFloat z);
-	// 绕轴顺时针旋转。
+	// 绕轴朝向顺时针旋转。
 	HMatrix4x4 SetRotationAxis(const HVector3& axis, HFloat angle);
-	// 绕法向量顺时针旋转。需要保证旋转轴必须是单位向量。可以节省一次初始化运算。
+	// 绕法向量朝向顺时针旋转。需要保证旋转轴必须是单位向量。可以节省一次初始化运算。
 	HMatrix4x4 SetRotationNormal(const HVector3& normal, HFloat angle);
-	// 绕四元数旋转。
+	// 绕四元数朝向旋转。
 	HMatrix4x4 SetRotationQuaternion(const HQuaternion& q);
-	// 依次绕XYZ轴顺时针旋转对应的度数。x-pitch, y-yaw, z-roll
+
+	// 绕X轴旋转对应角度。
+	HMatrix4x4 SetRotationX(HFloat angle);
+	// 绕Y轴旋转对应角度。
+	HMatrix4x4 SetRotationY(HFloat angle);
+	// 绕Z轴旋转对应角度。
+	HMatrix4x4 SetRotationZ(HFloat angle);
+	// 依次绕XYZ轴朝向顺时针旋转对应的度数。x-pitch, y-yaw, z-roll
 	HMatrix4x4 SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll);
+
 	HMatrix4x4 SetScale(HFloat x, HFloat y, HFloat z);
 	
 	HMatrix4x4 Transpose() const;
@@ -42,7 +51,7 @@ public:
 public:
 	union
 	{
-		struct { HFloat _00, _01, _02, _03, _10, _11, _12, _13, _20, _21, _22, _23, _30, _31, _32, _33; };
+		struct { HFloat _11, _12, _13, _14, _21, _22, _23, _24, _31, _32, _33, _34, _41, _42, _43, _44; };
 		HVector4 v[4];
 	};
 };

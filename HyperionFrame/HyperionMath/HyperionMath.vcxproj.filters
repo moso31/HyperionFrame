@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="HVector.h" />
-    <ClInclude Include="HMathType.h" />
-    <ClInclude Include="HMatrix.h" />
-    <ClInclude Include="HQuaternion.h" />
-    <ClInclude Include="HMathBasic.h" />
+    <ClInclude Include="inc\HVector.h" />
+    <ClInclude Include="inc\HMathBasic.h" />
+    <ClInclude Include="inc\HMathType.h" />
+    <ClInclude Include="inc\HMatrix.h" />
+    <ClInclude Include="inc\HQuaternion.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HMatrix.cpp" />
-    <ClCompile Include="HQuaternion.cpp" />
-    <ClCompile Include="HVector.cpp" />
-    <ClCompile Include="HMathBasic.cpp" />
+    <ClCompile Include="src\HQuaternion.cpp" />
+    <ClCompile Include="src\HVector.cpp" />
+    <ClCompile Include="src\HMathBasic.cpp" />
+    <ClCompile Include="src\HMatrix.cpp" />
   </ItemGroup>
 </Project>
