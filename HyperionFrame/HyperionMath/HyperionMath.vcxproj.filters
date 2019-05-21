@@ -13,4 +13,14 @@
     <ClCompile Include="src\HMathBasic.cpp" />
     <ClCompile Include="src\HMatrix.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="doc">
+      <UniqueIdentifier>{9f9f424a-5dc6-403c-ba26-6caebd654ae9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="doc\readme.txt">
+      <Filter>doc</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

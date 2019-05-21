@@ -75,7 +75,7 @@ void HMatrix4x4::SetNaN()
 	}
 }
 
-HMatrix4x4 HMatrix4x4::Set(HFloat m11, HFloat m12, HFloat m13, HFloat m14, HFloat m21, HFloat m22, HFloat m23, HFloat m24, HFloat m31, HFloat m32, HFloat m33, HFloat m34, HFloat m41, HFloat m42, HFloat m43, HFloat m44)
+HMatrix4x4 HMatrix4x4::Set(const HFloat m11, const HFloat m12, const HFloat m13, const HFloat m14, const HFloat m21, const HFloat m22, const HFloat m23, const HFloat m24, const HFloat m31, const HFloat m32, const HFloat m33, const HFloat m34, const HFloat m41, const HFloat m42, const HFloat m43, const HFloat m44)
 {
 	_11 = m11; _12 = m12; _13 = m13; _14 = m14;
 	_21 = m21; _22 = m22; _23 = m23; _24 = m24;
@@ -271,21 +271,45 @@ HMatrix4x4 HMatrix4x4::Inverse() const
 	return result;
 }
 
-HMatrix4x4 HMatrix4x4::LookAt(const HVector3 & eyePos, const HVector3 & focusPos, const HVector3 & upDir) const
+HMatrix4x4 HMatrix4x4::SetLookAtLH(const HVector3 & eyePos, const HVector3 & focusPos, const HVector3 & upDir) 
 {
-	return LookTo(eyePos, focusPos - eyePos, upDir);
+	return SetLookToLH(eyePos, focusPos - eyePos, upDir);
 }
 
-HMatrix4x4 HMatrix4x4::LookTo(const HVector3 & eyePos, const HVector3 & eyeDir, const HVector3 & upDir) const
+HMatrix4x4 HMatrix4x4::SetLookToLH(const HVector3 & eyePos, const HVector3 & eyeDir, const HVector3 & upDir) 
 {
 	HVector3 dir = eyeDir.Normalize();
 	HVector3 left = upDir.Cross(dir).Normalize();
 	HVector3 up = dir.Cross(left);
 
-	return HMatrix4x4(
+	return Set(
 		left.x, up.x, dir.x, 0.0f,
 		left.y, up.y, dir.y, 0.0f,
 		left.z, up.z, dir.z, 0.0f,
 		-left.Dot(eyePos), -up.Dot(eyePos), -dir.Dot(eyePos), 1.0f
 	);
 }
+
+HMatrix4x4 HMatrix4x4::SetOrthoLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar)
+{
+	HFloat fRange = 1.0f / (zFar - zNear);
+	return Set(
+		2 / width, 0.0f, 0.0f, 0.0f,
+		0.0f, 2 / height, 0.0f, 0.0f,
+		0.0f, 0.0f, fRange, 0.0f,
+		0.0f, 0.0f, -fRange * zNear, 1.0f
+	);
+}
+
+HMatrix4x4 HMatrix4x4::SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar)
+{
+	float zNear2 = zNear + zNear;
+	float fRange = zFar / (zFar - zNear);
+	return Set(
+		zNear2 / width, 0.0f, 0.0f, 0.0f,
+		0.0f, zNear2 / height, 0.0f, 0.0f,
+		0.0f, 0.0f, fRange, 1.0f,
+		0.0f, 0.0f, -fRange * zNear, 0.0f
+	);
+}
+

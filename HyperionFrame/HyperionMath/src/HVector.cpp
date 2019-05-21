@@ -114,7 +114,7 @@ HVector3 HVector3::TransformCoord(const HMatrix4x4 & m) const
 {
 	return HVector3(m._11 * x + m._12 * y + m._13 * z + m._14,
 			m._21 * x + m._22 * y + m._23 * z + m._24,
-			m._31 * x + m._32 * y + m._33 * z + m._33);
+			m._31 * x + m._32 * y + m._33 * z + m._34);
 }
 
 HVector3 HVector3::TransformNormal(const HMatrix4x4 & m) const

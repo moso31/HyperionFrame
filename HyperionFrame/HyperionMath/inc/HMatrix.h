@@ -18,23 +18,24 @@ public:
 	void SetZero();
 	void SetNaN();
 
-	HMatrix4x4 Set(HFloat m11, HFloat m12, HFloat m13, HFloat m14, HFloat m21, HFloat m22, HFloat m23, HFloat m24, HFloat m31, HFloat m32, HFloat m33, HFloat m34, HFloat m41, HFloat m42, HFloat m43, HFloat m44);
+	HMatrix4x4 Set(const HFloat m11, const HFloat m12, const HFloat m13, const HFloat m14, const HFloat m21, const HFloat m22, const HFloat m23, const HFloat m24, const HFloat m31, const HFloat m32, const HFloat m33, const HFloat m34, const HFloat m41, const HFloat m42, const HFloat m43, const HFloat m44);
 
 	HMatrix4x4 SetTranslation(HFloat x, HFloat y, HFloat z);
-	// 绕轴朝向顺时针旋转。
+	// 绕轴朝向屏幕外为准，顺时针旋转angle度。
 	HMatrix4x4 SetRotationAxis(const HVector3& axis, HFloat angle);
-	// 绕法向量朝向顺时针旋转。需要保证旋转轴必须是单位向量。可以节省一次初始化运算。
+	// 绕法向量朝向屏幕外为准，顺时针旋转angle度。
+	// 需要保证旋转轴必须是单位向量。可以节省一次初始化运算。
 	HMatrix4x4 SetRotationNormal(const HVector3& normal, HFloat angle);
 	// 绕四元数朝向旋转。
 	HMatrix4x4 SetRotationQuaternion(const HQuaternion& q);
 
-	// 绕X轴旋转对应角度。
+	// 以X轴朝向屏幕外为准，顺时针旋转angle度。
 	HMatrix4x4 SetRotationX(HFloat angle);
-	// 绕Y轴旋转对应角度。
+	// 以Y轴朝向屏幕外为准，顺时针旋转angle度。
 	HMatrix4x4 SetRotationY(HFloat angle);
-	// 绕Z轴旋转对应角度。
+	// 以Z轴朝向屏幕外为准，顺时针旋转angle度。
 	HMatrix4x4 SetRotationZ(HFloat angle);
-	// 依次绕XYZ轴朝向顺时针旋转对应的度数。x-pitch, y-yaw, z-roll
+	// 依次绕XYZ轴朝向屏幕外为准，顺时针旋转对应的度数。x-pitch, y-yaw, z-roll
 	HMatrix4x4 SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll);
 
 	HMatrix4x4 SetScale(HFloat x, HFloat y, HFloat z);
@@ -42,11 +43,10 @@ public:
 	HMatrix4x4 Transpose() const;
 	HMatrix4x4 Inverse() const;
 
-	// 下列摄像机相关函数均采用左手坐标系。
-	HMatrix4x4 LookAt(const HVector3& eyePos, const HVector3& focusPos, const HVector3& upDir) const;
-	HMatrix4x4 LookTo(const HVector3& eyePos, const HVector3& eyeDir, const HVector3& upDir) const;
-	HMatrix4x4 Ortho() const;
-	HMatrix4x4 Persp() const;
+	HMatrix4x4 SetLookAtLH(const HVector3& eyePos, const HVector3& focusPos, const HVector3& upDir);
+	HMatrix4x4 SetLookToLH(const HVector3& eyePos, const HVector3& eyeDir, const HVector3& upDir);
+	HMatrix4x4 SetOrthoLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar);
+	HMatrix4x4 SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar);
 
 public:
 	union

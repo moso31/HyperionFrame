@@ -31,6 +31,9 @@
     <ClCompile Include="src\HQuaternion.cpp" />
     <ClCompile Include="src\HVector.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="doc\readme.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{C575B44A-0EB4-4C86-8B2C-DB522B8BA38B}</ProjectGuid>
