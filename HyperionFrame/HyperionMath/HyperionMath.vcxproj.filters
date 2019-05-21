@@ -6,6 +6,7 @@
     <ClInclude Include="inc\HMathType.h" />
     <ClInclude Include="inc\HMatrix.h" />
     <ClInclude Include="inc\HQuaternion.h" />
+    <ClInclude Include="inc\HyperionMath.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\HQuaternion.cpp" />

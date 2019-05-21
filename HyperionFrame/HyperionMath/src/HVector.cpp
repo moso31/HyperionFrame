@@ -2,73 +2,94 @@
 #include "HMatrix.h"
 #pragma once
 
-HVector3 HVector3::operator+(const HVector3 & v) const
+HFloat2 HFloat2::operator+(const HFloat2 & v) const
 {
-	return HVector3(x + v.x, y + v.y, z + v.z);
+	return HFloat2(x + v.x, y + v.y);
 }
 
-HVector3 HVector3::operator+(const HFloat & f) const
+HFloat2 HFloat2::operator+(const HFloat & f) const
 {
-	return HVector3(x + f, y + f, z + f);
+	return HFloat2(x + f, y + f);
 }
 
-HVector3 HVector3::operator-(const HVector3 & v) const
+HFloat2 HFloat2::operator-(const HFloat2 & v) const
 {
-	return HVector3(x - v.x, y - v.y, z - v.z);
+	return HFloat2(x - v.x, y - v.y);
 }
 
-HVector3 HVector3::operator-(const HFloat & f) const
+HFloat2 HFloat2::operator-(const HFloat & f) const
 {
-	return HVector3(x - f, y - f, z - f);
+	return HFloat2(x - f, y - f);
 }
 
-HVector3 HVector3::operator-() const
+HFloat2 HFloat2::operator-() const
 {
-	return HVector3(-x, -y, -z);
+	return HFloat2(-x, -y);
 }
 
-HVector3 HVector3::operator*(const HVector3 & v) const
+HFloat2 HFloat2::operator*(const HFloat2 & v) const
 {
-	return HVector3(x * v.x, y * v.y, z * v.z);
+	return HFloat2(x * v.x, y * v.y);
 }
 
-HVector3 HVector3::operator*(const HFloat & f) const
+HFloat2 HFloat2::operator*(const HFloat & f) const
 {
-	return HVector3(x * f, y * f, z * f);
+	return HFloat2(x * f, y * f);
 }
 
-HVector3 HVector3::operator/(const HVector3 & v) const
+HFloat2 HFloat2::operator/(const HFloat2 & v) const
 {
-	return HVector3(x / v.x, y / v.y, z / v.z);
+	return HFloat2(x / v.x, y / v.y);
 }
 
-HVector3 HVector3::operator/(const HFloat & f) const
+HFloat2 HFloat2::operator/(const HFloat & f) const
 {
 	HFloat d = 1.0f / f;
-	return HVector3(x * d, y * d, z * d);
+	return HFloat2(x * d, y * d);
 }
 
-HVector3 operator+(const HFloat & f, const HVector3 & v)
+HFloat2 operator+(const HFloat & f, const HFloat2 & v)
 {
 	return v + f;
 }
 
-HVector3 operator-(const HFloat & f, const HVector3 & v)
+HFloat2 operator-(const HFloat & f, const HFloat2 & v)
 {
-	return HVector3(f - v.x, f - v.y, f - v.z);
+	return HFloat2(f - v.x, f - v.y);
 }
 
-HVector3 operator*(const HFloat & f, const HVector3 & v)
+HFloat2 operator*(const HFloat & f, const HFloat2 & v)
 {
 	return v * f;
 }
 
-HVector3 operator/(const HFloat & f, const HVector3 & v)
+HFloat2 operator/(const HFloat & f, const HFloat2 & v)
 {
-	return HVector3(f / v.x, f / v.y, f / v.z);
+	return HFloat2(f / v.x, f / v.y);
 }
 
-HFloat HVector3::Angle(const HVector3 & v) const
+HFloat2 HFloat2::MaxVector(const HFloat2 & v) const
+{
+	return HFloat2(
+		x > v.x ? x : v.x,
+		y > v.y ? y : v.y
+	);
+}
+
+HFloat2 HFloat2::MinVector(const HFloat2 & v) const
+{
+	return HFloat2(
+		x < v.x ? x : v.x,
+		y < v.y ? y : v.y
+	);
+}
+
+HFloat2 HFloat2::Reciprocal() const
+{
+	return HFloat2(1.0f / x, 1.0f / y);
+}
+
+HFloat HFloat2::Angle(const HFloat2 & v) const
 {
 	HFloat cosAngle = Dot(v) / (Length() * v.Length());
 	HFloat result = Clamp(cosAngle, -1.0f, 1.0f);
@@ -76,7 +97,7 @@ HFloat HVector3::Angle(const HVector3 & v) const
 	return result;
 }
 
-HFloat HVector3::AngleNormal(const HVector3 & v) const
+HFloat HFloat2::AngleNormal(const HFloat2 & v) const
 {
 	HFloat cosAngle = Dot(v);
 	HFloat result = Clamp(cosAngle, -1.0f, 1.0f);
@@ -84,108 +105,259 @@ HFloat HVector3::AngleNormal(const HVector3 & v) const
 	return result;
 }
 
-HFloat HVector3::Dot(const HVector3 & v) const
+HFloat HFloat2::Dot(const HFloat2 & v) const
 {
-	return x * v.x + y * v.y + z * v.z;
+	return x * v.x + y * v.y;
 }
 
-HVector3 HVector3::Cross(const HVector3 & v) const
+HFloat HFloat2::LengthSq() const
 {
-	return HVector3(y * v.z - v.y * z, v.x * z - x * v.z, x * v.y - v.x * y);
+	return x * x + y * y;
 }
 
-HFloat HVector3::LengthSq() const
+HFloat HFloat2::Length() const
 {
-	return x * x + y * y + z * z;
+	return sqrtf(x * x + y * y);
 }
 
-HFloat HVector3::Length() const
-{
-	return sqrtf(x * x + y * y + z * z);
-}
-
-HVector3 HVector3::Normalize() const
+HFloat2 HFloat2::Normalize() const
 {
 	HFloat dt = 1.0f / Length();
-	return HVector3(x * dt, y * dt, z * dt);
+	return HFloat2(x * dt, y * dt);
 }
 
-HVector3 HVector3::TransformCoord(const HMatrix4x4 & m) const
+HFloat3 HFloat3::operator+(const HFloat3 & v) const
 {
-	return HVector3(m._11 * x + m._12 * y + m._13 * z + m._14,
-			m._21 * x + m._22 * y + m._23 * z + m._24,
-			m._31 * x + m._32 * y + m._33 * z + m._34);
+	return HFloat3(x + v.x, y + v.y, z + v.z);
 }
 
-HVector3 HVector3::TransformNormal(const HMatrix4x4 & m) const
+HFloat3 HFloat3::operator+(const HFloat & f) const
 {
-	return HVector3(m._11 * x + m._12 * y + m._13 * z,
-		m._21 * x + m._22 * y + m._23 * z,
-		m._31 * x + m._32 * y + m._33 * z);
+	return HFloat3(x + f, y + f, z + f);
 }
 
-HVector4 HVector4::operator+(const HVector4 & v) const
+HFloat3 HFloat3::operator-(const HFloat3 & v) const
 {
-	return HVector4(x + v.x, y + v.y, z + v.z, w + v.w);
+	return HFloat3(x - v.x, y - v.y, z - v.z);
 }
 
-HVector4 HVector4::operator+(const HFloat & f) const
+HFloat3 HFloat3::operator-(const HFloat & f) const
 {
-	return HVector4(x + f, y + f, z + f, w + f);
+	return HFloat3(x - f, y - f, z - f);
 }
 
-HVector4 HVector4::operator-(const HVector4 & v) const
+HFloat3 HFloat3::operator-() const
 {
-	return HVector4(x - v.x, y - v.y, z - v.z, w - v.w);
+	return HFloat3(-x, -y, -z);
 }
 
-HVector4 HVector4::operator-(const HFloat & f) const
+HFloat3 HFloat3::operator*(const HFloat3 & v) const
 {
-	return HVector4(x - f, y - f, z - f, w - f);
+	return HFloat3(x * v.x, y * v.y, z * v.z);
 }
 
-HVector4 HVector4::operator-() const
+HFloat3 HFloat3::operator*(const HFloat & f) const
 {
-	return HVector4(-x, -y, -z, -w);
+	return HFloat3(x * f, y * f, z * f);
 }
 
-HVector4 HVector4::operator*(const HVector4 & v) const
+HFloat3 HFloat3::operator/(const HFloat3 & v) const
 {
-	return HVector4(x + v.x, y + v.y, z + v.z, w + v.w);
+	return HFloat3(x / v.x, y / v.y, z / v.z);
 }
 
-HVector4 HVector4::operator*(const HFloat & f) const
-{
-	return HVector4(x * f, y * f, z * f, w * f);
-}
-
-HVector4 HVector4::operator/(const HVector4 & v) const
-{
-	return HVector4(x / v.x, y / v.y, z / v.z, w / v.w);
-}
-
-HVector4 HVector4::operator/(const HFloat & f) const
+HFloat3 HFloat3::operator/(const HFloat & f) const
 {
 	HFloat d = 1.0f / f;
-	return HVector4(x * d, y * d, z * d, w * d);
+	return HFloat3(x * d, y * d, z * d);
 }
 
-HVector4 operator+(const HFloat & f, const HVector4 & v)
+HFloat3 operator+(const HFloat & f, const HFloat3 & v)
 {
 	return v + f;
 }
 
-HVector4 operator-(const HFloat & f, const HVector4 & v)
+HFloat3 operator-(const HFloat & f, const HFloat3 & v)
 {
-	return HVector4(f - v.x, f - v.y, f - v.z, f - v.w);
+	return HFloat3(f - v.x, f - v.y, f - v.z);
 }
 
-HVector4 operator*(const HFloat & f, const HVector4 & v)
+HFloat3 operator*(const HFloat & f, const HFloat3 & v)
 {
 	return v * f;
 }
 
-HVector4 operator/(const HFloat & f, const HVector4 & v)
+HFloat3 operator/(const HFloat & f, const HFloat3 & v)
 {
-	return HVector4(f / v.x, f / v.y, f / v.z, f / v.w);
+	return HFloat3(f / v.x, f / v.y, f / v.z);
+}
+
+HFloat3 HFloat3::MaxVector(const HFloat3 & v) const
+{
+	return HFloat3(
+		x > v.x ? x : v.x,
+		y > v.y ? y : v.y,
+		z > v.z ? z : v.z
+	);
+}
+
+HFloat3 HFloat3::MinVector(const HFloat3 & v) const
+{
+	return HFloat3(
+		x < v.x ? x : v.x,
+		y < v.y ? y : v.y,
+		z < v.z ? z : v.z
+	);
+}
+
+HFloat3 HFloat3::Reciprocal() const
+{
+	return HFloat3(1.0f / x, 1.0f / y, 1.0f / z);
+}
+
+HFloat HFloat3::Angle(const HFloat3 & v) const
+{
+	HFloat cosAngle = Dot(v) / (Length() * v.Length());
+	HFloat result = Clamp(cosAngle, -1.0f, 1.0f);
+	result = acosf(result);
+	return result;
+}
+
+HFloat HFloat3::AngleNormal(const HFloat3 & v) const
+{
+	HFloat cosAngle = Dot(v);
+	HFloat result = Clamp(cosAngle, -1.0f, 1.0f);
+	result = acosf(result);
+	return result;
+}
+
+HFloat HFloat3::Dot(const HFloat3 & v) const
+{
+	return x * v.x + y * v.y + z * v.z;
+}
+
+HFloat3 HFloat3::Cross(const HFloat3 & v) const
+{
+	return HFloat3(y * v.z - v.y * z, v.x * z - x * v.z, x * v.y - v.x * y);
+}
+
+HFloat HFloat3::LengthSq() const
+{
+	return x * x + y * y + z * z;
+}
+
+HFloat HFloat3::Length() const
+{
+	return sqrtf(x * x + y * y + z * z);
+}
+
+HFloat3 HFloat3::Normalize() const
+{
+	HFloat dt = 1.0f / Length();
+	return HFloat3(x * dt, y * dt, z * dt);
+}
+
+HFloat3 HFloat3::TransformCoord(const HMatrix4x4 & m) const
+{
+	return HFloat3(m._11 * x + m._12 * y + m._13 * z + m._14,
+			m._21 * x + m._22 * y + m._23 * z + m._24,
+			m._31 * x + m._32 * y + m._33 * z + m._34);
+}
+
+HFloat3 HFloat3::TransformNormal(const HMatrix4x4 & m) const
+{
+	return HFloat3(m._11 * x + m._12 * y + m._13 * z,
+		m._21 * x + m._22 * y + m._23 * z,
+		m._31 * x + m._32 * y + m._33 * z);
+}
+
+HFloat4 HFloat4::operator+(const HFloat4 & v) const
+{
+	return HFloat4(x + v.x, y + v.y, z + v.z, w + v.w);
+}
+
+HFloat4 HFloat4::operator+(const HFloat & f) const
+{
+	return HFloat4(x + f, y + f, z + f, w + f);
+}
+
+HFloat4 HFloat4::operator-(const HFloat4 & v) const
+{
+	return HFloat4(x - v.x, y - v.y, z - v.z, w - v.w);
+}
+
+HFloat4 HFloat4::operator-(const HFloat & f) const
+{
+	return HFloat4(x - f, y - f, z - f, w - f);
+}
+
+HFloat4 HFloat4::operator-() const
+{
+	return HFloat4(-x, -y, -z, -w);
+}
+
+HFloat4 HFloat4::operator*(const HFloat4 & v) const
+{
+	return HFloat4(x + v.x, y + v.y, z + v.z, w + v.w);
+}
+
+HFloat4 HFloat4::operator*(const HFloat & f) const
+{
+	return HFloat4(x * f, y * f, z * f, w * f);
+}
+
+HFloat4 HFloat4::operator/(const HFloat4 & v) const
+{
+	return HFloat4(x / v.x, y / v.y, z / v.z, w / v.w);
+}
+
+HFloat4 HFloat4::operator/(const HFloat & f) const
+{
+	HFloat d = 1.0f / f;
+	return HFloat4(x * d, y * d, z * d, w * d);
+}
+
+HFloat4 HFloat4::MaxVector(const HFloat4 & v) const
+{
+	return HFloat4(
+		x > v.x ? x : v.x,
+		y > v.y ? y : v.y,
+		z > v.z ? z : v.z,
+		w > v.w ? w : v.w
+	);
+}
+
+HFloat4 HFloat4::MinVector(const HFloat4 & v) const
+{
+	return HFloat4(
+		x < v.x ? x : v.x,
+		y < v.y ? y : v.y,
+		z < v.z ? z : v.z,
+		w < v.w ? w : v.w
+	);
+}
+
+HFloat4 HFloat4::Reciprocal() const
+{
+	return HFloat4(1.0f / x, 1.0f / y, 1.0f / z, 1.0f / w);
+}
+
+HFloat4 operator+(const HFloat & f, const HFloat4 & v)
+{
+	return v + f;
+}
+
+HFloat4 operator-(const HFloat & f, const HFloat4 & v)
+{
+	return HFloat4(f - v.x, f - v.y, f - v.z, f - v.w);
+}
+
+HFloat4 operator*(const HFloat & f, const HFloat4 & v)
+{
+	return v * f;
+}
+
+HFloat4 operator/(const HFloat & f, const HFloat4 & v)
+{
+	return HFloat4(f / v.x, f / v.y, f / v.z, f / v.w);
 }

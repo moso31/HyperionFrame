@@ -1,7 +1,7 @@
 #pragma once
 #include "header.h"
 
-static const float H_MACHINEEPSLION = numeric_limits<float>::epsilon() * 0.5f;
+static const HFloat H_MACHINEEPSLION = numeric_limits<HFloat>::epsilon() * 0.5f;
 
 template <typename T, typename U, typename V>
 inline T Clamp(T val, U low, V high) {
@@ -10,73 +10,73 @@ inline T Clamp(T val, U low, V high) {
 	else return (T)val;
 }
 
-inline float gamma(int n)
+inline HFloat gamma(HInt n)
 {
 	return (n * H_MACHINEEPSLION) / (1 - n * H_MACHINEEPSLION);
 }
 
-inline uint32_t FloatToBits(float f) 
+inline HUInt FloatToBits(HFloat f) 
 {
-	uint32_t ui;
-	memcpy(&ui, &f, sizeof(float));
+	HUInt ui;
+	memcpy(&ui, &f, sizeof(HFloat));
 	return ui;
 }
 
-inline float BitsToFloat(uint32_t ui)
+inline HFloat BitsToFloat(HUInt ui)
 {
-	float f;
-	memcpy(&f, &ui, sizeof(uint32_t));
+	HFloat f;
+	memcpy(&f, &ui, sizeof(HUInt));
 	return f;
 }
 
-inline uint64_t FloatToBits(double f) 
+inline HUInt64 FloatToBits(HDouble f) 
 {
-	uint64_t ui;
-	memcpy(&ui, &f, sizeof(double));
+	HUInt64 ui;
+	memcpy(&ui, &f, sizeof(HDouble));
 	return ui;
 }
 
-inline double BitsToFloat(uint64_t ui) 
+inline HDouble BitsToFloat(HUInt64 ui) 
 {
-	double f;
-	memcpy(&f, &ui, sizeof(uint64_t));
+	HDouble f;
+	memcpy(&f, &ui, sizeof(HUInt64));
 	return f;
 }
 
-inline float NextFloatUp(float v) {
+inline HFloat NextFloatUp(HFloat v) {
 	if (isinf(v) && v > 0.) return v;
 	if (v == -0.f) v = 0.f;
-	uint32_t ui = FloatToBits(v);
+	HUInt ui = FloatToBits(v);
 	if (v >= 0) ++ui;
 	else --ui;
 	return BitsToFloat(ui);
 }
 
-inline float NextFloatDown(float v) 
+inline HFloat NextFloatDown(HFloat v) 
 {
 	if (isinf(v) && v < 0.) return v;
 	if (v == 0.f) v = -0.f;
-	uint32_t ui = FloatToBits(v);
+	HUInt ui = FloatToBits(v);
 	if (v > 0) --ui;
 	else ++ui;
 	return BitsToFloat(ui);
 }
 
-inline double NextFloatUp(double v, int delta = 1) 
+inline HDouble NextFloatUp(HDouble v, HInt delta = 1) 
 {
 	if (isinf(v) && v > 0.) return v;
 	if (v == -0.f) v = 0.f;
-	uint64_t ui = FloatToBits(v);
+	HUInt64 ui = FloatToBits(v);
 	if (v >= 0.) ui += delta;
 	else ui -= delta;
 	return BitsToFloat(ui);
 }
 
-inline double NextFloatDown(double v, int delta = 1) 
+inline HDouble NextFloatDown(HDouble v, HInt delta = 1) 
 {
 	if (isinf(v) && v < 0.) return v;
 	if (v == 0.f) v = -0.f;
-	uint64_t ui = FloatToBits(v);
+	HUInt64 ui = FloatToBits(v);
 	if (v > 0.) ui -= delta;
 	else ui += delta;
 	return BitsToFloat(ui);
@@ -86,8 +86,8 @@ class EFloat
 {
 public:
 	EFloat() {}
-	EFloat(float v, float err = 0.0f);
-	EFloat(float v, long double ld, float err);
+	EFloat(HFloat v, HFloat err = 0.0f);
+	EFloat(HFloat v, HDouble ld, HFloat err);
 	EFloat(const EFloat& ef);
 
 	EFloat operator+(EFloat other) const;
@@ -96,17 +96,17 @@ public:
 	EFloat operator/(EFloat other) const;
 	EFloat operator-() const;
 	bool operator==(EFloat other) const;
-	explicit operator float() const { return v; }
-	explicit operator double() const { return ld; }
+	explicit operator HFloat() const { return v; }
+	explicit operator HDouble() const { return ld; }
 
 	void Check() const;
-	float AbsoluteError() { return high - low; }
-	float RelativeError() { return (float)(abs((ld - v) / ld)); }
+	HFloat AbsoluteError() { return high - low; }
+	HFloat RelativeError() { return (HFloat)(abs((ld - v) / ld)); }
 
 public:
-	float v;	// value
-	float low, high;	// absolute error
-	long double ld;		// long double value, for more precision.
+	HFloat v;	// value
+	HFloat low, high;	// absolute error
+	HDouble ld;		// double value, for more precision.
 
 private:
 	friend inline EFloat sqrt(EFloat other);
@@ -115,13 +115,13 @@ private:
 };
 
 // EFloat Inline Functions
-inline EFloat operator*(float f, EFloat other) { return EFloat(f) * other; }
+inline EFloat operator*(HFloat f, EFloat other) { return EFloat(f) * other; }
 
-inline EFloat operator/(float f, EFloat other) { return EFloat(f) / other; }
+inline EFloat operator/(HFloat f, EFloat other) { return EFloat(f) / other; }
 
-inline EFloat operator+(float f, EFloat other) { return EFloat(f) + other; }
+inline EFloat operator+(HFloat f, EFloat other) { return EFloat(f) + other; }
 
-inline EFloat operator-(float f, EFloat other) { return EFloat(f) - other; }
+inline EFloat operator-(HFloat f, EFloat other) { return EFloat(f) - other; }
 
 inline EFloat sqrt(EFloat other) 
 {
@@ -168,18 +168,18 @@ inline EFloat abs(EFloat other)
 
 inline bool Quadratic(EFloat A, EFloat B, EFloat C, EFloat * t0, EFloat * t1)
 {
-	double delta = (double)B.v * (double)B.v - 4.0 * (double)A.v * double(C.v);
+	HDouble delta = (HDouble)B.v * (HDouble)B.v - 4.0 * (HDouble)A.v * HDouble(C.v);
 	if (delta < 0.0) 
 		return false;
-	double sqrtDelta = sqrt(delta);
-	EFloat sqrtDeltaFlt((float)sqrtDelta, H_MACHINEEPSLION * (float)sqrtDelta);
+	HDouble sqrtDelta = sqrt(delta);
+	EFloat sqrtDeltaFlt((HFloat)sqrtDelta, H_MACHINEEPSLION * (HFloat)sqrtDelta);
 
 	EFloat q;
-	if ((float)B < 0) q = -0.5 * (B - sqrtDeltaFlt);
+	if ((HFloat)B < 0) q = -0.5 * (B - sqrtDeltaFlt);
 	else q = -0.5 * (B + sqrtDeltaFlt);
 	*t0 = q / A;
 	*t1 = C / q;
-	if ((float)*t0 > (float)*t1) 
+	if ((HFloat)*t0 > (HFloat)*t1) 
 		swap(*t0, *t1);
 	return true;
 }
@@ -187,60 +187,56 @@ inline bool Quadratic(EFloat A, EFloat B, EFloat C, EFloat * t0, EFloat * t1)
 class Ray
 {
 public:
-	Ray(const XMFLOAT3& _orig = { 0.0f, 0.0f, 0.0f }, const XMFLOAT3& _dir = { 0.0f, 0.0f, 0.0f });
+	Ray(const HFloat3& _orig = { 0.0f, 0.0f, 0.0f }, const HFloat3& _dir = { 0.0f, 0.0f, 0.0f });
 	~Ray() {}
 
-	XMFLOAT3 GetOrigin();
-	XMFLOAT3 GetDirection();
-	XMFLOAT3 GetT(float t);
+	HFloat3 GetT(HFloat t);
 
-private:
-	XMFLOAT3 origin;
-	XMFLOAT3 direction;
+public:
+	HFloat3 origin;
+	HFloat3 direction;
 };
 
 class Segment
 {
 public:
-	Segment(const XMFLOAT3& point1, const XMFLOAT3& point2);
+	Segment(const HFloat3& point1, const HFloat3& point2);
 	~Segment() {}
 
-	XMFLOAT3 point1;
-	XMFLOAT3 point2;
+	HFloat3 point1;
+	HFloat3 point2;
 };
 
 class AABB
 {
 public:
 	AABB();
-	AABB(XMFLOAT3 p);
-	AABB(XMFLOAT3 _min, XMFLOAT3 _max);
+	AABB(HFloat3 p);
+	AABB(HFloat3 _min, HFloat3 _max);
 	~AABB() {}
 
-	XMFLOAT3 GetCenter() const;
-	XMFLOAT3 GetExtent() const;
-	XMFLOAT3 GetVecMin() const;
-	XMFLOAT3 GetVecMax() const;
+	HFloat3 GetCenter() const;
+	HFloat3 GetExtent() const;
 
 	// 获取指定点在当前AABB中的相对位置。
 	// 点最小角时将表示为(0, 0, 0)，最大角是(1, 1, 1)
-	XMFLOAT3 Offset(XMFLOAT3& p) const;
+	HFloat3 Offset(HFloat3& p) const;
 
 	void Merge(AABB aabb);
-	void Merge(XMFLOAT3 point);
+	void Merge(HFloat3 point);
 
-	bool IntersectP(Ray ray, float* hit0, float* hit1);
+	bool IntersectP(Ray ray, HFloat* hit0, HFloat* hit1);
 
 	// 获取当前包围盒的表面积
-	float GetSurfaceArea();
+	HFloat GetSurfaceArea();
 
-	int GetMaximumExtent();
+	HInt GetMaximumExtent();
 
-private:
-	XMFLOAT3 min;
-	XMFLOAT3 max;
+public:
+	HFloat3 min;
+	HFloat3 max;
 };
 
-bool Quadratic(float a, float b, float c, float& out_t0, float& out_t1);
+bool Quadratic(HFloat a, HFloat b, HFloat c, HFloat& out_t0, HFloat& out_t1);
 
 bool RayIntersectP(Ray ray, AABB aabb);

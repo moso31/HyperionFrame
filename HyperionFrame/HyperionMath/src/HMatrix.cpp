@@ -92,12 +92,12 @@ HMatrix4x4 HMatrix4x4::SetTranslation(HFloat x, HFloat y, HFloat z)
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationAxis(const HVector3 & axis, HFloat angle)
+HMatrix4x4 HMatrix4x4::SetRotationAxis(const HFloat3 & axis, HFloat angle)
 {
 	return SetRotationNormal(axis.Normalize(), angle);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationNormal(const HVector3 & normal, HFloat angle)
+HMatrix4x4 HMatrix4x4::SetRotationNormal(const HFloat3 & normal, HFloat angle)
 {
 	HFloat c = cosf(angle);
 	HFloat s = sinf(angle);
@@ -271,16 +271,16 @@ HMatrix4x4 HMatrix4x4::Inverse() const
 	return result;
 }
 
-HMatrix4x4 HMatrix4x4::SetLookAtLH(const HVector3 & eyePos, const HVector3 & focusPos, const HVector3 & upDir) 
+HMatrix4x4 HMatrix4x4::SetLookAtLH(const HFloat3 & eyePos, const HFloat3 & focusPos, const HFloat3 & upDir) 
 {
 	return SetLookToLH(eyePos, focusPos - eyePos, upDir);
 }
 
-HMatrix4x4 HMatrix4x4::SetLookToLH(const HVector3 & eyePos, const HVector3 & eyeDir, const HVector3 & upDir) 
+HMatrix4x4 HMatrix4x4::SetLookToLH(const HFloat3 & eyePos, const HFloat3 & eyeDir, const HFloat3 & upDir) 
 {
-	HVector3 dir = eyeDir.Normalize();
-	HVector3 left = upDir.Cross(dir).Normalize();
-	HVector3 up = dir.Cross(left);
+	HFloat3 dir = eyeDir.Normalize();
+	HFloat3 left = upDir.Cross(dir).Normalize();
+	HFloat3 up = dir.Cross(left);
 
 	return Set(
 		left.x, up.x, dir.x, 0.0f,

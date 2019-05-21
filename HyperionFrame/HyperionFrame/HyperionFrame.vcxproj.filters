@@ -73,9 +73,6 @@
     <ClCompile Include="EngineWorker\Samplers\HPixelSampler.cpp">
       <Filter>EngineWorker\Samplers</Filter>
     </ClCompile>
-    <ClCompile Include="EngineWorker\Math\HMath.cpp">
-      <Filter>EngineWorker\Math</Filter>
-    </ClCompile>
     <ClCompile Include="EngineWorker\Math\RandomNumberGenerator.cpp">
       <Filter>EngineWorker\Math</Filter>
     </ClCompile>
@@ -129,6 +126,9 @@
     </ClCompile>
     <ClCompile Include="EngineWorker\Scripts\HSFirstPersonalCamera.cpp">
       <Filter>EngineWorker\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Math\HEngineMath.cpp">
+      <Filter>EngineWorker\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -216,9 +216,6 @@
     <ClInclude Include="EngineWorker\Math\RandomNumberGenerator.h">
       <Filter>EngineWorker\Math</Filter>
     </ClInclude>
-    <ClInclude Include="EngineWorker\Math\HMath.h">
-      <Filter>EngineWorker\Math</Filter>
-    </ClInclude>
     <ClInclude Include="EngineWorker\Materials\HMatteMaterial.h">
       <Filter>EngineWorker\Materials</Filter>
     </ClInclude>
@@ -275,6 +272,9 @@
     </ClInclude>
     <ClInclude Include="EngineWorker\Scripts\HSFirstPersonalCamera.h">
       <Filter>EngineWorker\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Math\HEngineMath.h">
+      <Filter>EngineWorker\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

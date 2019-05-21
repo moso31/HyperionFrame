@@ -12,7 +12,7 @@ public:
 	HMatrix4x4 operator+ (const HMatrix4x4& m) const;
 	HMatrix4x4 operator- (const HMatrix4x4& m) const;
 	HMatrix4x4 operator* (const HMatrix4x4& m) const;
-	HVector4 operator[] (const HInt& index) { return v[index]; }
+	HFloat4 operator[] (const HInt& index) { return v[index]; }
 
 	void SetIdentity();
 	void SetZero();
@@ -22,10 +22,10 @@ public:
 
 	HMatrix4x4 SetTranslation(HFloat x, HFloat y, HFloat z);
 	// 绕轴朝向屏幕外为准，顺时针旋转angle度。
-	HMatrix4x4 SetRotationAxis(const HVector3& axis, HFloat angle);
+	HMatrix4x4 SetRotationAxis(const HFloat3& axis, HFloat angle);
 	// 绕法向量朝向屏幕外为准，顺时针旋转angle度。
 	// 需要保证旋转轴必须是单位向量。可以节省一次初始化运算。
-	HMatrix4x4 SetRotationNormal(const HVector3& normal, HFloat angle);
+	HMatrix4x4 SetRotationNormal(const HFloat3& normal, HFloat angle);
 	// 绕四元数朝向旋转。
 	HMatrix4x4 SetRotationQuaternion(const HQuaternion& q);
 
@@ -43,8 +43,8 @@ public:
 	HMatrix4x4 Transpose() const;
 	HMatrix4x4 Inverse() const;
 
-	HMatrix4x4 SetLookAtLH(const HVector3& eyePos, const HVector3& focusPos, const HVector3& upDir);
-	HMatrix4x4 SetLookToLH(const HVector3& eyePos, const HVector3& eyeDir, const HVector3& upDir);
+	HMatrix4x4 SetLookAtLH(const HFloat3& eyePos, const HFloat3& focusPos, const HFloat3& upDir);
+	HMatrix4x4 SetLookToLH(const HFloat3& eyePos, const HFloat3& eyeDir, const HFloat3& upDir);
 	HMatrix4x4 SetOrthoLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar);
 	HMatrix4x4 SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar);
 
@@ -52,6 +52,6 @@ public:
 	union
 	{
 		struct { HFloat _11, _12, _13, _14, _21, _22, _23, _24, _31, _32, _33, _34, _41, _42, _43, _44; };
-		HVector4 v[4];
+		HFloat4 v[4];
 	};
 };

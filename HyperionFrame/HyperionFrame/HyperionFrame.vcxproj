@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include;..\HyperionMath\inc</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -144,7 +144,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include;..\HyperionMath\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -186,7 +186,7 @@
     <ClCompile Include="EngineWorker\Materials\HMaterial.cpp" />
     <ClCompile Include="EngineWorker\Materials\HMatteMaterial.cpp" />
     <ClCompile Include="EngineWorker\Materials\HMirrorMaterial.cpp" />
-    <ClCompile Include="EngineWorker\Math\HMath.cpp" />
+    <ClCompile Include="EngineWorker\Math\HEngineMath.cpp" />
     <ClCompile Include="EngineWorker\Math\RandomNumberGenerator.cpp" />
     <ClCompile Include="EngineWorker\Samplers\HDefaultSampler.cpp" />
     <ClCompile Include="EngineWorker\Samplers\HPixelSampler.cpp" />
@@ -235,7 +235,7 @@
     <ClInclude Include="EngineWorker\Materials\HMaterial.h" />
     <ClInclude Include="EngineWorker\Materials\HMatteMaterial.h" />
     <ClInclude Include="EngineWorker\Materials\HMirrorMaterial.h" />
-    <ClInclude Include="EngineWorker\Math\HMath.h" />
+    <ClInclude Include="EngineWorker\Math\HEngineMath.h" />
     <ClInclude Include="EngineWorker\Math\RandomNumberGenerator.h" />
     <ClInclude Include="EngineWorker\Samplers\HDefaultSampler.h" />
     <ClInclude Include="EngineWorker\Samplers\HPixelSampler.h" />

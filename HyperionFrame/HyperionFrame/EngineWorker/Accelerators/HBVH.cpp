@@ -10,7 +10,7 @@ inline int LeftShift3(int x) {
 	return x;
 }
 
-inline int EncodeMorton3(const XMINT3 &v) {
+inline int EncodeMorton3(const HInt3 &v) {
 	return (LeftShift3(v.z) << 2) | (LeftShift3(v.y) << 1) | LeftShift3(v.x);
 }
 
@@ -67,9 +67,9 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 				HBVHMortonPrimitiveInfo primitiveInfo;
 				primitiveInfo.index = count++;
 				primitiveInfo.aabb = (*it)->GetAABBWorld();
-				XMFLOAT3 fRelativePosition = m_scene->GetAABB().Offset(primitiveInfo.aabb.GetCenter());
+				HFloat3 fRelativePosition = m_scene->GetAABB().Offset(primitiveInfo.aabb.GetCenter());
 				int mortonScale = 1 << 10;
-				XMINT3 iRelativePositionScaled = { (int)(fRelativePosition.x * mortonScale), (int)(fRelativePosition.y * mortonScale), (int)(fRelativePosition.z * mortonScale) };
+				HInt3 iRelativePositionScaled = { (int)(fRelativePosition.x * mortonScale), (int)(fRelativePosition.y * mortonScale), (int)(fRelativePosition.z * mortonScale) };
 				primitiveInfo.mortonCode = EncodeMorton3(iRelativePositionScaled);
 				m_mortonPrimitiveInfo.push_back(primitiveInfo);
 			}
