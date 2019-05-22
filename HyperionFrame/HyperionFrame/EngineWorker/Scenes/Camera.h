@@ -13,23 +13,23 @@ public:
 
 	D3D12_RECT GetScissorRect() { return m_scissorRect; }
 
-	void Init(float fovY = 70.0f, float nearZ = 0.01f, float farZ = 100.0f);
+	void Init(HFloat fovY = 70.0f, HFloat nearZ = 0.01f, HFloat farZ = 100.0f);
 	void OnResize();
 
 	void Update();
 	void Render();
 
-	void SetTranslation(float x, float y, float z) override;
-	void SetRotation(float x, float y, float z) override;
-	void SetLookAt(float x, float y, float z);
+	void SetTranslation(HFloat x, HFloat y, HFloat z) override;
+	void SetRotation(HFloat x, HFloat y, HFloat z) override;
+	void SetLookAt(HFloat x, HFloat y, HFloat z);
 	
-	XMFLOAT3 GetForward();
-	XMFLOAT3 GetLeft();
-	XMFLOAT3 GetAt();
-	XMFLOAT3 GetUp();
+	HFloat3 GetForward();
+	HFloat3 GetLeft();
+	HFloat3 GetAt();
+	HFloat3 GetUp();
 
-	HFloat4x4 GetViewToWorld(XMMATRIX& out_mxResult);
-	Ray GenerateRay(float screenX, float screenY);
+	HFloat4x4 GetViewToWorld(HFloat4x4& out_mxResult);
+	Ray GenerateRay(HFloat screenX, HFloat screenY);
 
 	virtual UINT GetAlignedConstantBufferSize();
 	virtual void SetCameraBuffer();
@@ -42,9 +42,9 @@ private:
 	HFloat4x4 m_projectionMatrix;
 	HFloat4x4 m_viewMatrix;
 
-	float m_fovY;
-	float m_nearZ, m_farZ;
-	XMFLOAT3 m_at, m_up;
+	HFloat m_fovY;
+	HFloat m_nearZ, m_farZ;
+	HFloat3 m_at, m_up;
 
 	CBufferEyePos		m_cbEyePos;
 };

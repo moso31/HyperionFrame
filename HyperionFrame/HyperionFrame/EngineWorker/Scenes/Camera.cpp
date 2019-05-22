@@ -16,11 +16,11 @@ Camera::~Camera()
 {
 }
 
-void Camera::Init(float fovY, float nearZ, float farZ)
+void Camera::Init(HFloat fovY, HFloat nearZ, HFloat farZ)
 {
-	XMFLOAT2 outputSize = m_dxResources->GetOutputSize();
-	float aspectRatio = outputSize.x / outputSize.y;
-	float fovAngleY = fovY * XM_PI / 180.0f;
+	HFloat2 outputSize = m_dxResources->GetOutputSize();
+	HFloat aspectRatio = outputSize.x / outputSize.y;
+	HFloat fovAngleY = fovY * H_PI / 180.0f;
 
 	m_fovY = fovAngleY;
 	m_nearZ = nearZ;
@@ -29,16 +29,9 @@ void Camera::Init(float fovY, float nearZ, float farZ)
 	D3D12_VIEWPORT viewport = m_dxResources->GetScreenViewport();
 	m_scissorRect = { 0, 0, static_cast<LONG>(viewport.Width), static_cast<LONG>(viewport.Height) };
 
-	// 此示例使用行主序矩阵利用右手坐标系。
-	XMMATRIX projectionMatrix =
-		XMMatrixPerspectiveFovRH(
-			fovAngleY,
-			aspectRatio,
-			nearZ,
-			farZ
-		);
-	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);
-	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.projection, XMMatrixTranspose(projectionMatrix));
+	m_projectionMatrix.SetPerspLH(fovAngleY, aspectRatio, nearZ, farZ);
+
+	PipelineManager::s_constantBufferData.projection = m_projectionMatrix.Transpose();
 }
 
 void Camera::OnResize()
@@ -47,7 +40,7 @@ void Camera::OnResize()
 
 void Camera::Update()
 {
-	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.view, XMMatrixTranspose(XMLoadFloat4x4(&m_viewMatrix)));
+	PipelineManager::s_constantBufferData.view = m_viewMatrix.Transpose();
 
 	m_cbEyePos.eyePos = translation;
 	memcpy(m_mappedConstantBuffer, &m_cbEyePos, sizeof(m_cbEyePos));
@@ -57,146 +50,101 @@ void Camera::Render()
 {
 }
 
-void Camera::SetTranslation(float x, float y, float z)
+void Camera::SetTranslation(HFloat x, HFloat y, HFloat z)
 {
 	translation = { x, y, z };
 
-	XMVECTOR eye = XMLoadFloat3(&translation);
-	XMVECTOR dir = XMVector4Transform(
-		XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
-		XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation))
-	);
+	HFloat4x4 mxR;
+	mxR.SetRotationXYZ(rotation);
+	HFloat3 dir = HFloat4(0.0f, 0.0f, 1.0f, 0.0f).Transform(mxR);
 
-	XMVECTOR at = eye + dir;
-	XMVECTOR up = { 0.0f, 1.0f, 0.0f, 0.0f };
+	m_at = translation + dir;
+	m_up = { 0.0f, 1.0f, 0.0f };
 
-	XMStoreFloat3(&m_at, at);
-	XMStoreFloat3(&m_up, up);
-
-	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, at, up);
-	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
+	m_viewMatrix.SetLookAtLH(translation, m_at, m_up);
 }
 
-void Camera::SetRotation(float x, float y, float z)
+void Camera::SetRotation(HFloat x, HFloat y, HFloat z)
 {
 	rotation = { x, y, z };
 
-	XMVECTOR eye = XMLoadFloat3(&translation);
-	XMVECTOR dir = XMVector4Transform(
-		XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
-		XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation))
-	);
+	HFloat4x4 mxR;
+	mxR.SetRotationXYZ(rotation);
+	HFloat3 dir = HFloat4(0.0f, 0.0f, 1.0f, 0.0f).Transform(mxR);
 
-	XMVECTOR at = eye + dir;
-	XMVECTOR up = { 0.0f, 1.0f, 0.0f, 0.0f };
+	m_at = translation + dir;
+	m_up = { 0.0f, 1.0f, 0.0f };
 
-	XMStoreFloat3(&m_at, at);
-	XMStoreFloat3(&m_up, up);
-
-	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, at, up);
-	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
+	m_viewMatrix.SetLookAtLH(translation, m_at, m_up);
 }
 
-void Camera::SetLookAt(float x, float y, float z)
+void Camera::SetLookAt(HFloat x, HFloat y, HFloat z)
 {
-	XMFLOAT3 at = { x, y, z };
+	m_at = { x, y, z };
+	m_up = { 0.0f, 1.0f, 0.0f };
 
-	XMVECTOR vEye = XMLoadFloat3(&translation);
-	XMVECTOR vAt = XMLoadFloat3(&at);
-	XMVECTOR vDir = vAt - vEye;
+	HFloat3 dir = m_at - translation;
+	HFloat dis = sqrtf(dir.x * dir.x + dir.z * dir.z);
 
-	XMFLOAT3 dir;
-	XMStoreFloat3(&dir, vDir);
-	float dis = sqrtf(dir.x * dir.x + dir.z * dir.z);
-
-	rotation = XMFLOAT3(
+	rotation = HFloat3(
 		atan2f(-dir.y, dis),	// pitch
 		atan2f(dir.x, dir.z),	// yaw
 		0.0f				// roll
 	);
 
-	XMVECTOR vUp = { 0.0f, 1.0f, 0.0f, 0.0f };
-
-	XMStoreFloat3(&m_at, vAt);
-	XMStoreFloat3(&m_up, vUp);
-
-	XMMATRIX viewMatrix = XMMatrixLookAtRH(vEye, vAt, vUp);
-	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
+	m_viewMatrix.SetLookAtLH(translation, m_at, m_up);
 }
 
-XMFLOAT3 Camera::GetForward()
+HFloat3 Camera::GetForward()
 {
-	XMVECTOR vTranslation = XMLoadFloat3(&translation);
-	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&m_at) - vTranslation);
-
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, vDir);
-	return result;
+	return (m_at - translation).Normalize();
 }
 
-XMFLOAT3 Camera::GetLeft()
+HFloat3 Camera::GetLeft()
 {
-	XMVECTOR vTranslation = XMLoadFloat3(&translation);
-	XMVECTOR vDir = XMLoadFloat3(&m_at) - vTranslation;
-	XMVECTOR vUp = XMLoadFloat3(&m_up);
-	XMVECTOR vLeft = XMVector3Normalize(XMVector3Cross(vDir, vUp));
-
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, vLeft);
-	return result;
+	return (m_at - translation).Cross(m_up).Normalize();
 }
 
-XMFLOAT3 Camera::GetAt()
+HFloat3 Camera::GetAt()
 {
 	return m_at;
 }
 
-XMFLOAT3 Camera::GetUp()
+HFloat3 Camera::GetUp()
 {
 	return m_up;
 }
 
-HFloat4x4 Camera::GetViewToWorld(XMMATRIX& out_mxResult)
+HFloat4x4 Camera::GetViewToWorld(HFloat4x4& out_mxResult)
 {
-	XMVECTOR vTranslation = XMLoadFloat3(&translation);
-	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&m_at) - vTranslation);
-	XMVECTOR vUp = XMVector3Normalize(XMLoadFloat3(&m_up));
-	XMVECTOR vLeft = XMVector3Normalize(XMVector3Cross(vDir, vUp));
-	XMVECTOR vNewUp = XMVector3Cross(vDir, vLeft);
+	HFloat3 dir = (m_at - translation).Normalize();
+	HFloat3 left = dir.Cross(m_up).Normalize();
+	HFloat3 newUp = dir.Cross(left);
 
-	out_mxResult.r[0] = vLeft;
-	out_mxResult.r[1] = vNewUp;
-	out_mxResult.r[2] = vDir;	
-	out_mxResult.r[3] = XMVectorSetW(vTranslation, 1.0f);
+	out_mxResult.v[0] = HFloat4(left, 0.0f);
+	out_mxResult.v[1] = HFloat4(newUp, 0.0f);
+	out_mxResult.v[2] = HFloat4(dir, 0.0f);
+	out_mxResult.v[3] = HFloat4(translation, 1.0f);
 
-	HFloat4x4 result;
-	XMStoreFloat4x4(&result, XMMatrixTranspose(out_mxResult));
-	return result;
+	return out_mxResult.Transpose();
 }
 
-Ray Camera::GenerateRay(float screenX, float screenY)
+Ray Camera::GenerateRay(HFloat screenX, HFloat screenY)
 {
-	XMFLOAT2 outputSize = m_dxResources->GetOutputSize();
-	float x = (2.0f * screenX / outputSize.x - 1.0f) / m_projectionMatrix._11;
-	float y = (1.0f - 2.0f * screenY / outputSize.y) / m_projectionMatrix._22;
+	HFloat2 outputSize = m_dxResources->GetOutputSize();
+	HFloat x = (2.0f * screenX / outputSize.x - 1.0f) / m_projectionMatrix._11;
+	HFloat y = (1.0f - 2.0f * screenY / outputSize.y) / m_projectionMatrix._22;
 
-	XMVECTOR vOrigin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	XMVECTOR vDir = XMVector3Normalize(XMVectorSet(-x, y, 1.0f, 0.0f));
+	HFloat3 vOrig(0.0f);
+	HFloat3 vDir(-x, y, 1.0f);
 
-	XMMATRIX mxWorld2View = XMLoadFloat4x4(&m_viewMatrix);
-	XMMATRIX mxView2World = XMMatrixInverse(&XMMatrixDeterminant(mxWorld2View), mxWorld2View);
+	HFloat4x4 mxR;
+	mxR.SetRotationXYZ(rotation);
 
-	XMMATRIX mxRotation = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
+	HFloat3 vOrigWorld = vOrig.TransformCoord(m_viewMatrix.Inverse());
+	HFloat3 vDirWorld = vDir.TransformNormal(mxR);
 
-	XMVECTOR vWorldOrigin = XMVector3TransformCoord(vOrigin, mxView2World);
-	XMVECTOR vWorldDir = (XMVector3TransformNormal(vDir, mxRotation));
-
-	XMFLOAT3 origin, dir;
-	XMStoreFloat3(&origin, vWorldOrigin);
-	XMStoreFloat3(&dir, vWorldDir);
-
-	Ray result(origin, dir);
-	return result;
+	return Ray(vOrigWorld, vDirWorld);
 }
 
 UINT Camera::GetAlignedConstantBufferSize()

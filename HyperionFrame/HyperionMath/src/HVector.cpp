@@ -592,6 +592,16 @@ HFloat4 HFloat4::Sqrt() const
 	return HFloat4(sqrtf(x), sqrtf(y), sqrtf(z), sqrtf(w));
 }
 
+HFloat4 HFloat4::Transform(const HFloat4x4 & m) const
+{
+	return HFloat4(
+		m._11 * v[0] + m._21 * v[1] + m._31 * v[2] + m._41 * v[3],
+		m._12 * v[0] + m._22 * v[1] + m._32 * v[2] + m._42 * v[3],
+		m._13 * v[0] + m._23 * v[1] + m._33 * v[2] + m._43 * v[3],
+		m._14 * v[0] + m._24 * v[1] + m._34 * v[2] + m._44 * v[3]
+	);
+}
+
 HFloat4 HFloat4::Permute(const HInt x, const HInt y, const HInt z, const HInt w) const
 {
 	return HFloat4(v[x], v[y], v[z], v[w]);

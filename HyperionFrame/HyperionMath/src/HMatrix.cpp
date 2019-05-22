@@ -318,8 +318,8 @@ HFloat4x4 HFloat4x4::SetOrthoLH(const HFloat width, const HFloat height, const H
 
 HFloat4x4 HFloat4x4::SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar)
 {
-	float zNear2 = zNear + zNear;
-	float fRange = zFar / (zFar - zNear);
+	HFloat zNear2 = zNear + zNear;
+	HFloat fRange = zFar / (zFar - zNear);
 	return Set(
 		zNear2 / width, 0.0f, 0.0f, 0.0f,
 		0.0f, zNear2 / height, 0.0f, 0.0f,
@@ -328,3 +328,9 @@ HFloat4x4 HFloat4x4::SetPerspLH(const HFloat width, const HFloat height, const H
 	);
 }
 
+HFloat4x4 HFloat4x4::SetPerspFovLH(const float fovY, const float aspectRatio, const float zNear, const float zFar)
+{
+	HFloat halfFov = 0.5f * fovY;
+	HFloat Height = cos(halfFov) / sin(halfFov);
+	return SetPerspLH(Height / aspectRatio, Height, zNear, zFar);
+}

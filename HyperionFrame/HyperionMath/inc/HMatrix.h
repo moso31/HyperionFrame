@@ -50,6 +50,7 @@ public:
 	HFloat4x4 SetLookToLH(const HFloat3& eyePos, const HFloat3& eyeDir, const HFloat3& upDir);
 	HFloat4x4 SetOrthoLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar);
 	HFloat4x4 SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar);
+	HFloat4x4 SetPerspFovLH(const float fovY, const float aspectRatio, const float zNear, const float zFar);
 
 public:
 	union
