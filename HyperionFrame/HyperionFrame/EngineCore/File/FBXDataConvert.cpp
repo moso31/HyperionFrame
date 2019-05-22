@@ -1,30 +1,30 @@
 #include "FBXDataConvert.h"
 
-XMFLOAT2 ReadXMFLOAT2(FbxVector2 pValue)
+HFloat2 ReadHFLOAT2(FbxVector2 pValue)
 {
-	XMFLOAT2 result;
+	HFloat2 result;
 	result.x = (float)pValue[0];
 	result.y = (float)pValue[1];
 	return result;
 }
 
-XMFLOAT3 ReadXMFLOAT3(FbxVector4 pValue)
+HFloat3 ReadHFLOAT3(FbxVector4 pValue)
 {
-	XMFLOAT3 result;
+	HFloat3 result;
 	result.x = (float)pValue[0];
 	result.y = (float)pValue[1];
 	result.z = (float)pValue[2];
 	return result;
 }
 
-XMFLOAT3 ReadXMFLOAT3(FbxColor pValue)
+HFloat3 ReadHFLOAT3(FbxColor pValue)
 {
-	return XMFLOAT3((float)pValue.mRed, (float)pValue.mGreen, (float)pValue.mBlue);
+	return HFloat3((float)pValue.mRed, (float)pValue.mGreen, (float)pValue.mBlue);
 }
 
-XMFLOAT4 ReadXMFLOAT4(FbxVector4 pValue)
+HFloat4 ReadHFLOAT4(FbxVector4 pValue)
 {
-	XMFLOAT4 result;
+	HFloat4 result;
 	result.x = (float)pValue[0];
 	result.y = (float)pValue[1];
 	result.z = (float)pValue[2];

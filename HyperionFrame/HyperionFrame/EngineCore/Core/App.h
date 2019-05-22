@@ -10,13 +10,13 @@ public:
 
 	LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void Init(XMFLOAT2 windowSize);
+	void Init(HFloat2 windowSize);
 	void Run();
 
 	void Update();
 	bool Render();
 
-	void SetWindow(XMFLOAT2 size);
+	void SetWindow(HFloat2 size);
 	void CreateRenderers();
 
 private:

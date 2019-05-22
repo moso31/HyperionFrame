@@ -16,12 +16,12 @@ HSegment::~HSegment()
 {
 }
 
-void HSegment::InitParameters(XMFLOAT3 point1, XMFLOAT3 point2)
+void HSegment::InitParameters(HFloat3 point1, HFloat3 point2)
 {
 	m_vertices =
 	{
-		{ point1, XMFLOAT3(), XMFLOAT2() },
-		{ point2, XMFLOAT3(), XMFLOAT2() },
+		{ point1, HFloat3(), HFloat2() },
+		{ point2, HFloat3(), HFloat2() },
 	};
 
 	m_indices =

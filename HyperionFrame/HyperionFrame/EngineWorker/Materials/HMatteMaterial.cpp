@@ -4,7 +4,7 @@ HMatteMaterial::HMatteMaterial()
 {
 }
 
-HMatteMaterial::HMatteMaterial(const XMCOLOR3 & _Kd, const float & _sigma) :
+HMatteMaterial::HMatteMaterial(const HFloat3 & _Kd, const HFloat & _sigma) :
 	HMaterial(HMAT_MATTE)
 {
 	Kd = _Kd;
@@ -18,13 +18,10 @@ HMatteMaterial::~HMatteMaterial()
 void HMatteMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
 	si->bsdf = new BSDF(*si);
-	XMCOLOR3 r; /* = Kd->Evaluate(*si).Clamp();*/
-	XMCOLORV rV = XMVectorClamp(XMLoadFloat3(&Kd), XMVectorZero(), XMVectorReplicate(1.0f));
-	float sig = Clamp(sigma/*->Evaluate(*si)*/, 0.0f, 90.0f);
-	if (!XMVector3Equal(rV, XMVectorZero()))
+	HFloat3 r = Clamp(Kd, 0.0f, 1.0f); /* r = Kd->Evaluate(*si).Clamp();*/
+	HFloat sig = Clamp(sigma/*->Evaluate(*si)*/, 0.0f, 90.0f);
+	if (r != 0.0f)
 	{
-		XMStoreFloat3(&r, rV);
-
 		//if (sig == 0)
 		si->bsdf->Add(new LambertianReflection(r));
 		//else

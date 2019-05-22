@@ -7,17 +7,14 @@ SurfaceInteraction::SurfaceInteraction()
 {
 }
 
-SurfaceInteraction::SurfaceInteraction(const XMFLOAT3 & p, const XMFLOAT2 & uv, const XMFLOAT3 & wo, const XMFLOAT3 & dpdu, const XMFLOAT3 & dpdv, HShape * shape) :
+SurfaceInteraction::SurfaceInteraction(const HFloat3 & p, const HFloat2 & uv, const HFloat3 & wo, const HFloat3 & dpdu, const HFloat3 & dpdv, HShape * shape) :
 	uv(uv),
 	dpdu(dpdu),
 	dpdv(dpdv),
 	shape(shape)
 {
-	XMVECTOR vn = XMVector3Normalize(XMVector3Cross(XMLoadFloat3(&dpdv), XMLoadFloat3(&dpdu)));
-	XMStoreFloat3(&n, vn);
-
 	this->p = p;
-	this->n = n;
+	this->n = dpdv.Cross(dpdu).Normalize();
 	this->wo = wo;
 }
 
@@ -32,22 +29,18 @@ void SurfaceInteraction::ComputeScatterFunctions()
 		material->ComputeScatterFunction(this);
 }
 
-Ray Interaction::SpawnRay(const XMFLOAT3 & d) const
+Ray Interaction::SpawnRay(const HFloat3 & d) const
 {
 	//OffsetRayOrigin(p, n, d);
 	return Ray(p, d);
 }
 
-Ray Interaction::SpawnRayTo(const XMFLOAT3 & p1) const
+Ray Interaction::SpawnRayTo(const HFloat3 & p1) const
 {
-	XMFLOAT3 d;
-	XMStoreFloat3(&d, XMLoadFloat3(&p1) - XMLoadFloat3(&p));
-	return Ray(p, d);
+	return Ray(p, p1 - p);
 }
 
 Ray Interaction::SpawnRayTo(const Interaction & it) const
 {
-	XMFLOAT3 d;
-	XMStoreFloat3(&d, XMLoadFloat3(&it.p) - XMLoadFloat3(&p));
-	return Ray(p, d);
+	return Ray(p, it.p - p);
 }

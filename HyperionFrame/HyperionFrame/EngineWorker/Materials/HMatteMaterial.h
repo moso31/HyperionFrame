@@ -5,15 +5,15 @@ class HMatteMaterial : public HMaterial
 {
 public:
 	HMatteMaterial();
-	HMatteMaterial(const XMCOLOR3& _Kd, const float& _sigma);
+	HMatteMaterial(const HFloat3& _Kd, const HFloat& _sigma);
 	~HMatteMaterial();
 
 	void ComputeScatterFunction(SurfaceInteraction* si);
 
-	XMCOLOR3 GetDiffuse() { return Kd; }
-	void SetDiffuse(XMCOLOR3 diffuse) { Kd = diffuse; }
+	HFloat3 GetDiffuse() { return Kd; }
+	void SetDiffuse(HFloat3 diffuse) { Kd = diffuse; }
 
 private:
-	XMCOLOR3 Kd;
-	float sigma;
+	HFloat3 Kd;
+	HFloat sigma;
 };

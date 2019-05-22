@@ -53,7 +53,7 @@ public:
 
 	// BMP图片生成函数。
 	void MakeBMPImage();
-	void MakeBMPImageTile(int tileX, int tileY, XMINT2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
+	void MakeBMPImageTile(int tileX, int tileY, HInt2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
 
 	// 允许 场景管理器类 成为友元。
 	// 因为 场景管理器 在管理场景时，使用了一些 场景类 的私有成员变量。

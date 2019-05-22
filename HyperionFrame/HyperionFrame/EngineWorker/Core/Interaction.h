@@ -5,33 +5,33 @@ class Interaction
 {
 public:
 	Interaction() {}
-	Interaction(const XMFLOAT3 &p) : p(p) {}
-	Interaction(const XMFLOAT3 &p, const XMFLOAT3 &wo) : p(p), n(n) {}
-	Interaction(const XMFLOAT3 &p, const XMFLOAT3 &n, const XMFLOAT3 &wo) : p(p), n(n), wo(wo) {}
+	Interaction(const HFloat3 &p) : p(p) {}
+	Interaction(const HFloat3 &p, const HFloat3 &wo) : p(p), n(n) {}
+	Interaction(const HFloat3 &p, const HFloat3 &n, const HFloat3 &wo) : p(p), n(n), wo(wo) {}
 	virtual ~Interaction() {};
 
-	Ray SpawnRay(const XMFLOAT3 &d) const;
-	Ray SpawnRayTo(const XMFLOAT3 &p1) const;
+	Ray SpawnRay(const HFloat3 &d) const;
+	Ray SpawnRayTo(const HFloat3 &p1) const;
 	Ray SpawnRayTo(const Interaction &it) const;
 
 public:
-	XMFLOAT3 p;
-	XMFLOAT3 n;
-	XMFLOAT3 wo;
+	HFloat3 p;
+	HFloat3 n;
+	HFloat3 wo;
 };
 
 class SurfaceInteraction : public Interaction
 {
 public:
 	SurfaceInteraction();
-	SurfaceInteraction(const XMFLOAT3 &p, const XMFLOAT2 &uv, const XMFLOAT3 &wo, const XMFLOAT3& dpdu, const XMFLOAT3& dpdv, HShape* shape);
+	SurfaceInteraction(const HFloat3 &p, const HFloat2 &uv, const HFloat3 &wo, const HFloat3& dpdu, const HFloat3& dpdv, HShape* shape);
 	~SurfaceInteraction();
 
 	void ComputeScatterFunctions();
 
 public:
-	XMFLOAT3 dpdu, dpdv;
-	XMFLOAT2 uv;
+	HFloat3 dpdu, dpdv;
+	HFloat2 uv;
 
 	HShape* shape;
 	BSDF* bsdf;

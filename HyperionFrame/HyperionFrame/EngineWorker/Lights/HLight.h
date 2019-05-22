@@ -8,7 +8,7 @@ public:
 	HLight();
 	virtual ~HLight();
 
-	virtual XMCOLOR3 Sample_Li(const Interaction& isect, XMFLOAT3& out_wi, VisibilityTester* out_vis) = 0;
+	virtual HFloat3 Sample_Li(const Interaction& isect, HFloat3& out_wi, VisibilityTester* out_vis) = 0;
 
 private:
 

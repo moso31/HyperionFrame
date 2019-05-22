@@ -156,7 +156,7 @@ XMFLOAT3 Camera::GetUp()
 	return m_up;
 }
 
-XMFLOAT4X4 Camera::GetViewToWorld(XMMATRIX& out_mxResult)
+HFloat4x4 Camera::GetViewToWorld(XMMATRIX& out_mxResult)
 {
 	XMVECTOR vTranslation = XMLoadFloat3(&translation);
 	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&m_at) - vTranslation);
@@ -169,7 +169,7 @@ XMFLOAT4X4 Camera::GetViewToWorld(XMMATRIX& out_mxResult)
 	out_mxResult.r[2] = vDir;	
 	out_mxResult.r[3] = XMVectorSetW(vTranslation, 1.0f);
 
-	XMFLOAT4X4 result;
+	HFloat4x4 result;
 	XMStoreFloat4x4(&result, XMMatrixTranspose(out_mxResult));
 	return result;
 }

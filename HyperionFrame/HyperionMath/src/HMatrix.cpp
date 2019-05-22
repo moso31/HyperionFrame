@@ -1,7 +1,7 @@
 #include "HMatrix.h"
 #include "HQuaternion.h"
 
-HMatrix4x4::HMatrix4x4(HFloat _11, HFloat _12, HFloat _13, HFloat _14, HFloat _21, HFloat _22, HFloat _23, HFloat _24, HFloat _31, HFloat _32, HFloat _33, HFloat _34, HFloat _41, HFloat _42, HFloat _43, HFloat _44) :
+HFloat4x4::HFloat4x4(HFloat _11, HFloat _12, HFloat _13, HFloat _14, HFloat _21, HFloat _22, HFloat _23, HFloat _24, HFloat _31, HFloat _32, HFloat _33, HFloat _34, HFloat _41, HFloat _42, HFloat _43, HFloat _44) :
 	_11(_11), _12(_12), _13(_13), _14(_14),
 	_21(_21), _22(_22), _23(_23), _24(_24),
 	_31(_31), _32(_32), _33(_33), _34(_34),
@@ -9,7 +9,7 @@ HMatrix4x4::HMatrix4x4(HFloat _11, HFloat _12, HFloat _13, HFloat _14, HFloat _2
 {
 }
 
-HMatrix4x4::HMatrix4x4(const HMatrix4x4 & m) :
+HFloat4x4::HFloat4x4(const HFloat4x4 & m) :
 	_11(m._11), _12(m._12), _13(m._13), _14(m._14),
 	_21(m._21), _22(m._22), _23(m._23), _24(m._24),
 	_31(m._31), _32(m._32), _33(m._33), _34(m._34),
@@ -17,25 +17,25 @@ HMatrix4x4::HMatrix4x4(const HMatrix4x4 & m) :
 {
 }
 
-HMatrix4x4 HMatrix4x4::operator+(const HMatrix4x4 & m) const
+HFloat4x4 HFloat4x4::operator+(const HFloat4x4 & m) const
 {
-	HMatrix4x4 r;
+	HFloat4x4 r;
 	for (int i = 0; i < 4; i++)
 		r[i] = v[i] + m.v[i];
 	return r;
 }
 
-HMatrix4x4 HMatrix4x4::operator-(const HMatrix4x4 & m) const
+HFloat4x4 HFloat4x4::operator-(const HFloat4x4 & m) const
 {
-	HMatrix4x4 r;
+	HFloat4x4 r;
 	for (int i = 0; i < 4; i++)
 		r[i] = v[i] - m.v[i];
 	return r;
 }
 
-HMatrix4x4 HMatrix4x4::operator*(const HMatrix4x4 & m) const
+HFloat4x4 HFloat4x4::operator*(const HFloat4x4 & m) const
 {
-	HMatrix4x4 r;
+	HFloat4x4 r;
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 4; j++)
@@ -49,7 +49,7 @@ HMatrix4x4 HMatrix4x4::operator*(const HMatrix4x4 & m) const
 	return r;
 }
 
-void HMatrix4x4::SetIdentity()
+void HFloat4x4::SetIdentity()
 {
 	_11 = 1.0f; _12 = 0.0f; _13 = 0.0f; _14 = 0.0f;
 	_21 = 0.0f; _22 = 1.0f; _23 = 0.0f; _24 = 0.0f;
@@ -57,7 +57,7 @@ void HMatrix4x4::SetIdentity()
 	_41 = 0.0f; _42 = 0.0f; _43 = 0.0f; _44 = 1.0f;
 }
 
-void HMatrix4x4::SetZero()
+void HFloat4x4::SetZero()
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -66,7 +66,7 @@ void HMatrix4x4::SetZero()
 	}
 }
 
-void HMatrix4x4::SetNaN()
+void HFloat4x4::SetNaN()
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -75,7 +75,7 @@ void HMatrix4x4::SetNaN()
 	}
 }
 
-HMatrix4x4 HMatrix4x4::Set(const HFloat m11, const HFloat m12, const HFloat m13, const HFloat m14, const HFloat m21, const HFloat m22, const HFloat m23, const HFloat m24, const HFloat m31, const HFloat m32, const HFloat m33, const HFloat m34, const HFloat m41, const HFloat m42, const HFloat m43, const HFloat m44)
+HFloat4x4 HFloat4x4::Set(const HFloat m11, const HFloat m12, const HFloat m13, const HFloat m14, const HFloat m21, const HFloat m22, const HFloat m23, const HFloat m24, const HFloat m31, const HFloat m32, const HFloat m33, const HFloat m34, const HFloat m41, const HFloat m42, const HFloat m43, const HFloat m44)
 {
 	_11 = m11; _12 = m12; _13 = m13; _14 = m14;
 	_21 = m21; _22 = m22; _23 = m23; _24 = m24;
@@ -84,7 +84,7 @@ HMatrix4x4 HMatrix4x4::Set(const HFloat m11, const HFloat m12, const HFloat m13,
 	return *this;
 }
 
-HMatrix4x4 HMatrix4x4::SetTranslation(HFloat x, HFloat y, HFloat z)
+HFloat4x4 HFloat4x4::SetTranslation(HFloat x, HFloat y, HFloat z)
 {
 	return Set(1.0f, 0.0f, 0.0f, x,
 		0.0f, 1.0f, 0.0f, y,
@@ -92,12 +92,17 @@ HMatrix4x4 HMatrix4x4::SetTranslation(HFloat x, HFloat y, HFloat z)
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationAxis(const HFloat3 & axis, HFloat angle)
+HFloat4x4 HFloat4x4::SetTranslation(HFloat3 v)
+{
+	return SetTranslation(v.x, v.y, v.z);
+}
+
+HFloat4x4 HFloat4x4::SetRotationAxis(const HFloat3 & axis, HFloat angle)
 {
 	return SetRotationNormal(axis.Normalize(), angle);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationNormal(const HFloat3 & normal, HFloat angle)
+HFloat4x4 HFloat4x4::SetRotationNormal(const HFloat3 & normal, HFloat angle)
 {
 	HFloat c = cosf(angle);
 	HFloat s = sinf(angle);
@@ -115,7 +120,7 @@ HMatrix4x4 HMatrix4x4::SetRotationNormal(const HFloat3 & normal, HFloat angle)
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationQuaternion(const HQuaternion & q)
+HFloat4x4 HFloat4x4::SetRotationQuaternion(const HQuaternion & q)
 {
 	HFloat sqw = q.w * q.w;
 	HFloat sqx = q.x * q.x;
@@ -135,7 +140,7 @@ HMatrix4x4 HMatrix4x4::SetRotationQuaternion(const HQuaternion & q)
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationX(HFloat angle)
+HFloat4x4 HFloat4x4::SetRotationX(HFloat angle)
 {
 	HFloat s = sinf(angle);
 	HFloat c = cosf(angle);
@@ -145,7 +150,7 @@ HMatrix4x4 HMatrix4x4::SetRotationX(HFloat angle)
 		0, 0, 0, 1);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationY(HFloat angle)
+HFloat4x4 HFloat4x4::SetRotationY(HFloat angle)
 {
 	HFloat s = sinf(angle);
 	HFloat c = cosf(angle);
@@ -155,7 +160,7 @@ HMatrix4x4 HMatrix4x4::SetRotationY(HFloat angle)
 		0, 0, 0, 1);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationZ(HFloat angle)
+HFloat4x4 HFloat4x4::SetRotationZ(HFloat angle)
 {
 	HFloat s = sinf(angle);
 	HFloat c = cosf(angle);
@@ -165,7 +170,7 @@ HMatrix4x4 HMatrix4x4::SetRotationZ(HFloat angle)
 		0, 0, 0, 1);
 }
 
-HMatrix4x4 HMatrix4x4::SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll)
+HFloat4x4 HFloat4x4::SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll)
 {
 	HFloat cx = cosf(pitch);
 	HFloat cy = cosf(yaw);
@@ -182,7 +187,12 @@ HMatrix4x4 HMatrix4x4::SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll)
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-HMatrix4x4 HMatrix4x4::SetScale(HFloat x, HFloat y, HFloat z)
+HFloat4x4 HFloat4x4::SetRotationXYZ(HFloat3 v)
+{
+	return SetRotationXYZ(v.x, v.y, v.z);
+}
+
+HFloat4x4 HFloat4x4::SetScale(HFloat x, HFloat y, HFloat z)
 {
 	return Set(x, 0.0f, 0.0f, 0.0f,
 		0.0f, y, 0.0f, 0.0f,
@@ -190,20 +200,25 @@ HMatrix4x4 HMatrix4x4::SetScale(HFloat x, HFloat y, HFloat z)
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-HMatrix4x4 HMatrix4x4::Transpose() const
+HFloat4x4 HFloat4x4::SetScale(HFloat3 v)
 {
-	return HMatrix4x4(_11, _21, _31, _41,
+	return SetScale(v.x, v.y, v.z);
+}
+
+HFloat4x4 HFloat4x4::Transpose() const
+{
+	return HFloat4x4(_11, _21, _31, _41,
 		_12, _22, _32, _42,
 		_13, _23, _33, _43,
 		_14, _24, _33, _44);
 }
 
-HMatrix4x4 HMatrix4x4::Inverse() const
+HFloat4x4 HFloat4x4::Inverse() const
 {
 	int b[4] = { 0, 0, 0, 0 };
 	int sq[4] = { 0, 1, 2, 3 };
-	HMatrix4x4 mCopy(*this);
-	HMatrix4x4 result;
+	HFloat4x4 mCopy(*this);
+	HFloat4x4 result;
 	for (int i = 0; i < 4; i++)
 	{
 		int ix = 0, iy = 0;
@@ -271,12 +286,12 @@ HMatrix4x4 HMatrix4x4::Inverse() const
 	return result;
 }
 
-HMatrix4x4 HMatrix4x4::SetLookAtLH(const HFloat3 & eyePos, const HFloat3 & focusPos, const HFloat3 & upDir) 
+HFloat4x4 HFloat4x4::SetLookAtLH(const HFloat3 & eyePos, const HFloat3 & focusPos, const HFloat3 & upDir) 
 {
 	return SetLookToLH(eyePos, focusPos - eyePos, upDir);
 }
 
-HMatrix4x4 HMatrix4x4::SetLookToLH(const HFloat3 & eyePos, const HFloat3 & eyeDir, const HFloat3 & upDir) 
+HFloat4x4 HFloat4x4::SetLookToLH(const HFloat3 & eyePos, const HFloat3 & eyeDir, const HFloat3 & upDir) 
 {
 	HFloat3 dir = eyeDir.Normalize();
 	HFloat3 left = upDir.Cross(dir).Normalize();
@@ -290,7 +305,7 @@ HMatrix4x4 HMatrix4x4::SetLookToLH(const HFloat3 & eyePos, const HFloat3 & eyeDi
 	);
 }
 
-HMatrix4x4 HMatrix4x4::SetOrthoLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar)
+HFloat4x4 HFloat4x4::SetOrthoLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar)
 {
 	HFloat fRange = 1.0f / (zFar - zNear);
 	return Set(
@@ -301,7 +316,7 @@ HMatrix4x4 HMatrix4x4::SetOrthoLH(const HFloat width, const HFloat height, const
 	);
 }
 
-HMatrix4x4 HMatrix4x4::SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar)
+HFloat4x4 HFloat4x4::SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar)
 {
 	float zNear2 = zNear + zNear;
 	float fRange = zFar / (zFar - zNear);

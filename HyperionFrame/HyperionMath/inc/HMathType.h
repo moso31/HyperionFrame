@@ -15,7 +15,7 @@ class HFloat2;
 class HFloat3;
 class HFloat4;
 class HQuaternion;
-class HMatrix4x4;
+class HFloat4x4;
 
 const float H_PI		= 3.14159265358979323846f;
 const float H_2PI		= 6.28318530717958647692f;

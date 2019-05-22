@@ -27,7 +27,7 @@ DXResource::~DXResource()
 {
 }
 
-void DXResource::SetWindow(XMFLOAT2 size)
+void DXResource::SetWindow(HFloat2 size)
 {
 	m_outputSize = size;
 	CreateWindowSizeDependentResources();

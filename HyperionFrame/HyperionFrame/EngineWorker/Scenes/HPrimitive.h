@@ -57,7 +57,7 @@ public:
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
 
-	virtual UINT GetAlignedConstantBufferSize() = 0;
+	virtual HUInt GetAlignedConstantBufferSize() = 0;
 	void GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	virtual void SetPrimitiveBuffer(const PrimitiveBuffer& primitiveBuffer);
 

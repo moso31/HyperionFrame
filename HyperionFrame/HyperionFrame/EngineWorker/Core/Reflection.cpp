@@ -3,7 +3,7 @@
 
 namespace Reflection
 {
-	float FrDielectric(float cosThetaI, float etaI, float etaT)
+	HFloat FrDielectric(HFloat cosThetaI, HFloat etaI, HFloat etaT)
 	{
 		cosThetaI = Clamp(cosThetaI, -1, 1);
 		bool entering = cosThetaI > 0.f;
@@ -13,108 +13,84 @@ namespace Reflection
 			cosThetaI = std::abs(cosThetaI);
 		}
 
-		float sinThetaI = sqrtf(max(0.0f, 1.0f - cosThetaI * cosThetaI));
-		float sinThetaT = etaI / etaT * sinThetaI;
+		HFloat sinThetaI = sqrtf(max(0.0f, 1.0f - cosThetaI * cosThetaI));
+		HFloat sinThetaT = etaI / etaT * sinThetaI;
 
 		if (sinThetaT >= 1.0f) return 1.0f;
-		float cosThetaT = sqrtf(max(0.0f, 1.0f - sinThetaT * sinThetaT));
+		HFloat cosThetaT = sqrtf(max(0.0f, 1.0f - sinThetaT * sinThetaT));
 
-		float Rparl = ((etaT * cosThetaI) - (etaI * cosThetaT)) / ((etaT * cosThetaI) + (etaI * cosThetaT));
-		float Rperp = ((etaI * cosThetaI) - (etaT * cosThetaT)) / ((etaI * cosThetaI) + (etaT * cosThetaT));
+		HFloat Rparl = ((etaT * cosThetaI) - (etaI * cosThetaT)) / ((etaT * cosThetaI) + (etaI * cosThetaT));
+		HFloat Rperp = ((etaI * cosThetaI) - (etaT * cosThetaT)) / ((etaI * cosThetaI) + (etaT * cosThetaT));
 		return (Rparl * Rparl + Rperp * Rperp) / 2.0f;
 	}
 
-	XMCOLOR3 FrConductor(float cosThetaI, const XMCOLOR3 & etaI, const XMCOLOR3 & etaT, const XMCOLOR3 & k)
+	HFloat3 FrConductor(HFloat cosThetaI, const HFloat3 & etaI, const HFloat3 & etaT, const HFloat3 & k)
 	{
-		XMCOLORV etaIV = XMLoadFloat3(&etaI);
-		XMCOLORV etaTV = XMLoadFloat3(&etaT);
-		XMCOLORV kV = XMLoadFloat3(&k);
-
 		cosThetaI = Clamp(cosThetaI, -1, 1);
-		XMCOLORV etaV = etaTV / etaIV;
-		XMCOLORV etak = kV / etaIV;
+		HFloat3 eta = etaT / etaI;
+		HFloat3 etak = k / etaI;
 
-		float cosThetaI2 = cosThetaI * cosThetaI;
-		float sinThetaI2 = 1.0f - cosThetaI2;
+		HFloat cosThetaI2 = cosThetaI * cosThetaI;
+		HFloat sinThetaI2 = 1.0f - cosThetaI2;
 
-		XMCOLORV cosThetaI2V = XMVectorReplicate(cosThetaI2);
-		XMCOLORV sinThetaI2V = XMVectorReplicate(sinThetaI2);
+		HFloat3 eta2 = eta * eta;
+		HFloat3 etak2 = etak * etak;
 
-		XMCOLORV eta2V = etaV * etaV;
-		XMCOLORV etak2V = etak * etak;
+		HFloat3 t0 = eta2 - etak2 - (sinThetaI2);
+		HFloat3 a2b2 = (t0 * t0 + 4 * eta2 * etak2).Sqrt();
+		HFloat3 t1 = a2b2 + cosThetaI2;
+		HFloat3 a = (0.5f * (a2b2 + t0)).Sqrt();
+		HFloat3 t2 = 2.0f * cosThetaI * a;
+		HFloat3 Rs = (t1 - t2) / (t1 + t2);
 
-		XMCOLORV t0V = eta2V - etak2V - (sinThetaI2V);
-		XMCOLORV a2b2V = XMVectorSqrt(t0V * t0V + 4 * eta2V * etak2V);
-		XMCOLORV t1V = a2b2V + cosThetaI2V;
-		XMCOLORV aV = XMVectorSqrt(0.5f * (a2b2V + t0V));
-		XMCOLORV t2V = 2.0f * cosThetaI * aV;
-		XMCOLORV RsV = (t1V - t2V) / (t1V + t2V);
+		HFloat3 t3 = cosThetaI2 * a2b2 + sinThetaI2 * sinThetaI2;
+		HFloat3 t4 = t2 * sinThetaI2;
+		HFloat3 Rp = Rs * (t3 - t4) / (t3 + t4);
 
-		XMCOLORV t3V = cosThetaI2V * a2b2V + XMVectorReplicate(sinThetaI2 * sinThetaI2);
-		XMCOLORV t4V = t2V * sinThetaI2;
-		XMCOLORV RpV = RsV * (t3V - t4V) / (t3V + t4V);
-
-		XMCOLOR3 result;
-		XMStoreFloat3(&result, 0.5f * (RpV + RsV));
-		return result;
+		return 0.5f * (Rp + Rs);
 	}
 
-	float CosTheta(const XMFLOAT3 & w)
+	HFloat CosTheta(const HFloat3 & w)
 	{
 		return w.z;
 	}
 
-	float AbsCosTheta(const XMFLOAT3 & w)
+	HFloat AbsCosTheta(const HFloat3 & w)
 	{
 		return abs(w.z);
 	}
 
-	XMFLOAT3 Reflect(const XMFLOAT3 &wo, const XMFLOAT3 &n) 
+	HFloat3 Reflect(const HFloat3 &wo, const HFloat3 &n) 
 	{
-		XMVECTOR nV = XMLoadFloat3(&n);
-		XMVECTOR woV = XMLoadFloat3(&wo);
-
-		XMFLOAT3 result;
-		XMStoreFloat3(&result, -woV + XMVectorReplicate(2.0f) * XMVector3Dot(woV, nV) * nV);
-		return result;
+		return -wo + 2.0f * wo.Dot(n) * n;
 	}
 
-	bool Refract(const XMFLOAT3 &wi, const XMFLOAT3 &n, float eta, XMFLOAT3 *out_wt)
+	bool Refract(const HFloat3 &wi, const HFloat3 &n, HFloat eta, HFloat3 *out_wt)
 	{
-		XMVECTOR nV = XMLoadFloat3(&n);
-		XMVECTOR wiV = XMLoadFloat3(&wi);
-		XMVECTOR etaV = XMVectorReplicate(eta);
-		XMVECTOR oneV = XMVectorReplicate(1.0f);
+		HFloat cosThetaI = n.Dot(wi);
+		HFloat sin2ThetaI = max(0.0f, 1.0f - cosThetaI * cosThetaI);
+		HFloat sin2ThetaT = (eta * eta) * sin2ThetaI;
 
-		XMVECTOR cosThetaIV = XMVector3Dot(nV, wiV);
-		XMVECTOR sin2ThetaIV = XMVectorMax(XMVectorZero(), oneV - cosThetaIV * cosThetaIV);
-		XMVECTOR sin2ThetaTV = etaV * etaV * sin2ThetaIV;
+		if (sin2ThetaT >= 1.0f) return false;
 
-		if (XMVector3GreaterOrEqual(sin2ThetaTV, oneV))
-			return false;
-		XMVECTOR cosThetaTV = XMVectorSqrt(oneV - sin2ThetaTV);
+		HFloat cosThetaT = sqrtf(1 - sin2ThetaT);
 
-		XMVECTOR wtV = etaV * -wiV + (etaV * cosThetaIV - cosThetaTV) * nV;
-		XMStoreFloat3(out_wt, wtV);
+		*out_wt = eta * -wi + (eta * cosThetaI - cosThetaT) * n;
 		return true;
 	}
 
-	XMFLOAT3 Faceforward(const XMFLOAT3 &n, const XMFLOAT3 &v) 
+	HFloat3 Faceforward(const HFloat3 &n, const HFloat3 &v) 
 	{
-		XMVECTOR nV = XMLoadFloat3(&n);
-		XMVECTOR vV = XMLoadFloat3(&v);
-		XMFLOAT3 result;
-		XMStoreFloat3(&result, XMVector3Less(XMVector3Dot(nV, vV), XMVectorZero()) ? -nV : nV);
-		return result;
+		return (n.Dot(v) < 0.0f ? -n : n);
 	}
 }
 
 using namespace Reflection;
 
-BSDF::BSDF(const SurfaceInteraction & si, float eta)
+BSDF::BSDF(const SurfaceInteraction & si, HFloat eta)
 	: n(si.n), s(si.dpdu) 
 {
-	XMStoreFloat3(&t, XMVector3Cross(XMLoadFloat3(&n), XMLoadFloat3(&s)));
+	t = n.Cross(s);
 }
 
 void BSDF::Add(BxDF * bxdf)
@@ -130,32 +106,29 @@ int BSDF::NumComponents(BxDFType type)
 	return num;
 }
 
-XMCOLOR3 BSDF::f(const XMFLOAT3 & woW, const XMFLOAT3 & wiW, BxDFType flags)
+HFloat3 BSDF::f(const HFloat3 & woW, const HFloat3 & wiW, BxDFType flags)
 {
-	XMFLOAT3 wi = WorldToReflectionCoord(wiW), wo = WorldToReflectionCoord(woW);
+	HFloat3 wi = WorldToReflectionCoord(wiW), wo = WorldToReflectionCoord(woW);
 	//printf("wi: %f, %f, %f   wo: %f, %f, %f\n", wiW.x, wiW.y, wiW.z, woW.x, woW.y, woW.z);
 	if (wo.z == 0)
 		return { 0.0f, 0.0f, 0.0f };
 
-	XMVECTOR nV = XMLoadFloat3(&n);
-	float reflect = XMVectorGetX(XMVector3Dot(XMLoadFloat3(&wiW), nV)) * XMVectorGetX(XMVector3Dot(XMLoadFloat3(&woW), nV));
+	HFloat reflect = wiW.Dot(n) * woW.Dot(n);
 	bool isReflect = reflect > 0;
 	//printf("normal: %f, %f, %f, reflect: %f\n", n.x, n.y, n.z, reflect);
 
-	XMCOLOR3 f(0.0f, 0.0f, 0.0f); 
-	XMVECTOR fV = XMVectorZero();
+	HFloat3 f(0.0f); 
 	for (UINT i = 0; i < m_bxdfs.size(); ++i)
 		if (m_bxdfs[i]->MatchesFlags(flags) &&
 			((isReflect && (m_bxdfs[i]->type & BSDF_REFLECTION)) ||
 			(!isReflect && (m_bxdfs[i]->type & BSDF_TRANSMISSION))))
 		{
-			 fV += XMLoadFloat3(&m_bxdfs[i]->f(wo, wi));
+			 f += m_bxdfs[i]->f(wo, wi);
 		}
-	XMStoreFloat3(&f, fV);
 	return f;
 }
 
-XMCOLOR3 BSDF::Sample_f(const XMFLOAT3 & woW, XMFLOAT3 * wiW, const XMFLOAT2 & u, float * pdf, BxDFType type/*, BxDFType *sampledType*/)
+HFloat3 BSDF::Sample_f(const HFloat3 & woW, HFloat3 * wiW, const HFloat2 & u, HFloat * pdf, BxDFType type/*, BxDFType *sampledType*/)
 {
 	int matchingComps = NumComponents(type);
 	if (matchingComps == 0) {
@@ -176,13 +149,13 @@ XMCOLOR3 BSDF::Sample_f(const XMFLOAT3 & woW, XMFLOAT3 * wiW, const XMFLOAT2 & u
 		}
 	}
 
-	XMFLOAT2 uRemapped(min(u.x * matchingComps - comp, ONE_MINUS_EPSILON), u.y);
+	HFloat2 uRemapped(min(u.x * matchingComps - comp, H_ONE_MINUS_EPSILON), u.y);
 
-	XMFLOAT3 wi, wo = WorldToReflectionCoord(woW);
+	HFloat3 wi, wo = WorldToReflectionCoord(woW);
 	if (wo.z == 0) return { 0.0f, 0.0f, 0.0f };
 	*pdf = 0.f;
 	//if (sampledType) *sampledType = bxdf->type;
-	XMCOLOR3 f = bxdf->Sample_f(wo, &wi, uRemapped, pdf/*, sampledType*/);
+	HFloat3 f = bxdf->Sample_f(wo, &wi, uRemapped, pdf/*, sampledType*/);
 
 	if (*pdf == 0) 
 	{
@@ -197,45 +170,38 @@ XMCOLOR3 BSDF::Sample_f(const XMFLOAT3 & woW, XMFLOAT3 * wiW, const XMFLOAT2 & u
 	//			*pdf += bxdfs[i]->Pdf(wo, wi);
 	//if (matchingComps > 1) *pdf /= matchingComps;
 
-	XMVECTOR woWV = XMLoadFloat3(&woW);
-	XMVECTOR wiWV = XMLoadFloat3(wiW);
-	XMVECTOR ngV = XMLoadFloat3(&n);
-
 	if (!(bxdf->type & BSDF_SPECULAR)) 
 	{
-		bool reflect = XMVectorGetX(XMVector3Dot(wiWV, ngV) * XMVector3Dot(woWV, ngV)) > 0;
-		XMVECTOR fV = XMVectorZero();
+		bool reflect = (*wiW).Dot(n) * woW.Dot(n) > 0;
 		for (size_t i = 0; i < m_bxdfs.size(); ++i)
 			if (m_bxdfs[i]->MatchesFlags(type) &&
 				((reflect && (m_bxdfs[i]->type & BSDF_REFLECTION)) ||
 				(!reflect && (m_bxdfs[i]->type & BSDF_TRANSMISSION))))
-				fV += XMLoadFloat3(&m_bxdfs[i]->f(wo, wi));
-
-		XMStoreFloat3(&f, fV);
+				f += m_bxdfs[i]->f(wo, wi);
 	}
 
 	return f;
 }
 
-XMFLOAT3 BSDF::WorldToReflectionCoord(const XMFLOAT3 & v)
+HFloat3 BSDF::WorldToReflectionCoord(const HFloat3 & v)
 {
-	return XMFLOAT3(
+	return HFloat3(
 		v.x * s.x + v.y * s.y + v.z * s.z,
 		v.x * t.x + v.y * t.y + v.z * t.z,
 		v.x * n.x + v.y * n.y + v.z * n.z
 	);
 }
 
-XMFLOAT3 BSDF::ReflectionToWorldCoord(const XMFLOAT3 & v)
+HFloat3 BSDF::ReflectionToWorldCoord(const HFloat3 & v)
 {
-	return XMFLOAT3(
+	return HFloat3(
 		v.x * s.x + v.y * t.x + v.z * n.x,
 		v.x * s.y + v.y * t.y + v.z * n.y,
 		v.x * s.z + v.y * t.z + v.z * n.z
 	);
 }
 
-XMCOLOR3 BxDF::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const XMFLOAT2 & u, float * pdf) const
+HFloat3 BxDF::Sample_f(const HFloat3 & wo, HFloat3 * wi, const HFloat2 & u, HFloat * pdf) const
 {
 	*wi = CosineSampleHemisphere(u);
 	if (wo.z < 0) wi->z *= -1;
@@ -243,33 +209,33 @@ XMCOLOR3 BxDF::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const XMFLOAT2 & u, 
 	return f(wo, *wi);
 }
 
-XMCOLOR3 FresnelConductor::Evaluate(float cosThetaI) const
+HFloat3 FresnelConductor::Evaluate(HFloat cosThetaI) const
 {
 	return FrConductor(cosThetaI, etaI, etaT, k);
 }
 
-XMCOLOR3 FresnelDielectric::Evaluate(float cosThetaI) const
+HFloat3 FresnelDielectric::Evaluate(HFloat cosThetaI) const
 {
-	float val = FrDielectric(cosThetaI, etaI, etaT);
-	return XMCOLOR3(val, val, val);
+	HFloat val = FrDielectric(cosThetaI, etaI, etaT);
+	return HFloat3(val, val, val);
 }
 
-XMCOLOR3 LambertianReflection::f(const XMFLOAT3 & wo, const XMFLOAT3 & wi) const
+HFloat3 LambertianReflection::f(const HFloat3 & wo, const HFloat3 & wi) const
 {
-	return XMCOLOR3(R.x * H_1DIVPI, R.y * H_1DIVPI, R.z * H_1DIVPI);
+	return HFloat3(R.x * H_1DIVPI, R.y * H_1DIVPI, R.z * H_1DIVPI);
 }
 
-XMFLOAT3 CosineSampleHemisphere(const XMFLOAT2 & u)
+HFloat3 CosineSampleHemisphere(const HFloat2 & u)
 {
-	XMFLOAT2 d;
-	XMFLOAT2 uOffset(2.0f * u.x - 1.0f, 2.0f * u.y - 1.0f);
+	HFloat2 d;
+	HFloat2 uOffset(2.0f * u.x - 1.0f, 2.0f * u.y - 1.0f);
 	if (uOffset.x == 0 && uOffset.y == 0)
 	{
-		d = XMFLOAT2(0.0f, 0.0f);
+		d = HFloat2(0.0f, 0.0f);
 	}
 	else
 	{
-		float theta, r;
+		HFloat theta, r;
 		if (abs(uOffset.x) > abs(uOffset.y)) 
 		{
 			r = uOffset.x;
@@ -280,37 +246,33 @@ XMFLOAT3 CosineSampleHemisphere(const XMFLOAT2 & u)
 			r = uOffset.y;
 			theta = H_PIDIV2 - H_PIDIV4 * (uOffset.x / uOffset.y);
 		}
-		d = XMFLOAT2(r * cos(theta), r * sin(theta));
+		d = HFloat2(r * cos(theta), r * sin(theta));
 	}
 
-	float z = sqrt(max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
-	return XMFLOAT3(d.x, d.y, z);
+	HFloat z = sqrt(max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
+	return HFloat3(d.x, d.y, z);
 }
 
-XMCOLOR3 SpecularReflection::f(const XMFLOAT3 & wo, const XMFLOAT3 & wi) const
+HFloat3 SpecularReflection::f(const HFloat3 & wo, const HFloat3 & wi) const
 {
-	return XMCOLOR3(0.0f, 0.0f, 0.0f);
+	return HFloat3(0.0f, 0.0f, 0.0f);
 }
 
-XMCOLOR3 SpecularReflection::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const XMFLOAT2 & sample, float * pdf) const
+HFloat3 SpecularReflection::Sample_f(const HFloat3 & wo, HFloat3 * wi, const HFloat2 & sample, HFloat * pdf) const
 {
-	*wi = XMFLOAT3(-wo.x, -wo.y, wo.z);
+	*wi = HFloat3(-wo.x, -wo.y, wo.z);
 	*pdf = 1;
 
-	XMVECTOR fresV = XMLoadFloat3(&fresnel->Evaluate(CosTheta(*wi)));
-	XMVECTOR rV = XMLoadFloat3(&R);
-
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, fresV * rV / AbsCosTheta(*wi));
-	return result;
+	HFloat3 fres = fresnel->Evaluate(CosTheta(*wi));
+	return fres * R / AbsCosTheta(*wi);
 }
 
-XMCOLOR3 FresnelNoOp::Evaluate(float value) const
+HFloat3 FresnelNoOp::Evaluate(HFloat value) const
 {
-	return XMCOLOR3(1.0f, 1.0f, 1.0f);
+	return HFloat3(1.0f, 1.0f, 1.0f);
 }
 
-SpecularTransmission::SpecularTransmission(const XMCOLOR3 & T, float etaA, float etaB)
+SpecularTransmission::SpecularTransmission(const HFloat3 & T, HFloat etaA, HFloat etaB)
 	: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)),
 	T(T),
 	etaA(etaA),
@@ -319,28 +281,23 @@ SpecularTransmission::SpecularTransmission(const XMCOLOR3 & T, float etaA, float
 {
 }
 
-XMCOLOR3 SpecularTransmission::f(const XMFLOAT3 & wo, const XMFLOAT3 & wi) const
+HFloat3 SpecularTransmission::f(const HFloat3 & wo, const HFloat3 & wi) const
 {
-	return XMCOLOR3(0.0f, 0.0f, 0.0f);
+	return HFloat3(0.0f, 0.0f, 0.0f);
 }
 
-XMCOLOR3 SpecularTransmission::Sample_f(const XMFLOAT3 & wo, XMFLOAT3 * wi, const XMFLOAT2 & sample, float * pdf) const
+HFloat3 SpecularTransmission::Sample_f(const HFloat3 & wo, HFloat3 * wi, const HFloat2 & sample, HFloat * pdf) const
 {
 	bool entering = CosTheta(wo) > 0;
-	float etaI = entering ? etaA : etaB;
-	float etaT = entering ? etaB : etaA;
+	HFloat etaI = entering ? etaA : etaB;
+	HFloat etaT = entering ? etaB : etaA;
 
-	if (!Refract(wo, Faceforward(XMFLOAT3(0, 0, 1), wo), etaI / etaT, wi))
-		return XMCOLOR3(0.0f, 0.0f, 0.0f);
+	if (!Refract(wo, Faceforward(HFloat3(0, 0, 1), wo), etaI / etaT, wi))
+		return HFloat3(0.0f, 0.0f, 0.0f);
 	*pdf = 1;
 
-	XMVECTOR TV = XMLoadFloat3(&T);
-	XMVECTOR etaIV = XMVectorReplicate(etaI);
-	XMVECTOR etaTV = XMVectorReplicate(etaT);
-	XMVECTOR ftV = TV * (XMVectorReplicate(1.0f) - XMLoadFloat3(&fresnel.Evaluate(CosTheta(*wi))));
-	if (true) ftV *= (etaIV * etaIV) / (etaTV * etaTV);
+	HFloat3 ft = T * (1.0f - fresnel.Evaluate(CosTheta(*wi)));
+	if (true) ft *= (etaI * etaI) / (etaT * etaT);
 
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, ftV / XMVectorReplicate(AbsCosTheta(*wi)));
-	return result;
+	return ft / AbsCosTheta(*wi);
 }

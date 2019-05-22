@@ -10,7 +10,7 @@ public:
 	DXResource(HWND hwnd, DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
 	~DXResource();
 
-	void SetWindow(XMFLOAT2 size);
+	void SetWindow(HFloat2 size);
 
 	void CreateDeviceResources();
 	void CreateWindowSizeDependentResources();
@@ -23,8 +23,8 @@ public:
 	void UpdateRenderTargetSize();
 
 	// 呈现器目标的大小，以像素为单位。
-	void SetOutputSize(XMFLOAT2 size) { m_outputSize = size; }
-	XMFLOAT2 GetOutputSize() const { return m_outputSize; }
+	void SetOutputSize(HFloat2 size) { m_outputSize = size; }
+	HFloat2 GetOutputSize() const { return m_outputSize; }
 	
 	// D3D 访问器。
 	ID3D12Device*				GetD3DDevice() const				{ return m_d3dDevice.Get(); }
@@ -74,7 +74,7 @@ private:
 	UINT64 m_fenceValues[c_frameCount];
 	HANDLE m_fenceEvent;
 	
-	XMFLOAT2 m_d3dRenderTargetSize;
-	XMFLOAT2 m_outputSize;
+	HFloat2 m_d3dRenderTargetSize;
+	HFloat2 m_outputSize;
 };
 

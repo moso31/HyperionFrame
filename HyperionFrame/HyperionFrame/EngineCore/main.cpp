@@ -42,8 +42,8 @@ bool InitWindow()
 	int screenHeight = GetDeviceCaps(screen, VERTRES);
 	ReleaseDC(NULL, screen);
 
-	g_windowSize = XMFLOAT2(screenWidth * WINDOW_RATIO, screenHeight * WINDOW_RATIO);
-	//g_windowSize = XMFLOAT2(1366, 768);
+	g_windowSize = HFloat2(screenWidth * WINDOW_RATIO, screenHeight * WINDOW_RATIO);
+	//g_windowSize = HFloat2(1366, 768);
 
 	RECT R = { 0, 0, (int)g_windowSize.x, (int)g_windowSize.y };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);

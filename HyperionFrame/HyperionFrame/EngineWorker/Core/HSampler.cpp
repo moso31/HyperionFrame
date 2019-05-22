@@ -1,11 +1,11 @@
 #include "HSampler.h"
 
-HSampler::HSampler(int64_t samplesPerPixel) :
+HSampler::HSampler(HInt64 samplesPerPixel) :
 	samplesPerPixel(samplesPerPixel)
 {
 }
 
-void HSampler::GenerateSampleData(XMINT2 & pixel)
+void HSampler::GenerateSampleData(HInt2 & pixel)
 {
 	currentPixel = pixel;
 	currentPixelSampleIndex = 0;
@@ -17,7 +17,7 @@ bool HSampler::NextSample()
 	return currentPixelSampleIndex < samplesPerPixel;
 }
 
-bool HSampler::GotoSample(int64_t sampleIndex)
+bool HSampler::GotoSample(HInt64 sampleIndex)
 {
 	currentPixelSampleIndex = sampleIndex;
 	return currentPixelSampleIndex < samplesPerPixel;

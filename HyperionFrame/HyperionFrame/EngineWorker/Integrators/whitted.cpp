@@ -3,7 +3,7 @@
 #include "Interaction.h"
 #include "Reflection.h"
 
-XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& scene, int depth, vector<Segment>* out_debug_rayTraceData)
+HFloat3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& scene, int depth, vector<Segment>* out_debug_rayTraceData)
 {
 	bool isHit = false;
 
@@ -13,10 +13,10 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 	{
 #if _DEBUG
 		Ray r;
-		XMFLOAT3 ro, rd;
+		HFloat3 ro, rd;
 		r = ray;
-		ro = r.GetOrigin();
-		rd = r.GetDirection();
+		ro = r.origin;
+		rd = r.direction;
 		printf("Ray: orig: %.3f, %.3f, %.3f;  dir: %.3f, %.3f, %.3f\n", ro.x, ro.y, ro.z, rd.x, rd.y, rd.z);
 
 		printf("hit: name: %s, ID: %d\n", scene.primitives[hitShapeIndex]->GetName().data(), hitShapeIndex);
@@ -26,26 +26,21 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 		if (out_debug_rayTraceData)
 			out_debug_rayTraceData->push_back(seg);
 #endif
-		XMFLOAT3 wo = isect.wo;
+		HFloat3 wo = isect.wo;
 
 		isect.ComputeScatterFunctions();
 
-		XMCOLORV LV = XMVectorZero();
+		HFloat3 L(0.0f);
 		for (UINT j = 0; j < scene.lights.size(); j++)
 		{
-			XMFLOAT3 wi;
+			HFloat3 wi;
 			VisibilityTester vis;
-			XMCOLOR3 Li = scene.lights[j]->Sample_Li(isect, wi, &vis);
-			XMCOLOR3 f = isect.bsdf->f(wo, wi);
+			HFloat3 Li = scene.lights[j]->Sample_Li(isect, wi, &vis);
 
-			XMCOLORV fV = XMLoadFloat3(&f);
-			if (!XMVector3Equal(fV, XMVectorZero()) && vis.Unoccluded(scene))
+			HFloat3 f = isect.bsdf->f(wo, wi);
+			if (f != 0.0 && vis.Unoccluded(scene))
 			{
-				XMCOLORV LiV = XMLoadFloat3(&Li);
-				XMVECTOR wiV = XMLoadFloat3(&wi);
-				XMVECTOR nV = XMLoadFloat3(&isect.n);
-
-				LV += fV * LiV * XMVectorAbs(XMVector3Dot(wiV, nV));
+				L += f * Li * fabsf(wi.Dot(isect.n));
 			}
 		}
 
@@ -54,37 +49,35 @@ XMCOLOR3 WhittedIntegrator::Li(const Ray& ray, HSampler& sampler, const HScene& 
 #if _DEBUG
 			printf("R %d...\n", depth);
 #endif
-			XMCOLORV fRV = XMLoadFloat3(&SpecularReflect(ray, isect, scene, sampler, depth, out_debug_rayTraceData));
+			HFloat3 fR = SpecularReflect(ray, isect, scene, sampler, depth, out_debug_rayTraceData);
 #if _DEBUG
 			printf("T %d...\n", depth);
 #endif
-			XMCOLORV fTV = XMLoadFloat3(&SpecularTransmit(ray, isect, scene, sampler, depth, out_debug_rayTraceData));
-			LV += fRV + fTV;
+			HFloat3 fT = SpecularTransmit(ray, isect, scene, sampler, depth, out_debug_rayTraceData);
+			L += fR + fT;
 		}
 
-		XMCOLOR3 L;
-		XMStoreFloat3(&L, LV);
 		//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
 		return L;
 	}
-	return XMCOLOR3(0.0f, 0.0f, 0.0f);
+	return HFloat3(0.0f, 0.0f, 0.0f);
 }
 
-XMCOLOR3 WhittedIntegrator::SpecularReflect(const Ray & ray, const SurfaceInteraction & isect, const HScene & scene, HSampler& sampler, int depth, vector<Segment>* out_debug_rayTraceData)
+HFloat3 WhittedIntegrator::SpecularReflect(const Ray & ray, const SurfaceInteraction & isect, const HScene & scene, HSampler& sampler, int depth, vector<Segment>* out_debug_rayTraceData)
 {
-	XMFLOAT3 wo = isect.wo, wi;
-	const XMFLOAT3 &p = isect.p;
-	const XMFLOAT3 &ns = isect.n;	// 现阶段没有微表面，不考虑isect.shading
+	HFloat3 wo = isect.wo, wi;
+	const HFloat3 &p = isect.p;
+	const HFloat3 &ns = isect.n;	// 现阶段没有微表面，不考虑isect.shading
 	BSDF &bsdf = *isect.bsdf;
 
 	float pdf;
-	XMCOLOR3 f = bsdf.Sample_f(wo, &wi, sampler.Get2D(), &pdf, BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
+	HFloat3 f = bsdf.Sample_f(wo, &wi, sampler.Get2D(), &pdf, BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
 
 	XMVECTOR fV = XMLoadFloat3(&f);
 	XMVECTOR wiV = XMLoadFloat3(&wi);
 	XMVECTOR nsV = XMLoadFloat3(&ns);
 
-	XMCOLOR3 L(0.0f, 0.0f, 0.0f);
+	HFloat3 L(0.0f, 0.0f, 0.0f);
 	if (!XMVector3Equal(fV, XMVectorZero()) && XMVectorGetX(XMVectorAbs(XMVector3Dot(wiV, nsV))) > H_EPSILON)
 	{
 		Ray ray = isect.SpawnRay(wi);
@@ -96,21 +89,21 @@ XMCOLOR3 WhittedIntegrator::SpecularReflect(const Ray & ray, const SurfaceIntera
 	return L;
 }
 
-XMCOLOR3 WhittedIntegrator::SpecularTransmit(const Ray & ray, const SurfaceInteraction & isect, const HScene & scene, HSampler& sampler, int depth, vector<Segment>* out_debug_rayTraceData)
+HFloat3 WhittedIntegrator::SpecularTransmit(const Ray & ray, const SurfaceInteraction & isect, const HScene & scene, HSampler& sampler, int depth, vector<Segment>* out_debug_rayTraceData)
 {
-	XMFLOAT3 wo = isect.wo, wi;
-	const XMFLOAT3 &p = isect.p;
-	const XMFLOAT3 &ns = isect.n;	// 现阶段没有微表面，不考虑isect.shading
+	HFloat3 wo = isect.wo, wi;
+	const HFloat3 &p = isect.p;
+	const HFloat3 &ns = isect.n;	// 现阶段没有微表面，不考虑isect.shading
 	BSDF &bsdf = *isect.bsdf;
 
 	float pdf;
-	XMCOLOR3 f = bsdf.Sample_f(wo, &wi, sampler.Get2D(), &pdf, BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
+	HFloat3 f = bsdf.Sample_f(wo, &wi, sampler.Get2D(), &pdf, BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
 
 	XMVECTOR fV = XMLoadFloat3(&f);
 	XMVECTOR wiV = XMLoadFloat3(&wi);
 	XMVECTOR nsV = XMLoadFloat3(&ns);
 
-	XMCOLOR3 L(0.0f, 0.0f, 0.0f);
+	HFloat3 L(0.0f, 0.0f, 0.0f);
 	if (!XMVector3Equal(fV, XMVectorZero()) && XMVectorGetX(XMVectorAbs(XMVector3Dot(wiV, nsV))) > H_EPSILON)
 	{
 		Ray ray = isect.SpawnRay(wi);

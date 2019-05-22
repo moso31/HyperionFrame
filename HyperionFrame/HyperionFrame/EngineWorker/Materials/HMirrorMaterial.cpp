@@ -4,7 +4,7 @@ HMirrorMaterial::HMirrorMaterial()
 {
 }
 
-HMirrorMaterial::HMirrorMaterial(const XMCOLOR3 & _Kr) : 
+HMirrorMaterial::HMirrorMaterial(const HFloat3 & _Kr) : 
 	HMaterial(HMAT_MIRROR)
 {
 	Kr = _Kr;
@@ -17,11 +17,9 @@ HMirrorMaterial::~HMirrorMaterial()
 void HMirrorMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
 	si->bsdf = new BSDF(*si);
-	XMCOLOR3 r; /* = Kd->Evaluate(*si).Clamp();*/
-	XMCOLORV rV = XMVectorClamp(XMLoadFloat3(&Kr), XMVectorZero(), XMVectorReplicate(1.0f));
-	if (!XMVector3Equal(rV, XMVectorZero()))
+	HFloat3 r = Clamp(Kr, 0.0f, 1.0f); /* = Kd->Evaluate(*si).Clamp();*/
+	if (r != 0.0f)
 	{
-		XMStoreFloat3(&r, rV);
 		si->bsdf->Add(new SpecularReflection(r, new FresnelNoOp()));
 	}
 }

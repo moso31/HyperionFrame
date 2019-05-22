@@ -4,7 +4,7 @@ HGlassMaterial::HGlassMaterial()
 {
 }
 
-HGlassMaterial::HGlassMaterial(const XMCOLOR3 & _Kr, const XMCOLOR3 & _Kt, float _eta) :
+HGlassMaterial::HGlassMaterial(const HFloat3 & _Kr, const HFloat3 & _Kt, HFloat _eta) :
 	HMaterial(HMAT_GLASS)
 {
 	Kr = _Kr;
@@ -18,15 +18,14 @@ HGlassMaterial::~HGlassMaterial()
 
 void HGlassMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
-	XMFLOAT3 R = Kr, T = Kt;
-	XMCOLORV RV = XMVectorClamp(XMLoadFloat3(&R), XMVectorZero(), XMVectorReplicate(1.0f));
-	XMCOLORV TV = XMVectorClamp(XMLoadFloat3(&T), XMVectorZero(), XMVectorReplicate(1.0f));
+	HFloat3 R = Clamp(Kr, 0.0f, 1.0f);
+	HFloat3 T = Clamp(Kt, 0.0f, 1.0f);
 
 	si->bsdf = new BSDF(*si, eta);
 
 	Fresnel *fresnel = new FresnelDielectric(1.0f, eta);
-	if (!XMVector3Equal(RV, XMVectorZero()))
+	if (R != 0.0)
 		si->bsdf->Add(new SpecularReflection(R, fresnel));
-	if (!XMVector3Equal(TV, XMVectorZero()))
+	if (T != 0.0)
 		si->bsdf->Add(new SpecularTransmission(T, 1.0f, eta));
 }

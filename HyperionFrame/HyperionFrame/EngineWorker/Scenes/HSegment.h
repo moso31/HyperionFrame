@@ -10,7 +10,7 @@ public:
 
 	ePrimitiveType GetType() { return SEGMENT; }
 
-	void InitParameters(XMFLOAT3 point1, XMFLOAT3 point2);
+	void InitParameters(HFloat3 point1, HFloat3 point2);
 
 	void Update();
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);

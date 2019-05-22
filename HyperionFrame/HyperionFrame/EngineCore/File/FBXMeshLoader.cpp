@@ -60,27 +60,27 @@ namespace FBXMeshLoader
 	void DisplayGeometricTransform(FbxNode * pNode, shared_ptr<HMesh>& pEngineMesh)
 	{
 		FbxVector4 lTmpVector;
-		XMFLOAT4 vec = XMFLOAT4();
+		HFloat4 vec = HFloat4();
 
 		//
 		// Translation
 		//
 		lTmpVector = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
-		vec = ReadXMFLOAT4(lTmpVector);
+		vec = ReadHFLOAT4(lTmpVector);
 		pEngineMesh->SetTranslation(vec.x, vec.y, vec.z);
 
 		//
 		// Rotation
 		//
 		lTmpVector = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
-		vec = ReadXMFLOAT4(lTmpVector);
+		vec = ReadHFLOAT4(lTmpVector);
 		pEngineMesh->SetRotation(vec.x, vec.y, vec.z);
 
 		//
 		// Scaling
 		//
 		lTmpVector = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
-		vec = ReadXMFLOAT4(lTmpVector);
+		vec = ReadHFLOAT4(lTmpVector);
 		pEngineMesh->SetScale(vec.x, vec.y, vec.z);
 	}
 
@@ -132,7 +132,7 @@ namespace FBXMeshLoader
 			for (j = 0; j < lPolygonSize; j++)
 			{
 				int lControlPointIndex = pMesh->GetPolygonVertex(i, j);
-				vertex.pos = ReadXMFLOAT3(lControlPoints[lControlPointIndex]);
+				vertex.pos = ReadHFLOAT3(lControlPoints[lControlPointIndex]);
 
 				for (l = 0; l < pMesh->GetElementVertexColorCount(); l++)
 				{
@@ -198,12 +198,12 @@ namespace FBXMeshLoader
 						switch (leUV->GetReferenceMode())
 						{
 						case FbxGeometryElement::eDirect:
-							vertex.uv = ReadXMFLOAT2(leUV->GetDirectArray().GetAt(lControlPointIndex));
+							vertex.uv = ReadHFLOAT2(leUV->GetDirectArray().GetAt(lControlPointIndex));
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
 							int id = leUV->GetIndexArray().GetAt(lControlPointIndex);
-							vertex.uv = ReadXMFLOAT2(leUV->GetDirectArray().GetAt(id));
+							vertex.uv = ReadHFLOAT2(leUV->GetDirectArray().GetAt(id));
 						}
 						break;
 						default:
@@ -219,7 +219,7 @@ namespace FBXMeshLoader
 						case FbxGeometryElement::eDirect:
 						case FbxGeometryElement::eIndexToDirect:
 						{
-							vertex.uv = ReadXMFLOAT2(leUV->GetDirectArray().GetAt(lTextureUVIndex));
+							vertex.uv = ReadHFLOAT2(leUV->GetDirectArray().GetAt(lTextureUVIndex));
 						}
 						break;
 						default:
@@ -244,12 +244,12 @@ namespace FBXMeshLoader
 						switch (leNormal->GetReferenceMode())
 						{
 						case FbxGeometryElement::eDirect:
-							vertex.norm = ReadXMFLOAT3(leNormal->GetDirectArray().GetAt(vertexId));
+							vertex.norm = ReadHFLOAT3(leNormal->GetDirectArray().GetAt(vertexId));
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
 							int id = leNormal->GetIndexArray().GetAt(vertexId);
-							vertex.norm = ReadXMFLOAT3(leNormal->GetDirectArray().GetAt(id));
+							vertex.norm = ReadHFLOAT3(leNormal->GetDirectArray().GetAt(id));
 						}
 						break;
 						default:

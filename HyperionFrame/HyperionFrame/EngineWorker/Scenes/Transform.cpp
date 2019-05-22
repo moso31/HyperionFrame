@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-Transform::Transform(XMFLOAT3 _translation, XMFLOAT3 _rotation, XMFLOAT3 _scale) :
+Transform::Transform(HFloat3 _translation, HFloat3 _rotation, HFloat3 _scale) :
 	translation(_translation),
 	rotation(_rotation),
 	scale(_scale)
@@ -9,27 +9,26 @@ Transform::Transform(XMFLOAT3 _translation, XMFLOAT3 _rotation, XMFLOAT3 _scale)
 
 void Transform::UpdateTransformData()
 {
-	XMVECTOR vTran = XMLoadFloat3(&translation);
-	XMVECTOR vRota = XMLoadFloat3(&rotation);
-	XMVECTOR vScal = XMLoadFloat3(&scale);
+	HFloat4x4 mxS, mxR, mxT;
+	mxS.SetScale(scale);
+	mxR.SetRotationXYZ(rotation);
+	mxT.SetTranslation(translation);
 
-	XMMATRIX mxObject2World = XMMatrixScalingFromVector(vScal) * XMMatrixRotationRollPitchYawFromVector(vRota) * XMMatrixTranslationFromVector(vTran);
-
-	XMStoreFloat4x4(&worldMatrix, mxObject2World);
-	XMStoreFloat4x4(&worldMatrixInv, XMMatrixInverse(&XMMatrixDeterminant(mxObject2World), mxObject2World));
+	worldMatrix = mxS * mxR * mxT;
+	worldMatrixInv = worldMatrix.Inverse();
 }
 
-XMFLOAT3 Transform::GetTranslation()
+HFloat3 Transform::GetTranslation()
 {
 	return translation;
 }
 
-XMFLOAT3 Transform::GetRotation()
+HFloat3 Transform::GetRotation()
 {
 	return rotation;
 }
 
-XMFLOAT3 Transform::GetScale()
+HFloat3 Transform::GetScale()
 {
 	return scale;
 }
@@ -54,12 +53,12 @@ Transform Transform::GetTransform()
 	return Transform(*this);
 }
 
-XMFLOAT4X4 Transform::GetObject2World()
+HFloat4x4 Transform::GetObject2World()
 {
 	return worldMatrix;
 }
 
-XMFLOAT4X4 Transform::GetWorld2Object()
+HFloat4x4 Transform::GetWorld2Object()
 {
 	return worldMatrixInv;
 }

@@ -72,7 +72,7 @@ shared_ptr<HMesh> HSceneManager::CreateMesh(string name, string filepath)
 	return mesh;
 }
 
-shared_ptr<HSegment> HSceneManager::CreateSegment(string name, XMFLOAT3 point1, XMFLOAT3 point2)
+shared_ptr<HSegment> HSceneManager::CreateSegment(string name, HFloat3 point1, HFloat3 point2)
 {
 	auto segment = make_shared<HSegment>(m_dxResources);
 	segment->InitParameters(point1, point2);
@@ -100,21 +100,21 @@ shared_ptr<HPointLight> HSceneManager::CreatePointLight()
 	return pointLight;
 }
 
-shared_ptr<HMatteMaterial> HSceneManager::CreateMatteMaterial(const XMCOLOR3& kd, const float sigma)
+shared_ptr<HMatteMaterial> HSceneManager::CreateMatteMaterial(const HFloat3& kd, const float sigma)
 {
 	auto mat = make_shared<HMatteMaterial>(kd, sigma);
 	m_pTargetScene->materials.push_back(mat);
 	return mat;
 }
 
-shared_ptr<HMirrorMaterial> HSceneManager::CreateMirrorMaterial(const XMCOLOR3 & kr)
+shared_ptr<HMirrorMaterial> HSceneManager::CreateMirrorMaterial(const HFloat3 & kr)
 {
 	auto mat = make_shared<HMirrorMaterial>(kr);
 	m_pTargetScene->materials.push_back(mat);
 	return mat;
 }
 
-shared_ptr<HGlassMaterial> HSceneManager::CreateGlassMaterial(const XMCOLOR3 & Kr, const XMCOLOR3 & Kt, const float eta)
+shared_ptr<HGlassMaterial> HSceneManager::CreateGlassMaterial(const HFloat3 & Kr, const HFloat3 & Kt, const float eta)
 {
 	auto mat = make_shared<HGlassMaterial>(Kr, Kt, eta);
 	m_pTargetScene->materials.push_back(mat);

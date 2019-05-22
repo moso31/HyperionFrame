@@ -23,8 +23,8 @@ public:
 
 	// 获取该材质的漫反射颜色
 	// 默认显示50%灰色，用于镜面等不具备漫反射的物体。
-	virtual XMCOLOR3 GetDiffuse() { return XMFLOAT3(0.5f, 0.5f, 0.5f); }
-	virtual void SetDiffuse(XMCOLOR3 diffuse) {};
+	virtual HFloat3 GetDiffuse() { return HFloat3(0.5f, 0.5f, 0.5f); }
+	virtual void SetDiffuse(HFloat3 diffuse) {};
 
 private:
 	eMaterialType m_type;

@@ -35,7 +35,7 @@ LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-void App::Init(XMFLOAT2 windowSize)
+void App::Init(HFloat2 windowSize)
 {
 	SetWindow(windowSize);
 	CreateRenderers();
@@ -70,7 +70,7 @@ bool App::Render()
 	return m_sceneRenderer->Render();
 }
 
-void App::SetWindow(XMFLOAT2 size)
+void App::SetWindow(HFloat2 size)
 {
 	m_dxResources->SetWindow(size);
 }

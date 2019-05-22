@@ -86,7 +86,7 @@ void HScene::InitPrimitiveData()
 	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
 	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
-	XMCOLOR3 red = { 1.0f, 0.0f, 0.0f },
+	HFloat3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
 		blue = { 0.0f, 0.0f, 1.0f },
 		yellow = { 1.0f, 1.0f, 0.0f },
@@ -158,11 +158,11 @@ void HScene::InitPrimitiveData()
 
 	//for (float i = 0.0f; i < 3.0f; i++)
 	//{
-	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3( 10.0f, i,  10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3( 10.0f, i, -10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3(-10.0f, i,  10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3(-10.0f, i, -10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", XMFLOAT3(0.0f, i, 0.0f), XMFLOAT3(-10.0f, i, -10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3( 10.0f, i,  10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3( 10.0f, i, -10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3(-10.0f, i,  10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3(-10.0f, i, -10.0f));
+	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3(-10.0f, i, -10.0f));
 	//	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pLine);
 	//}
 
@@ -186,7 +186,7 @@ void HScene::InitPrimitiveData()
 	}
 
 	auto pointLight = m_sceneManager->CreatePointLight();
-	XMFLOAT3 lightPos = { 0.0f, 10.0f, 5.0f };
+	HFloat3 lightPos = { 0.0f, 10.0f, 5.0f };
 	pointLight->SetTranslation(lightPos.x, lightPos.y, lightPos.z);
 	float brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
@@ -286,7 +286,7 @@ void HScene::OnMouseDown(HEventArg eArg)
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;
 	vector<Segment> rayTracePath;
-	XMCOLOR3 L = whi.Li(ray, *sampler, *this, 0, &rayTracePath);
+	HFloat3 L = whi.Li(ray, *sampler, *this, 0, &rayTracePath);
 
 #ifdef _DEBUG
 	//for (int i = 0; i < rayTracePath.size(); i++)
@@ -307,7 +307,7 @@ void HScene::OnKeyDown(HEventArg eArg)
 	//	pShape->SetTranslation(-3.0f, 2.5f, -4.0f + xxxxx * 1.0f);
 	//	pShape->SetScale(5.0f, 5.0f, 5.0f);
 	//	pShape->SetRotation(0.0f, -0.3f, 0.0f);
-	//	pShape->SetMaterial(m_sceneManager->CreateMatteMaterial(XMFLOAT3(1.0f, 0.8f, 0.6f), 90.0f));
+	//	pShape->SetMaterial(m_sceneManager->CreateMatteMaterial(HFloat3(1.0f, 0.8f, 0.6f), 90.0f));
 	//	return;
 	//}
 
@@ -335,9 +335,9 @@ bool HScene::IntersectP(Ray worldRay) const
 
 void HScene::MakeBMPImage()
 {
-	XMINT2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
-	XMINT2 tileSingleSize(32, 32);
-	XMINT2 tileCount(screenSize.x / tileSingleSize.x + 1, screenSize.y / tileSingleSize.y + 1);
+	HInt2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
+	HInt2 tileSingleSize(32, 32);
+	HInt2 tileCount(screenSize.x / tileSingleSize.x + 1, screenSize.y / tileSingleSize.y + 1);
 	int tileSampleCount = tileCount.x * tileCount.y;
 	int sampleCount = screenSize.x * screenSize.y;
 
@@ -378,16 +378,16 @@ void HScene::MakeBMPImage()
 	printf("done. ”√ ±£∫%.2f √Î\n", (float)(time_ed - time_st) / 1000.0f);
 }
 
-void HScene::MakeBMPImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSampleCount, ImageBMPData* pRGB)
+void HScene::MakeBMPImageTile(int tileX, int tileY, HInt2 tilesize, int tileSampleCount, ImageBMPData* pRGB)
 {
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 
-	XMINT2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
+	HInt2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
 	for (int i = 0; i < tilesize.x; i++)
 	{
 		for (int j = 0; j < tilesize.y; j++)
 		{
-			XMINT2 pixel(tileX * tilesize.x + i, tileY * tilesize.y + j);
+			HInt2 pixel(tileX * tilesize.x + i, tileY * tilesize.y + j);
 			
 			if (pixel.y >= screenSize.y || pixel.x >= screenSize.x)
 				continue;
@@ -397,21 +397,18 @@ void HScene::MakeBMPImageTile(int tileX, int tileY, XMINT2 tilesize, int tileSam
 			//printf("%d %d\n", x, y);
 			tileSampler->GenerateSampleData(pixel);
 
-			XMCOLORV LV = XMVectorZero();
+			HFloat3 L(0.0f);
 			do
 			{
 				Ray ray = m_mainCamera->GenerateRay((float)pixel.x, (float)pixel.y);
 				WhittedIntegrator whi;
-				XMCOLOR3 L = whi.Li(ray, *tileSampler, *this, 0, nullptr);
+				L += whi.Li(ray, *tileSampler, *this, 0, nullptr);
 				//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
-				LV += XMLoadFloat3(&L);
 			} while (tileSampler->NextSample());
 
-			XMFLOAT3 result;
-			XMStoreFloat3(&result, LV);
-			XMINT3 resultRGB(result.x > 1.0f ? 255 : (int)(result.x * 255.0f),
-				result.y > 1.0f ? 255 : (int)(result.y * 255.0f),
-				result.z > 1.0f ? 255 : (int)(result.z * 255.0f));
+			HInt3 resultRGB(L.x > 1.0f ? 255 : (int)(L.x * 255.0f),
+				L.y > 1.0f ? 255 : (int)(L.y * 255.0f),
+				L.z > 1.0f ? 255 : (int)(L.z * 255.0f));
 			
 			int rgbIdx = (screenSize.y - pixel.y - 1) * screenSize.x + pixel.x;
 			pRGB[rgbIdx].r += resultRGB.x;

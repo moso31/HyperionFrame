@@ -28,7 +28,7 @@ public:
 	XMFLOAT3 GetAt();
 	XMFLOAT3 GetUp();
 
-	XMFLOAT4X4 GetViewToWorld(XMMATRIX& out_mxResult);
+	HFloat4x4 GetViewToWorld(XMMATRIX& out_mxResult);
 	Ray GenerateRay(float screenX, float screenY);
 
 	virtual UINT GetAlignedConstantBufferSize();
@@ -39,8 +39,8 @@ private:
 
 	D3D12_RECT m_scissorRect;
 
-	XMFLOAT4X4 m_projectionMatrix;
-	XMFLOAT4X4 m_viewMatrix;
+	HFloat4x4 m_projectionMatrix;
+	HFloat4x4 m_viewMatrix;
 
 	float m_fovY;
 	float m_nearZ, m_farZ;
