@@ -4,9 +4,9 @@
 class HFloat2
 {
 public:
-	HFloat2() {}
-	HFloat2(HFloat value) : x(value), y(value) {}
-	HFloat2(HFloat x, HFloat y) : x(x), y(y) {}
+	HFloat2() = default;
+	HFloat2(HFloat value);
+	HFloat2(HFloat x, HFloat y);
 	HFloat2(const HFloat2& v);
 	HFloat2(const HFloat3& v);
 	HFloat2(const HFloat4& v);
@@ -61,9 +61,9 @@ public:
 class HFloat3
 {
 public:
-	HFloat3() {}
-	HFloat3(HFloat value) : x(value), y(value), z(value) {}
-	HFloat3(HFloat x, HFloat y, HFloat z) : x(x), y(y), z(z) {}
+	HFloat3() = default;
+	HFloat3(HFloat value);
+	HFloat3(HFloat x, HFloat y, HFloat z);
 	HFloat3(const HFloat2& v, const HFloat z);
 	HFloat3(const HFloat3& v);
 	HFloat3(const HFloat4& v);
@@ -122,9 +122,9 @@ public:
 class HFloat4
 {
 public:
-	HFloat4() {}
-	HFloat4(HFloat value) : x(value), y(value), z(value), w(value) {}
-	HFloat4(HFloat x, HFloat y, HFloat z, HFloat w) : x(x), y(y), z(z), w(w) {}
+	HFloat4() = default;
+	HFloat4(HFloat value);
+	HFloat4(HFloat x, HFloat y, HFloat z, HFloat w);
 	HFloat4(const HFloat2& v, const HFloat z, const HFloat w);
 	HFloat4(const HFloat3& v, const HFloat w);
 	HFloat4(const HFloat4& v);
@@ -174,7 +174,7 @@ public:
 class HInt2
 {
 public:
-	HInt2() {}
+	HInt2() = default;
 	HInt2(HInt value) : x(value), y(value) {}
 	HInt2(HInt x, HInt y) : x(x), y(y) {}
 	~HInt2() {}
@@ -191,7 +191,7 @@ public:
 class HInt3
 {
 public:
-	HInt3() {}
+	HInt3() = default;
 	HInt3(HInt value) : x(value), y(value), z(value) {}
 	HInt3(HInt x, HInt y, HInt z) : x(x), y(y), z(z) {}
 	~HInt3() {}

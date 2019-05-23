@@ -3,26 +3,12 @@
 
 struct Triangle
 {
-	union
-	{
-		struct
-		{
-			HFloat3 A, B, C;
-		};
-		HFloat3 p[3];
-	};
+	HFloat3 p[3];
 };
 
 struct TriangleUV
 {
-	union
-	{
-		struct
-		{
-			HFloat2 A, B, C;
-		};
-		HFloat2 p[3];
-	};
+	HFloat2 p[3];
 };
 
 class HShape : public HPrimitive

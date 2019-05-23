@@ -29,7 +29,7 @@ void Camera::Init(HFloat fovY, HFloat nearZ, HFloat farZ)
 	D3D12_VIEWPORT viewport = m_dxResources->GetScreenViewport();
 	m_scissorRect = { 0, 0, static_cast<LONG>(viewport.Width), static_cast<LONG>(viewport.Height) };
 
-	m_projectionMatrix.SetPerspLH(fovAngleY, aspectRatio, nearZ, farZ);
+	m_projectionMatrix.SetPerspFovLH(fovAngleY, aspectRatio, nearZ, farZ);
 
 	PipelineManager::s_constantBufferData.projection = m_projectionMatrix.Transpose();
 }

@@ -36,13 +36,14 @@ HFloat4x4 HFloat4x4::operator-(const HFloat4x4 & m) const
 HFloat4x4 HFloat4x4::operator*(const HFloat4x4 & m) const
 {
 	HFloat4x4 r;
+	r.SetZero();
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 4; j++)
 		{
 			for (int k = 0; k < 4; k++)
 			{
-				r.v[i].v[j] += v[i].v[k] + m.v[k].v[j];
+				r.v[i].v[j] += v[i].v[k] * m.v[k].v[j];
 			}
 		}
 	}
@@ -331,6 +332,13 @@ HFloat4x4 HFloat4x4::SetPerspLH(const HFloat width, const HFloat height, const H
 HFloat4x4 HFloat4x4::SetPerspFovLH(const float fovY, const float aspectRatio, const float zNear, const float zFar)
 {
 	HFloat halfFov = 0.5f * fovY;
-	HFloat Height = cosf(halfFov) / sinf(halfFov);
-	return SetPerspLH(Height / aspectRatio, Height, zNear, zFar);
+	HFloat height = cosf(halfFov) / sinf(halfFov);
+	HFloat width = height / aspectRatio;
+	HFloat fRange = zFar / (zFar - zNear);
+	return Set(
+		width, 0.0f, 0.0f, 0.0f,
+		0.0f, height, 0.0f, 0.0f,
+		0.0f, 0.0f, fRange, 1.0f,
+		0.0f, 0.0f, -fRange * zNear, 0.0f
+	);
 }

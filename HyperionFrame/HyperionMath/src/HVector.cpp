@@ -2,6 +2,16 @@
 #include "HVector.h"
 #include "HMatrix.h"
 
+HFloat2::HFloat2(HFloat value) :
+	x(value), y(value)
+{
+}
+
+HFloat2::HFloat2(HFloat x, HFloat y) :
+	x(x), y(y)
+{
+}
+
 HFloat2::HFloat2(const HFloat2 & v) :
 	x(v.x), y(v.y)
 {
@@ -215,7 +225,17 @@ bool HFloat2::Equal(const HFloat2 & v, HFloat tolerance)
 		fabsf(y - v.y) < tolerance);
 }
 
-HFloat3::HFloat3(const HFloat2 & v, const HFloat z) : 
+HFloat3::HFloat3(HFloat value) :
+	x(value), y(value), z(value)
+{
+}
+
+HFloat3::HFloat3(HFloat x, HFloat y, HFloat z) :
+	x(x), y(y), z(z)
+{
+}
+
+HFloat3::HFloat3(const HFloat2 & v, const HFloat z) :
 	x(v.x), y(v.y), z(z) 
 {
 }
@@ -459,6 +479,16 @@ bool HFloat3::Equal(const HFloat3 & v, HFloat tolerance)
 	return (fabsf(x - v.x) < tolerance &&
 		fabsf(y - v.y) < tolerance &&
 		fabsf(z - v.z) < tolerance);
+}
+
+HFloat4::HFloat4(HFloat value) :
+	x(value), y(value), z(value), w(value)
+{
+}
+
+HFloat4::HFloat4(HFloat x, HFloat y, HFloat z, HFloat w) :
+	x(x), y(y), z(z), w(w)
+{
 }
 
 HFloat4::HFloat4(const HFloat2 & v, const HFloat z, const HFloat w)
