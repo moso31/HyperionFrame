@@ -300,9 +300,9 @@ HFloat4x4 HFloat4x4::SetLookToLH(const HFloat3 & eyePos, const HFloat3 & eyeDir,
 
 	return Set(
 		left.x, left.y, left.z, -left.Dot(eyePos),
-		up.x, up.y, up.z, -up.Dot(eyePos),
-		dir.x, dir.y, dir.z, -dir.Dot(eyePos),
-		0.0f, 0.0f, 0.0f, 1.0f
+		up.x,	up.y,	up.z,	-up.Dot(eyePos),
+		dir.x,	dir.y,	dir.z,	-dir.Dot(eyePos),
+		0.0f,	0.0f,	0.0f,	1.0f
 	);
 }
 

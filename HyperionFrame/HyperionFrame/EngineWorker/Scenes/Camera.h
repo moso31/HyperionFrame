@@ -25,6 +25,7 @@ public:
 	
 	HFloat3 GetForward();
 	HFloat3 GetLeft();
+	HFloat3 GetRight();
 	HFloat3 GetAt();
 	HFloat3 GetUp();
 

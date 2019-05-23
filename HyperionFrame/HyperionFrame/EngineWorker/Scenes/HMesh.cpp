@@ -36,7 +36,7 @@ void HMesh::Update()
 {
 	// 准备将更新的模型矩阵传递到着色器。
 	// 准备将更新的模型矩阵传递到着色器。
-	PipelineManager::s_constantBufferData.model;
+	PipelineManager::s_constantBufferData.model = worldMatrix;
 
 	memcpy(m_mappedConstantBuffer, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
 	memcpy(m_mappedConstantBuffer + 256, &m_cbMeshData, sizeof(m_cbMeshData));

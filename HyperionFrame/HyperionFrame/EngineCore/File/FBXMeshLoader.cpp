@@ -309,10 +309,7 @@ namespace FBXMeshLoader
 				vertexId++;
 
 				pEngineMesh->AddVertex(vertex);
-				HInt x = i * 3 + j;
 				HInt meshIdx = i * 3 + j;
-				if (j % 3 == 1) meshIdx++;
-				else if (j % 3 == 2) meshIdx--;
 				pEngineMesh->AddIndex(meshIdx);
 			} // for polygonSize
 		} // for polygonCount

@@ -14,13 +14,13 @@ void HSFirstPersonalCamera::Update()
 {
 	HFloat3 pos = m_pCamera->GetTranslation();
 	HFloat3 fw = m_pCamera->GetForward();
-	HFloat3 left = m_pCamera->GetLeft();
+	HFloat3 right = m_pCamera->GetRight();
 
 	HFloat3 moveCommandV(0.0f);
 	if (m_bMoveState[POSITIVE_Z]) moveCommandV += fw;
 	if (m_bMoveState[NEGATIVE_Z]) moveCommandV -= fw;
-	if (m_bMoveState[POSITIVE_X]) moveCommandV += left;
-	if (m_bMoveState[NEGATIVE_X]) moveCommandV -= left;
+	if (m_bMoveState[POSITIVE_X]) moveCommandV += right;
+	if (m_bMoveState[NEGATIVE_X]) moveCommandV -= right;
 	
 	HFloat3 result = pos + moveCommandV * m_fMoveSpeed;
 	m_pCamera->SetTranslation(result.x, result.y, result.z);
@@ -59,7 +59,7 @@ void HSFirstPersonalCamera::OnMouseDown(HEventArg eArg)
 void HSFirstPersonalCamera::OnMouseMove(HEventArg eArg)
 {
 	auto rot = m_pCamera->GetRotation();
-	rot.y -= (HFloat)eArg.LastX * m_fSensitivity;	// yaw
-	rot.x += (HFloat)eArg.LastY * m_fSensitivity;	// pitch
+	rot.y += (HFloat)eArg.LastX * m_fSensitivity;	// yaw
+	rot.x -= (HFloat)eArg.LastY * m_fSensitivity;	// pitch
 	m_pCamera->SetRotation(rot.x, rot.y, rot.z);
 }

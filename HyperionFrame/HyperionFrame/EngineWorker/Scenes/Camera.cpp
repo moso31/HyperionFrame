@@ -89,7 +89,7 @@ void Camera::SetLookAt(HFloat x, HFloat y, HFloat z)
 	rotation = HFloat3(
 		atan2f(-dir.y, dis),	// pitch
 		atan2f(dir.x, dir.z),	// yaw
-		0.0f				// roll
+		0.0f					// roll
 	);
 
 	m_viewMatrix.SetLookAtLH(translation, m_at, m_up);
@@ -103,6 +103,11 @@ HFloat3 Camera::GetForward()
 HFloat3 Camera::GetLeft()
 {
 	return (m_at - translation).Cross(m_up).Normalize();
+}
+
+HFloat3 Camera::GetRight()
+{
+	return (translation - m_at).Cross(m_up).Normalize();
 }
 
 HFloat3 Camera::GetAt()

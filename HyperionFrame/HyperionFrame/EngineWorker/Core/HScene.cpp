@@ -73,7 +73,7 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 void HScene::InitPrimitiveData()
 {
 	m_mainCamera = m_sceneManager->CreateCamera();
-	m_mainCamera->SetTranslation(0.0f, 0.0f, -4.0f);
+	m_mainCamera->SetTranslation(4.0f, 0.0f, 4.0f);
 	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
 	//// float percision test.
@@ -86,7 +86,7 @@ void HScene::InitPrimitiveData()
 
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
-	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
+	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
 	HFloat3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
@@ -110,11 +110,6 @@ void HScene::InitPrimitiveData()
 	
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
-
-	pShape = m_sceneManager->CreateBox("New Math Lib Test");
-	pShape->SetTranslation(1.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[1]);
-	pShape->SetScale(1.0f, 1.0f, 1.0f);
 
 	//pShape = m_sceneManager->CreateBox("wall y+");
 	//pShape->SetTranslation(0.0f, 10.6f, 0.0f);
@@ -141,11 +136,12 @@ void HScene::InitPrimitiveData()
 	//pShape->SetMaterial(mtrl[5]);
 	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
-	//pShape->SetMaterial(mtrl[6]);
+	pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
+	pShape->SetMaterial(mtrl[6]);
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	//pShape->SetScale(5.0f, 5.0f, 5.0f);
-	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	pShape->SetScale(5.0f, 5.0f, 5.0f);
+	pShape->SetRotation(0.0f, H_PIDIV4, 0.0f);
+	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//pShape = m_sceneManager->CreateBox("box big");
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
