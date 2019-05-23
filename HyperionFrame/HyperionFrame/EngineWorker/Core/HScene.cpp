@@ -82,11 +82,11 @@ void HScene::InitPrimitiveData()
 
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
 
-	//shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
+	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
 
-	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
-	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
-	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
+	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
+	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
+	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
 	HFloat3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
@@ -115,7 +115,6 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(1.0f, 0.0f, 0.0f);
 	pShape->SetMaterial(mtrl[1]);
 	pShape->SetScale(1.0f, 1.0f, 1.0f);
-	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//pShape = m_sceneManager->CreateBox("wall y+");
 	//pShape->SetTranslation(0.0f, 10.6f, 0.0f);

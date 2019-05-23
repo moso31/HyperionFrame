@@ -84,7 +84,7 @@ void Sphere::InitParameters(HFloat radius, HInt segmentHorizontal, HInt segmentV
 void Sphere::Update()
 {
 	// 准备将更新的模型矩阵传递到着色器。
-	PipelineManager::s_constantBufferData.model = worldMatrix.Transpose();
+	PipelineManager::s_constantBufferData.model;
 
 	memcpy(m_mappedConstantBuffer, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
 	memcpy(m_mappedConstantBuffer + 256, &m_cbMeshData, sizeof(m_cbMeshData));

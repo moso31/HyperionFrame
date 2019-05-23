@@ -211,7 +211,7 @@ HFloat4x4 HFloat4x4::Transpose() const
 	return HFloat4x4(_11, _21, _31, _41,
 		_12, _22, _32, _42,
 		_13, _23, _33, _43,
-		_14, _24, _33, _44);
+		_14, _24, _34, _44);
 }
 
 HFloat4x4 HFloat4x4::Inverse() const
@@ -299,10 +299,10 @@ HFloat4x4 HFloat4x4::SetLookToLH(const HFloat3 & eyePos, const HFloat3 & eyeDir,
 	HFloat3 up = dir.Cross(left);
 
 	return Set(
-		left.x, up.x, dir.x, 0.0f,
-		left.y, up.y, dir.y, 0.0f,
-		left.z, up.z, dir.z, 0.0f,
-		-left.Dot(eyePos), -up.Dot(eyePos), -dir.Dot(eyePos), 1.0f
+		left.x, left.y, left.z, -left.Dot(eyePos),
+		up.x, up.y, up.z, -up.Dot(eyePos),
+		dir.x, dir.y, dir.z, -dir.Dot(eyePos),
+		0.0f, 0.0f, 0.0f, 1.0f
 	);
 }
 
@@ -312,8 +312,8 @@ HFloat4x4 HFloat4x4::SetOrthoLH(const HFloat width, const HFloat height, const H
 	return Set(
 		2 / width, 0.0f, 0.0f, 0.0f,
 		0.0f, 2 / height, 0.0f, 0.0f,
-		0.0f, 0.0f, fRange, 0.0f,
-		0.0f, 0.0f, -fRange * zNear, 1.0f
+		0.0f, 0.0f, fRange, -fRange * zNear,
+		0.0f, 0.0f, 0.0f, 1.0f
 	);
 }
 
@@ -324,8 +324,8 @@ HFloat4x4 HFloat4x4::SetPerspLH(const HFloat width, const HFloat height, const H
 	return Set(
 		zNear2 / width, 0.0f, 0.0f, 0.0f,
 		0.0f, zNear2 / height, 0.0f, 0.0f,
-		0.0f, 0.0f, fRange, 1.0f,
-		0.0f, 0.0f, -fRange * zNear, 0.0f
+		0.0f, 0.0f, fRange, -fRange * zNear,
+		0.0f, 0.0f, 1.0f, 0.0f
 	);
 }
 
@@ -338,7 +338,7 @@ HFloat4x4 HFloat4x4::SetPerspFovLH(const float fovY, const float aspectRatio, co
 	return Set(
 		width, 0.0f, 0.0f, 0.0f,
 		0.0f, height, 0.0f, 0.0f,
-		0.0f, 0.0f, fRange, 1.0f,
-		0.0f, 0.0f, -fRange * zNear, 0.0f
+		0.0f, 0.0f, fRange, -fRange * zNear,
+		0.0f, 0.0f, 1.0f, 0.0f
 	);
 }

@@ -31,7 +31,7 @@ void Camera::Init(HFloat fovY, HFloat nearZ, HFloat farZ)
 
 	m_projectionMatrix.SetPerspFovLH(fovAngleY, aspectRatio, nearZ, farZ);
 
-	PipelineManager::s_constantBufferData.projection = m_projectionMatrix.Transpose();
+	PipelineManager::s_constantBufferData.projection = m_projectionMatrix;
 }
 
 void Camera::OnResize()
@@ -40,7 +40,7 @@ void Camera::OnResize()
 
 void Camera::Update()
 {
-	PipelineManager::s_constantBufferData.view = m_viewMatrix.Transpose();
+	PipelineManager::s_constantBufferData.view = m_viewMatrix;
 
 	m_cbEyePos.eyePos = translation;
 	memcpy(m_mappedConstantBuffer, &m_cbEyePos, sizeof(m_cbEyePos));
