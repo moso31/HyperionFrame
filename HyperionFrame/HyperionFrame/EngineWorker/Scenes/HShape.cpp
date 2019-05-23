@@ -18,14 +18,14 @@ HShape::~HShape()
 {
 }
 
-UINT HShape::GetFaceCount()
+HUInt HShape::GetFaceCount()
 {
-	return (UINT)m_indices.size() / 3;
+	return (HUInt)m_indices.size() / 3;
 }
 
-Triangle HShape::GetFace(UINT faceIndex)
+Triangle HShape::GetFace(HUInt faceIndex)
 {
-	int index = faceIndex * 3;
+	HInt index = faceIndex * 3;
 	Triangle tri;
 	tri.p[0] = m_vertices[m_indices[index]].pos;
 	tri.p[1] = m_vertices[m_indices[index + 1]].pos;
@@ -33,9 +33,9 @@ Triangle HShape::GetFace(UINT faceIndex)
 	return tri;
 }
 
-TriangleUV HShape::GetUVs(UINT faceIndex)
+TriangleUV HShape::GetUVs(HUInt faceIndex)
 {
-	int index = faceIndex * 3;
+	HInt index = faceIndex * 3;
 	TriangleUV triUV;
 	triUV.p[0] = m_vertices[m_indices[index]].uv;
 	triUV.p[1] = m_vertices[m_indices[index + 1]].uv;
@@ -49,7 +49,7 @@ void HShape::SetMaterial(shared_ptr<HMaterial> mat)
 	m_cbMeshData.vertColor = mat->GetDiffuse();
 }
 
-UINT HShape::GetAlignedConstantBufferSize()
+HUInt HShape::GetAlignedConstantBufferSize()
 {
 	return ((sizeof(ModelViewProjectionConstantBuffer) + 255) + (sizeof(CBufferMeshData) + 255)) & ~255;
 }

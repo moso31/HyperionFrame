@@ -10,10 +10,10 @@ public:
 	virtual void GenerateSampleData(HInt2& pixel);
 	virtual bool NextSample();
 	virtual bool GotoSample(HInt64 sampleNum);
-	virtual float Get1D() = 0;
+	virtual HFloat Get1D() = 0;
 	virtual HFloat2 Get2D() = 0;
 
-	virtual unique_ptr<HSampler> Clone(int seed) = 0;
+	virtual unique_ptr<HSampler> Clone(HInt seed) = 0;
 
 	const HInt64 samplesPerPixel;
 

@@ -7,9 +7,9 @@ public:
 	HFloat2() {}
 	HFloat2(HFloat value) : x(value), y(value) {}
 	HFloat2(HFloat x, HFloat y) : x(x), y(y) {}
-	HFloat2(const HFloat2& v) : x(v.x), y(v.y) {}
-	HFloat2(const HFloat3& v) : x(v.x), y(v.y) {}
-	HFloat2(const HFloat4& v) : x(v.x), y(v.y) {}
+	HFloat2(const HFloat2& v);
+	HFloat2(const HFloat3& v);
+	HFloat2(const HFloat4& v);
 	~HFloat2() {}
 
 	HFloat2 operator+ (const HFloat2& v) const;
@@ -64,9 +64,9 @@ public:
 	HFloat3() {}
 	HFloat3(HFloat value) : x(value), y(value), z(value) {}
 	HFloat3(HFloat x, HFloat y, HFloat z) : x(x), y(y), z(z) {}
-	HFloat3(const HFloat2& v, const HFloat z) : x(v.x), y(v.y), z(z) {}
-	HFloat3(const HFloat3& v) : x(v.x), y(v.y), z(v.z) {}
-	HFloat3(const HFloat4& v) : x(v.x), y(v.y), z(v.z) {}
+	HFloat3(const HFloat2& v, const HFloat z);
+	HFloat3(const HFloat3& v);
+	HFloat3(const HFloat4& v);
 	~HFloat3() {}
 
 	HFloat3 operator+ (const HFloat3& v) const;
@@ -107,6 +107,7 @@ public:
 	HFloat3 TransformCoord(const HFloat4x4& m) const;
 	HFloat3 TransformNormal(const HFloat4x4& m) const;
 	HFloat3 Permute(const HInt x, const HInt y, const HInt z) const;
+	HFloat3 Clamp(const HFloat3& min, const HFloat3& max) const;
 	bool Equal(const HFloat3& v, HFloat tolerance = H_EPSILON);
 
 public:
@@ -124,9 +125,9 @@ public:
 	HFloat4() {}
 	HFloat4(HFloat value) : x(value), y(value), z(value), w(value) {}
 	HFloat4(HFloat x, HFloat y, HFloat z, HFloat w) : x(x), y(y), z(z), w(w) {}
-	HFloat4(const HFloat2& v, const HFloat z, const HFloat w) : x(v.x), y(v.y), z(z), w(w) {}
-	HFloat4(const HFloat3& v, const HFloat w) : x(v.x), y(v.y), z(v.z), w(w) {}
-	HFloat4(const HFloat4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+	HFloat4(const HFloat2& v, const HFloat z, const HFloat w);
+	HFloat4(const HFloat3& v, const HFloat w);
+	HFloat4(const HFloat4& v);
 	~HFloat4() {}
 
 	HFloat4 operator+ (const HFloat4& v) const;

@@ -19,7 +19,7 @@ HLine::~HLine()
 {
 }
 
-UINT HLine::GetAlignedConstantBufferSize()
+HUInt HLine::GetAlignedConstantBufferSize()
 {
 	return ((sizeof(ModelViewProjectionConstantBuffer) + 255) + (sizeof(CBufferMeshData) + 255)) & ~255;
 }

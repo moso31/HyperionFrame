@@ -1,6 +1,6 @@
 #include "global.h"
 
-const float WINDOW_RATIO = 0.5f;
+const HFloat WINDOW_RATIO = 0.5f;
 
 HWND g_hWnd;
 HINSTANCE g_hInstance;

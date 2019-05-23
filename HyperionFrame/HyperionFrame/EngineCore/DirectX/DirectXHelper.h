@@ -25,9 +25,9 @@ namespace DX
 #endif
 
 	// 将使用与设备无关的像素(DIP)表示的长度转换为使用物理像素表示的长度。
-	inline float ConvertDipsToPixels(float dips, float dpi)
+	inline HFloat ConvertDipsToPixels(HFloat dips, HFloat dpi)
 	{
-		static const float dipsPerInch = 96.0f;
+		static const HFloat dipsPerInch = 96.0f;
 		return floorf(dips * dpi / dipsPerInch + 0.5f); // 舍入到最接近的整数。
 	}
 

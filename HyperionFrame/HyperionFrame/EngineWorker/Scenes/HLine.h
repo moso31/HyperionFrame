@@ -11,7 +11,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
-	virtual UINT GetAlignedConstantBufferSize();
+	virtual HUInt GetAlignedConstantBufferSize();
 
 protected:
 	shared_ptr<DXResource>		m_dxResources;

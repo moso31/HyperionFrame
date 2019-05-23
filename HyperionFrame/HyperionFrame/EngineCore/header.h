@@ -35,14 +35,14 @@ using namespace Microsoft::WRL;
 
 struct HEventArg
 {
-	USHORT X, Y;
+	HUShort X, Y;
 	union
 	{
-		USHORT VKey;
-		USHORT VMouse;
+		HUShort VKey;
+		HUShort VMouse;
 	};
 	LONG LastX, LastY;
-	USHORT VWheel;
+	HUShort VWheel;
 };
 
 class HListener;

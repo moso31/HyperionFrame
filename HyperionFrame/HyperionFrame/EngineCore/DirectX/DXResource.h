@@ -4,7 +4,7 @@
 class DXResource
 {
 public:
-	static const UINT c_frameCount = 3;		// 使用三重缓冲。
+	static const HUInt c_frameCount = 3;		// 使用三重缓冲。
 
 	DXResource() {}
 	DXResource(HWND hwnd, DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
@@ -36,7 +36,7 @@ public:
 	DXGI_FORMAT					GetBackBufferFormat() const			{ return m_backBufferFormat; }
 	DXGI_FORMAT					GetDepthBufferFormat() const		{ return m_depthBufferFormat; }
 	D3D12_VIEWPORT				GetScreenViewport() const			{ return m_screenViewport; }
-	UINT						GetCurrentFrameIndex() const		{ return m_currentFrame; }
+	HUInt						GetCurrentFrameIndex() const		{ return m_currentFrame; }
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const
 	{
@@ -51,7 +51,7 @@ public:
 private:
 	HWND m_hwnd;
 
-	UINT m_currentFrame;
+	HUInt m_currentFrame;
 
 	ComPtr<ID3D12Device> m_d3dDevice;
 	ComPtr<IDXGIFactory4> m_dxgiFactory;
@@ -66,7 +66,7 @@ private:
 	DXGI_FORMAT m_backBufferFormat;
 	DXGI_FORMAT m_depthBufferFormat;
 	D3D12_VIEWPORT m_screenViewport;
-	UINT m_rtvDescriptorSize;
+	HUInt m_rtvDescriptorSize;
 	//bool m_deviceRemoved;
 
 	// CPU/GPU 同步。

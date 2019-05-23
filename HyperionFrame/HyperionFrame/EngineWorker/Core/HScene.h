@@ -45,7 +45,7 @@ public:
 
 	// 场景射线碰撞检测。
 	// 返回较具体的内容，包括射线和相交处物体的具体信息。
-	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, int* out_hitShapeIndex, float tMax = FLT_MAX) const;
+	bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, HInt* out_hitShapeIndex, HFloat tMax = FLT_MAX) const;
 	
 	// 场景射线碰撞检测（快速）。
 	// 仅探测到是否发生碰撞即返回结果。
@@ -53,7 +53,7 @@ public:
 
 	// BMP图片生成函数。
 	void MakeBMPImage();
-	void MakeBMPImageTile(int tileX, int tileY, HInt2 tileSize, int tileSampleCount, ImageBMPData* pRGB);
+	void MakeBMPImageTile(HInt tileX, HInt tileY, HInt2 tileSize, HInt tileSampleCount, ImageBMPData* pRGB);
 
 	// 允许 场景管理器类 成为友元。
 	// 因为 场景管理器 在管理场景时，使用了一些 场景类 的私有成员变量。
@@ -96,11 +96,11 @@ private:
 	AABB				m_aabb;
 	HBVHTree*			m_bvhTree;
 
-	int					m_makingProcessIndex;
+	HInt					m_makingProcessIndex;
 	
 	// 用于存放场景内primitive的描述符堆。
 	ComPtr<ID3D12DescriptorHeap>	m_cbvHeap;
-	UINT							m_cbvDescriptorSize;
+	HUInt							m_cbvDescriptorSize;
 
 	// Hyperion 中的场景实时变更采用的方法是 延迟加载。
 	// 即新添加物体的指令当前帧并不执行，而是交由此 预载列表 按序存储。

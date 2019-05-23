@@ -2,7 +2,7 @@
 #include "global.h"
 #include "HInput.h"
 
-LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI MsgProc(HWND hWnd, HUInt msg, WPARAM wParam, LPARAM lParam)
 {
 	return g_app->MsgProc(hWnd, msg, wParam, lParam);
 }

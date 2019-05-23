@@ -1,13 +1,13 @@
 #include "HPixelSampler.h"
 #include "RandomNumberGenerator.h"
 
-HPixelSampler::HPixelSampler(int64_t samplesPerPixel, int nSampledDimensions) :
+HPixelSampler::HPixelSampler(int64_t samplesPerPixel, HInt nSampledDimensions) :
 	HSampler(samplesPerPixel)
 {
-	for (int i = 0; i < nSampledDimensions; i++)
+	for (HInt i = 0; i < nSampledDimensions; i++)
 	{
-		samples1D.push_back(std::vector<float>((UINT)samplesPerPixel));
-		samples2D.push_back(std::vector<XMFLOAT2>((UINT)samplesPerPixel));
+		samples1D.push_back(std::vector<HFloat>((HUInt)samplesPerPixel));
+		samples2D.push_back(std::vector<HFloat2>((HUInt)samplesPerPixel));
 	}
 }
 
@@ -23,16 +23,16 @@ bool HPixelSampler::GotoSample(int64_t sampleIndex)
 	return HSampler::GotoSample(sampleIndex);
 }
 
-float HPixelSampler::Get1D()
+HFloat HPixelSampler::Get1D()
 {
-	if (current1DDimension < (int)samples1D.size())
-		return samples1D[current1DDimension++][(UINT)currentPixelSampleIndex];
+	if (current1DDimension < (HInt)samples1D.size())
+		return samples1D[current1DDimension++][(HUInt)currentPixelSampleIndex];
 	else return randRange01();
 }
 
-XMFLOAT2 HPixelSampler::Get2D()
+HFloat2 HPixelSampler::Get2D()
 {
-	if (current2DDimension < (int)samples2D.size())
-		return samples2D[current2DDimension++][(UINT)currentPixelSampleIndex];
-	else return XMFLOAT2(randRange01(), randRange01());
+	if (current2DDimension < (HInt)samples2D.size())
+		return samples2D[current2DDimension++][(HUInt)currentPixelSampleIndex];
+	else return HFloat2(randRange01(), randRange01());
 }

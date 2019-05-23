@@ -13,9 +13,9 @@ public:
 	HFloat3 GetTranslation();
 	HFloat3 GetRotation();
 	HFloat3 GetScale();
-	virtual void SetTranslation(float x, float y, float z);
-	virtual void SetRotation(float x, float y, float z);
-	void SetScale(float x, float y, float z);
+	virtual void SetTranslation(HFloat x, HFloat y, HFloat z);
+	virtual void SetRotation(HFloat x, HFloat y, HFloat z);
+	void SetScale(HFloat x, HFloat y, HFloat z);
 
 	Transform	GetTransform();
 	HFloat4x4	GetObject2World();

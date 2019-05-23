@@ -18,7 +18,7 @@ HMatteMaterial::~HMatteMaterial()
 void HMatteMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
 	si->bsdf = new BSDF(*si);
-	HFloat3 r = Clamp(Kd, 0.0f, 1.0f); /* r = Kd->Evaluate(*si).Clamp();*/
+	HFloat3 r = Kd.Clamp(0.0f, 1.0f);	//Kd->Evaluate(*si).Clamp();
 	HFloat sig = Clamp(sigma/*->Evaluate(*si)*/, 0.0f, 90.0f);
 	if (r != 0.0f)
 	{

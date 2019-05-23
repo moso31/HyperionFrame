@@ -85,7 +85,7 @@ HFloat AABB::GetSurfaceArea()
 	return (v.x * v.y + v.y * v.z + v.x * v.z) * 2.0f;
 }
 
-int AABB::GetMaximumExtent()
+HInt AABB::GetMaximumExtent()
 {
 	HFloat3 dim = GetExtent();
 	if (dim.x > dim.y)

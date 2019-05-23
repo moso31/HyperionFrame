@@ -10,7 +10,7 @@ HSTest::HSTest(shared_ptr<HObject> pObject) :
 void HSTest::Update()
 {
 	auto pTransformData = dynamic_pointer_cast<Transform>(m_pObject);
-	XMFLOAT3 rot = pTransformData->GetRotation();
+	HFloat3 rot = pTransformData->GetRotation();
 	rot.y += 0.05f;
 	pTransformData->SetRotation(rot.x, rot.y, rot.z);
 }

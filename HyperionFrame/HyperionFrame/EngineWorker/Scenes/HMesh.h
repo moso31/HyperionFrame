@@ -11,7 +11,7 @@ public:
 	ePrimitiveType GetType() { return BOX; }
 
 	void AddVertex(VertexPNT vertex) { m_vertices.push_back(vertex); }
-	void AddIndex(USHORT index) { m_indices.push_back(index); }
+	void AddIndex(HUShort index) { m_indices.push_back(index); }
 	void InitParameters(string filepath);
 
 	void Update();

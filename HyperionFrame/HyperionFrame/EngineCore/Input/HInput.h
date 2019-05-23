@@ -14,14 +14,14 @@ public:
 	HInput();
 	~HInput();
 
-	bool KeyDown(int key);
-	bool Key(int key);
-	bool KeyUp(int key);
-	bool MouseDown(int key);
-	bool MousePressing(int key);
-	bool MouseUp(int key);
-	XMINT2 MouseMove();
-	XMINT2 MousePosition();	// 获取鼠标在当前客户端的位置（左上角0,0）
+	bool KeyDown(HInt key);
+	bool Key(HInt key);
+	bool KeyUp(HInt key);
+	bool MouseDown(HInt key);
+	bool MousePressing(HInt key);
+	bool MouseUp(HInt key);
+	HInt2 MouseMove();
+	HInt2 MousePosition();	// 获取鼠标在当前客户端的位置（左上角0,0）
 	void RestoreData();
 
 	void Update();
@@ -38,6 +38,6 @@ private:
 	bool m_mouseState[256];
 	bool m_mouseActivite[256];
 
-	XMINT2 m_mouseMove;
+	HInt2 m_mouseMove;
 };
 

@@ -4,14 +4,14 @@
 class HPixelSampler : public HSampler
 {
 public:
-	HPixelSampler(int64_t samplesPerPixel, int nSampledDimensions);
+	HPixelSampler(int64_t samplesPerPixel, HInt nSampledDimensions);
 	bool NextSample();
 	bool GotoSample(int64_t sampleIndex);
-	float Get1D();
-	XMFLOAT2 Get2D();
+	HFloat Get1D();
+	HFloat2 Get2D();
 
 protected:
-	std::vector<std::vector<float>> samples1D;
-	std::vector<std::vector<XMFLOAT2>> samples2D;
-	int current1DDimension = 0, current2DDimension = 0;
+	std::vector<std::vector<HFloat>> samples1D;
+	std::vector<std::vector<HFloat2>> samples2D;
+	HInt current1DDimension = 0, current2DDimension = 0;
 };

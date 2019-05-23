@@ -31,7 +31,7 @@ public:
 	HFloat4x4 GetViewToWorld(HFloat4x4& out_mxResult);
 	Ray GenerateRay(HFloat screenX, HFloat screenY);
 
-	virtual UINT GetAlignedConstantBufferSize();
+	virtual HUInt GetAlignedConstantBufferSize();
 	virtual void SetCameraBuffer();
 
 private:

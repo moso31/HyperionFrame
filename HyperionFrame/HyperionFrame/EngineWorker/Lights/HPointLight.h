@@ -9,7 +9,7 @@ public:
 
 	HFloat3 GetIntensity() { return m_intensityColor; }
 	void SetIntensity(HFloat3 value) { m_intensityColor = value; }
-	void SetIntensity(float R, float G, float B) { m_intensityColor = { R, G, B }; }
+	void SetIntensity(HFloat R, HFloat G, HFloat B) { m_intensityColor = { R, G, B }; }
 
 	HFloat3 Sample_Li(const Interaction& isect, HFloat3& out_wi, VisibilityTester* out_vis);
 

@@ -17,43 +17,43 @@ Sphere::~Sphere()
 {
 }
 
-void Sphere::InitParameters(float radius, int segmentHorizontal, int segmentVertical)
+void Sphere::InitParameters(HFloat radius, HInt segmentHorizontal, HInt segmentVertical)
 {
-	int currVertIdx = 0;
-	for (int i = 0; i < segmentVertical; i++)
+	HInt currVertIdx = 0;
+	for (HInt i = 0; i < segmentVertical; i++)
 	{
-		float yDown = ((float)i / (float)segmentVertical * 2.0f - 1.0f) * radius;
-		float yUp = ((float)(i + 1) / (float)segmentVertical * 2.0f - 1.0f) * radius;
-		float radiusDown = sqrtf(radius * radius - yDown * yDown);
-		float radiusUp = sqrtf(radius * radius - yUp * yUp);
+		HFloat yDown = ((HFloat)i / (HFloat)segmentVertical * 2.0f - 1.0f) * radius;
+		HFloat yUp = ((HFloat)(i + 1) / (HFloat)segmentVertical * 2.0f - 1.0f) * radius;
+		HFloat radiusDown = sqrtf(radius * radius - yDown * yDown);
+		HFloat radiusUp = sqrtf(radius * radius - yUp * yUp);
 
-		for (int j = 0; j < segmentHorizontal; j++)
+		for (HInt j = 0; j < segmentHorizontal; j++)
 		{
-			float segNow = (float)j / (float)segmentHorizontal;
-			float segNext = (float)(j + 1) / (float)segmentHorizontal;
-			float angleNow = segNow * XM_2PI;
-			float angleNext = segNext * XM_2PI;
-			float xNow = sin(angleNow);
-			float zNow = cos(angleNow);
-			float xNext = sin(angleNext);
-			float zNext = cos(angleNext);
+			HFloat segNow = (HFloat)j / (HFloat)segmentHorizontal;
+			HFloat segNext = (HFloat)(j + 1) / (HFloat)segmentHorizontal;
+			HFloat angleNow = segNow * H_2PI;
+			HFloat angleNext = segNext * H_2PI;
+			HFloat xNow = sin(angleNow);
+			HFloat zNow = cos(angleNow);
+			HFloat xNext = sin(angleNext);
+			HFloat zNext = cos(angleNext);
 
-			XMFLOAT3 pNowUp = { xNow * radiusUp, yUp, zNow * radiusUp };
-			XMFLOAT3 pNextUp = { xNext * radiusUp, yUp, zNext * radiusUp };
-			XMFLOAT3 pNowDown = { xNow * radiusDown, yDown, zNow * radiusDown };
-			XMFLOAT3 pNextDown = { xNext * radiusDown, yDown, zNext * radiusDown };
+			HFloat3 pNowUp = { xNow * radiusUp, yUp, zNow * radiusUp };
+			HFloat3 pNextUp = { xNext * radiusUp, yUp, zNext * radiusUp };
+			HFloat3 pNowDown = { xNow * radiusDown, yDown, zNow * radiusDown };
+			HFloat3 pNextDown = { xNext * radiusDown, yDown, zNext * radiusDown };
 
-			XMFLOAT2 uvNowUp = { segNow, yUp };
-			XMFLOAT2 uvNextUp = { segNext, yUp };
-			XMFLOAT2 uvNowDown = { segNow, yDown };
-			XMFLOAT2 uvNextDown = { segNext, yDown };
+			HFloat2 uvNowUp = { segNow, yUp };
+			HFloat2 uvNextUp = { segNext, yUp };
+			HFloat2 uvNowDown = { segNow, yDown };
+			HFloat2 uvNextDown = { segNext, yDown };
 
-			float invRadius = 1.0f / radius;
-			XMFLOAT3 nNowUp, nNowDown, nNextUp, nNextDown;
-			XMStoreFloat3(&nNowUp, XMLoadFloat3(&pNowUp) * invRadius);
-			XMStoreFloat3(&nNextUp, XMLoadFloat3(&pNextUp) * invRadius);
-			XMStoreFloat3(&nNowDown, XMLoadFloat3(&pNowDown) * invRadius);
-			XMStoreFloat3(&nNextDown, XMLoadFloat3(&pNextDown) * invRadius);
+			HFloat invRadius = 1.0f / radius;
+			HFloat3 nNowUp, nNowDown, nNextUp, nNextDown;
+			nNowUp = pNowUp * invRadius;
+			nNextUp = pNextUp * invRadius;
+			nNowDown = pNowDown * invRadius;
+			nNextDown = pNextDown * invRadius;
 
 			m_vertices.push_back({ pNowUp,		nNowUp,		uvNowUp });
 			m_vertices.push_back({ pNextUp,		nNextUp,	uvNextUp });
@@ -71,7 +71,7 @@ void Sphere::InitParameters(float radius, int segmentHorizontal, int segmentVert
 		}
 	}
 
-	for (int i = 0; i < m_vertices.size(); i++)
+	for (HInt i = 0; i < m_vertices.size(); i++)
 	{
 		m_aabb.Merge(m_vertices[i].pos);
 	}
@@ -84,7 +84,7 @@ void Sphere::InitParameters(float radius, int segmentHorizontal, int segmentVert
 void Sphere::Update()
 {
 	// 准备将更新的模型矩阵传递到着色器。
-	XMStoreFloat4x4(&PipelineManager::s_constantBufferData.model, XMMatrixTranspose(XMLoadFloat4x4(&GetObject2World())));
+	PipelineManager::s_constantBufferData.model = worldMatrix.Transpose();
 
 	memcpy(m_mappedConstantBuffer, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
 	memcpy(m_mappedConstantBuffer + 256, &m_cbMeshData, sizeof(m_cbMeshData));
@@ -96,17 +96,13 @@ void Sphere::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	//pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
 	pCommandList->IASetIndexBuffer(&m_indexBufferView);
-	pCommandList->DrawIndexedInstanced((UINT)m_indices.size(), 1, 0, 0, 0);
+	pCommandList->DrawIndexedInstanced((HUInt)m_indices.size(), 1, 0, 0, 0);
 }
 
 bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit)
 {
-	XMMATRIX mxObject2World = XMLoadFloat4x4(&GetObject2World());
-	XMMATRIX mxWorld2Object = XMLoadFloat4x4(&GetWorld2Object());
-
-	XMFLOAT3 ro, rd;
-	XMStoreFloat3(&ro, XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), mxWorld2Object));
-	XMStoreFloat3(&rd, XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), mxWorld2Object));
+	HFloat3 ro = worldRay.origin.TransformCoord(worldMatrixInv);
+	HFloat3 rd = worldRay.direction.TransformNormal(worldMatrixInv);
 	Ray ray(ro, rd);
 
 	EFloat dx(rd.x), dy(rd.y), dz(rd.z);
@@ -131,39 +127,31 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_
 	}
 	*out_tHit = tShapeHit;
 
-	XMFLOAT3 pHit = ray.GetT(tShapeHit.v);
-	XMVECTOR pHitV = XMLoadFloat3(&pHit);
-	pHitV *= XMVectorReplicate(m_radius) / XMVector3Length(pHitV);
-	XMStoreFloat3(&pHit, pHitV);
+	HFloat3 pHit = ray.GetT(tShapeHit.v);
+	pHit *= m_radius / pHit.Length();
 	
-	float phi = atan2(XMVectorGetY(pHitV), XMVectorGetX(pHitV));
+	HFloat phi = atan2(pHit.y, pHit.x);
 	if (phi < 0.0f) phi += H_2PI;
 
-	float u = phi / H_2PI;
-	float theta = acos(Clamp(pHit.z / m_radius, -1.0f, 1.0f));
-	float v = theta / H_PI;
+	HFloat u = phi / H_2PI;
+	HFloat theta = acos(Clamp(pHit.z / m_radius, -1.0f, 1.0f));
+	HFloat v = theta / H_PI;
 
-	float zRadius = std::sqrt(pHit.x * pHit.x + pHit.y * pHit.y);
-	float invZRadius = 1.0f / zRadius;
-	float cosPhi = pHit.x * invZRadius;
-	float sinPhi = pHit.y * invZRadius;
-	XMFLOAT3 dpdu(-H_2PI * pHit.y, H_2PI * pHit.x, 0.0f);
-	XMFLOAT3 dpdv = XMFLOAT3(H_PI * pHit.z * cosPhi, H_PI * pHit.z * sinPhi, H_PI * -m_radius * std::sin(theta));
+	HFloat zRadius = std::sqrt(pHit.x * pHit.x + pHit.y * pHit.y);
+	HFloat invZRadius = 1.0f / zRadius;
+	HFloat cosPhi = pHit.x * invZRadius;
+	HFloat sinPhi = pHit.y * invZRadius;
+	HFloat3 dpdu(-H_2PI * pHit.y, H_2PI * pHit.x, 0.0f);
+	HFloat3 dpdv = HFloat3(H_PI * pHit.z * cosPhi, H_PI * pHit.z * sinPhi, H_PI * -m_radius * std::sin(theta));
 
 	{
-		XMVECTOR pV = XMVector3TransformCoord(XMLoadFloat3(&pHit), mxObject2World);
-		XMVECTOR woV = XMVector3Normalize(XMVector3TransformNormal(-XMLoadFloat3(&rd), mxObject2World));
-		XMVECTOR dpduV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&dpdu), mxObject2World));
-		XMVECTOR dpdvV = XMVector3Normalize(XMVector3TransformNormal(XMLoadFloat3(&dpdv), mxObject2World));
-		XMVECTOR nV = XMVector3Normalize(XMVector3Cross(dpdvV, dpduV));
-
 		SurfaceInteraction isect;
-		XMStoreFloat3(&isect.p, pV);
-		XMStoreFloat3(&isect.n, nV);
-		XMStoreFloat3(&isect.wo, woV);
-		XMStoreFloat3(&isect.dpdu, dpduV);
-		XMStoreFloat3(&isect.dpdv, dpdvV);
-		isect.uv = XMFLOAT2(u, v);
+		isect.p = pHit.TransformCoord(worldMatrix);
+		isect.wo = -rd.TransformNormal(worldMatrix).Normalize();
+		isect.dpdu = dpdu.TransformNormal(worldMatrix).Normalize();
+		isect.dpdv = dpdv.TransformNormal(worldMatrix).Normalize();
+		isect.n = dpdv.Cross(dpdu).Normalize();
+		isect.uv = HFloat2(u, v);
 		isect.shape = this;
 
 		*out_isect = isect;
@@ -173,9 +161,8 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_
 
 bool Sphere::IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1)
 {
-	XMFLOAT3 ro, rd;
-	XMStoreFloat3(&ro, XMVector3TransformCoord(XMLoadFloat3(&worldRay.GetOrigin()), XMLoadFloat4x4(&GetWorld2Object())));
-	XMStoreFloat3(&rd, XMVector3TransformNormal(XMLoadFloat3(&worldRay.GetDirection()), XMLoadFloat4x4(&GetWorld2Object())));
+	HFloat3 ro = worldRay.origin.TransformCoord(worldMatrixInv);
+	HFloat3 rd = worldRay.direction.TransformNormal(worldMatrixInv);
 	Ray ray(ro, rd);
 
 	EFloat a = rd.x * rd.x + rd.y * rd.y + rd.z * rd.z;

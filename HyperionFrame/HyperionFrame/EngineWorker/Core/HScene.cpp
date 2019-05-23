@@ -93,7 +93,7 @@ void HScene::InitPrimitiveData()
 		white = { 1.0f, 1.0f, 1.0f },
 		mirror_white = { 0.9f, 0.9f, 0.9f },
 		gray = { 0.8f, 0.8f, 0.8f };
-	float sig = 90.0f;
+	HFloat sig = 90.0f;
 	shared_ptr<HMaterial> mtrl[7] = {
 		m_sceneManager->CreateMatteMaterial(green, sig),
 		m_sceneManager->CreateMatteMaterial(red, sig),
@@ -156,7 +156,7 @@ void HScene::InitPrimitiveData()
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetMaterial(mtrl[4]);
 
-	//for (float i = 0.0f; i < 3.0f; i++)
+	//for (HFloat i = 0.0f; i < 3.0f; i++)
 	//{
 	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3( 10.0f, i,  10.0f));
 	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3( 10.0f, i, -10.0f));
@@ -166,10 +166,10 @@ void HScene::InitPrimitiveData()
 	//	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pLine);
 	//}
 
-	int chessSize = 9;
-	for (int i = -chessSize; i <= chessSize; i++)
+	HInt chessSize = 9;
+	for (HInt i = -chessSize; i <= chessSize; i++)
 	{
-		for (int j = -chessSize; j <= chessSize; j++)
+		for (HInt j = -chessSize; j <= chessSize; j++)
 		{
 			pShape = m_sceneManager->CreateBox("chess boxes");
 			if ((i + j) % 2)
@@ -188,7 +188,7 @@ void HScene::InitPrimitiveData()
 	auto pointLight = m_sceneManager->CreatePointLight();
 	HFloat3 lightPos = { 0.0f, 10.0f, 5.0f };
 	pointLight->SetTranslation(lightPos.x, lightPos.y, lightPos.z);
-	float brightness = 100.0f;
+	HFloat brightness = 100.0f;
 	pointLight->SetIntensity(brightness, brightness, brightness);
 
 	pointLight = m_sceneManager->CreatePointLight();
@@ -210,28 +210,28 @@ void HScene::InitPrimitiveData()
 void HScene::InitStructureData()
 {
 	m_mainCamera->UpdateTransformData();
-	for (int i = 0; i < primitives.size(); i++)
+	for (HInt i = 0; i < primitives.size(); i++)
 	{
 		primitives[i]->UpdateTransformData();
 		m_aabb.Merge(primitives[i]->GetAABBWorld());
 	}
-	for (int i = 0; i < debugMsgLines.size(); i++)
+	for (HInt i = 0; i < debugMsgLines.size(); i++)
 	{
 		debugMsgLines[i]->UpdateTransformData();
 	}
 	UpdateAccelerateStructure();
 }
 
-static float xxxxx = 0;
+static HFloat xxxxx = 0;
 void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	xxxxx += 0.01f;
 
-	for (int i = 0; i < (int)debugMsgLines.size(); i++)
+	for (HInt i = 0; i < (HInt)debugMsgLines.size(); i++)
 	{
 		//if (debugMsgLines[i]->GetName() == "debugLine")
 		//{
-		//	debugMsgLines[i]->SetRotation(0.0f, xxxxx + (float)i * 0.1f, 0.0f);
+		//	debugMsgLines[i]->SetRotation(0.0f, xxxxx + (HFloat)i * 0.1f, 0.0f);
 		//}
 	}
 
@@ -246,18 +246,18 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	ID3D12DescriptorHeap* ppHeaps[] = { m_cbvHeap.Get() };
 	pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-	UINT primitiveCount = (UINT)primitives.size();
-	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
-	UINT renderCount = primitiveCount + debugMsgLineCount;
-	UINT cbvIndex = DXResource::c_frameCount * renderCount;
+	HUInt primitiveCount = (HUInt)primitives.size();
+	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
+	HUInt renderCount = primitiveCount + debugMsgLineCount;
+	HUInt cbvIndex = DXResource::c_frameCount * renderCount;
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 	gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 
-	for (UINT i = 0; i < primitiveCount; i++)
+	for (HUInt i = 0; i < primitiveCount; i++)
 	{
-		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + i;
+		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
@@ -267,9 +267,9 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	}
 
 	pCommandList->SetPipelineState(pPSOs.at("wireFrame").Get());
-	for (UINT i = 0; i < debugMsgLineCount; i++)
+	for (HUInt i = 0; i < debugMsgLineCount; i++)
 	{
-		UINT cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i;
+		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
@@ -281,7 +281,7 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 
 void HScene::OnMouseDown(HEventArg eArg)
 {
-	Ray ray = m_mainCamera->GenerateRay(float(eArg.X), float(eArg.Y));
+	Ray ray = m_mainCamera->GenerateRay(HFloat(eArg.X), HFloat(eArg.Y));
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;
@@ -289,7 +289,7 @@ void HScene::OnMouseDown(HEventArg eArg)
 	HFloat3 L = whi.Li(ray, *sampler, *this, 0, &rayTracePath);
 
 #ifdef _DEBUG
-	//for (int i = 0; i < rayTracePath.size(); i++)
+	//for (HInt i = 0; i < rayTracePath.size(); i++)
 	//{
 	//	shared_ptr<HLine> pLine = m_sceneManager->CreateSegment("debugLine", rayTracePath[i].point1, rayTracePath[i].point2);
 	//	debugMsgLines.push_back(pLine);
@@ -320,7 +320,7 @@ void HScene::OnKeyUp(HEventArg eArg)
 	//printf("-1s.\n");
 }
 
-bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, int* out_hitShapeIndex, float tMax) const
+bool HScene::Intersect(Ray worldRay, SurfaceInteraction * out_isect, HInt* out_hitShapeIndex, HFloat tMax) const
 {
 	*out_hitShapeIndex = -1;
 	m_bvhTree->Intersect(worldRay, out_isect, out_hitShapeIndex, tMax);
@@ -335,11 +335,11 @@ bool HScene::IntersectP(Ray worldRay) const
 
 void HScene::MakeBMPImage()
 {
-	HInt2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
+	HInt2 screenSize = { (HInt)m_dxResources->GetOutputSize().x, (HInt)m_dxResources->GetOutputSize().y };
 	HInt2 tileSingleSize(32, 32);
 	HInt2 tileCount(screenSize.x / tileSingleSize.x + 1, screenSize.y / tileSingleSize.y + 1);
-	int tileSampleCount = tileCount.x * tileCount.y;
-	int sampleCount = screenSize.x * screenSize.y;
+	HInt tileSampleCount = tileCount.x * tileCount.y;
+	HInt sampleCount = screenSize.x * screenSize.y;
 
 	ImageBMPData* pRGB = new ImageBMPData[sampleCount];
 	memset(pRGB, 0, sizeof(ImageBMPData) * sampleCount);
@@ -350,20 +350,20 @@ void HScene::MakeBMPImage()
 	thread* threads = new thread[tileCount.x * tileCount.y];
 
 	m_makingProcessIndex = 0;
-	for (int i = 0; i < tileCount.x; i++)
+	for (HInt i = 0; i < tileCount.x; i++)
 	{
-		for (int j = 0; j < tileCount.y; j++)
+		for (HInt j = 0; j < tileCount.y; j++)
 		{
-			int count = i * tileCount.y + j;
+			HInt count = i * tileCount.y + j;
 			threads[count] = thread(&HScene::MakeBMPImageTile, this, i, j, tileSingleSize, tileSampleCount, pRGB);
 		}
 	}
 
-	for (int i = 0; i < tileCount.x; i++)
+	for (HInt i = 0; i < tileCount.x; i++)
 	{
-		for (int j = 0; j < tileCount.y; j++)
+		for (HInt j = 0; j < tileCount.y; j++)
 		{
-			int count = i * tileCount.y + j;
+			HInt count = i * tileCount.y + j;
 			threads[count].join();
 		}
 	}
@@ -375,17 +375,17 @@ void HScene::MakeBMPImage()
 	ImageGenerator::GenerateImageBMP((BYTE*)pRGB, screenSize.x, screenSize.y, "D:\\rgb.bmp");
 
 	auto time_ed = GetTickCount();
-	printf("done. 用时：%.2f 秒\n", (float)(time_ed - time_st) / 1000.0f);
+	printf("done. 用时：%.2f 秒\n", (HFloat)(time_ed - time_st) / 1000.0f);
 }
 
-void HScene::MakeBMPImageTile(int tileX, int tileY, HInt2 tilesize, int tileSampleCount, ImageBMPData* pRGB)
+void HScene::MakeBMPImageTile(HInt tileX, HInt tileY, HInt2 tilesize, HInt tileSampleCount, ImageBMPData* pRGB)
 {
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 
-	HInt2 screenSize = { (int)m_dxResources->GetOutputSize().x, (int)m_dxResources->GetOutputSize().y };
-	for (int i = 0; i < tilesize.x; i++)
+	HInt2 screenSize = { (HInt)m_dxResources->GetOutputSize().x, (HInt)m_dxResources->GetOutputSize().y };
+	for (HInt i = 0; i < tilesize.x; i++)
 	{
-		for (int j = 0; j < tilesize.y; j++)
+		for (HInt j = 0; j < tilesize.y; j++)
 		{
 			HInt2 pixel(tileX * tilesize.x + i, tileY * tilesize.y + j);
 			
@@ -400,17 +400,17 @@ void HScene::MakeBMPImageTile(int tileX, int tileY, HInt2 tilesize, int tileSamp
 			HFloat3 L(0.0f);
 			do
 			{
-				Ray ray = m_mainCamera->GenerateRay((float)pixel.x, (float)pixel.y);
+				Ray ray = m_mainCamera->GenerateRay((HFloat)pixel.x, (HFloat)pixel.y);
 				WhittedIntegrator whi;
 				L += whi.Li(ray, *tileSampler, *this, 0, nullptr);
 				//printf("R: %f, G: %f, B: %f\n", L.x, L.y, L.z);
 			} while (tileSampler->NextSample());
 
-			HInt3 resultRGB(L.x > 1.0f ? 255 : (int)(L.x * 255.0f),
-				L.y > 1.0f ? 255 : (int)(L.y * 255.0f),
-				L.z > 1.0f ? 255 : (int)(L.z * 255.0f));
+			HInt3 resultRGB(L.x > 1.0f ? 255 : (HInt)(L.x * 255.0f),
+				L.y > 1.0f ? 255 : (HInt)(L.y * 255.0f),
+				L.z > 1.0f ? 255 : (HInt)(L.z * 255.0f));
 			
-			int rgbIdx = (screenSize.y - pixel.y - 1) * screenSize.x + pixel.x;
+			HInt rgbIdx = (screenSize.y - pixel.y - 1) * screenSize.x + pixel.x;
 			pRGB[rgbIdx].r += resultRGB.x;
 			pRGB[rgbIdx].g += resultRGB.y;
 			pRGB[rgbIdx].b += resultRGB.z;
@@ -418,7 +418,7 @@ void HScene::MakeBMPImageTile(int tileX, int tileY, HInt2 tilesize, int tileSamp
 	}
 
 	m_makingProcessIndex++;
-	float percent = ((float)m_makingProcessIndex / (float)tileSampleCount) * 100.0f;
+	HFloat percent = ((HFloat)m_makingProcessIndex / (HFloat)tileSampleCount) * 100.0f;
 	printf("\r%.2f%%..", percent < 100.0f ? percent : 100.0f);
 }
 
@@ -426,9 +426,9 @@ void HScene::UpdateDescriptors()
 {
 	auto pD3DDevice = m_dxResources->GetD3DDevice();
 
-	UINT primitiveCount = (UINT)primitives.size();
-	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
-	UINT renderCount = primitiveCount + debugMsgLineCount;
+	HUInt primitiveCount = (HUInt)primitives.size();
+	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
+	HUInt renderCount = primitiveCount + debugMsgLineCount;
 
 	ComPtr<ID3D12DescriptorHeap>	pNewCbvHeap;
 	// 为常量缓冲区创建新的描述符堆。
@@ -443,11 +443,11 @@ void HScene::UpdateDescriptors()
 		DX::NAME_D3D12_OBJECT(pNewCbvHeap);
 	}
 
-	for (UINT n = 0; n < DXResource::c_frameCount; n++)
+	for (HUInt n = 0; n < DXResource::c_frameCount; n++)
 	{
-		for (UINT i = 0; i < primitiveCount; i++)
+		for (HUInt i = 0; i < primitiveCount; i++)
 		{
-			int heapIndex = n * renderCount + i;
+			HInt heapIndex = n * renderCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = primitives[i]->GetConstantBuffer()->GetGPUVirtualAddress();
 			//cbvGpuAddress += heapIndex * primitives[i]->GetAlignedConstantBufferSize();
 
@@ -465,9 +465,9 @@ void HScene::UpdateDescriptors()
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 		}
 
-		for (UINT i = 0; i < debugMsgLineCount; i++)
+		for (HUInt i = 0; i < debugMsgLineCount; i++)
 		{
-			int heapIndex = n * renderCount + primitiveCount + i;
+			HInt heapIndex = n * renderCount + primitiveCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = debugMsgLines[i]->GetConstantBuffer()->GetGPUVirtualAddress();
 			//cbvGpuAddress += heapIndex * debugMsgLines[i]->GetAlignedConstantBufferSize();
 
@@ -486,7 +486,7 @@ void HScene::UpdateDescriptors()
 		}
 	}
 
-	int heapIndex = DXResource::c_frameCount * renderCount;
+	HInt heapIndex = DXResource::c_frameCount * renderCount;
 	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_mainCamera->GetConstantBuffer()->GetGPUVirtualAddress();
 	//cbvGpuAddress += heapIndex * m_mainCamera->GetAlignedConstantBufferSize();
 
@@ -533,16 +533,16 @@ void HScene::UpdateTransform()
 {
 	m_mainCamera->UpdateTransformData();
 
-	UINT primitiveCount = (UINT)primitives.size();
-	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
-	UINT renderCount = primitiveCount + debugMsgLineCount;
+	HUInt primitiveCount = (HUInt)primitives.size();
+	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
+	HUInt renderCount = primitiveCount + debugMsgLineCount;
 
-	for (UINT i = 0; i < primitiveCount; i++)
+	for (HUInt i = 0; i < primitiveCount; i++)
 	{
 		primitives[i]->UpdateTransformData();
 	}
 
-	for (UINT i = 0; i < debugMsgLineCount; i++)
+	for (HUInt i = 0; i < debugMsgLineCount; i++)
 	{
 		debugMsgLines[i]->UpdateTransformData();
 	}
@@ -552,9 +552,9 @@ void HScene::UpdateConstantBuffer()
 {
 	m_mainCamera->Update();
 
-	UINT primitiveCount = (UINT)primitives.size();
-	UINT debugMsgLineCount = (UINT)debugMsgLines.size();
+	HUInt primitiveCount = (HUInt)primitives.size();
+	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
 
-	for (UINT i = 0; i < primitiveCount; i++) primitives[i]->Update();
-	for (UINT i = 0; i < debugMsgLineCount; i++) debugMsgLines[i]->Update();
+	for (HUInt i = 0; i < primitiveCount; i++) primitives[i]->Update();
+	for (HUInt i = 0; i < debugMsgLineCount; i++) debugMsgLines[i]->Update();
 }

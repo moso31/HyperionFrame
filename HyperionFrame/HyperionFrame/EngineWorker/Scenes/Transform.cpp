@@ -33,17 +33,17 @@ HFloat3 Transform::GetScale()
 	return scale;
 }
 
-void Transform::SetTranslation(float x, float y, float z)
+void Transform::SetTranslation(HFloat x, HFloat y, HFloat z)
 {
 	translation = { x, y, z };
 }
 
-void Transform::SetRotation(float x, float y, float z)
+void Transform::SetRotation(HFloat x, HFloat y, HFloat z)
 {
 	rotation = { x, y, z };
 }
 
-void Transform::SetScale(float x, float y, float z)
+void Transform::SetScale(HFloat x, HFloat y, HFloat z)
 {
 	scale = { x, y, z };
 }

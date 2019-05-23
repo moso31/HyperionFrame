@@ -23,12 +23,8 @@ AABB HPrimitive::GetAABB()
 
 AABB HPrimitive::GetAABBWorld()
 {
-	XMVECTOR maxV = XMLoadFloat3(&m_aabb.GetVecMax());
-	XMVECTOR minV = XMLoadFloat3(&m_aabb.GetVecMin());
-	XMMATRIX mxObject2World = XMLoadFloat4x4(&worldMatrix);
-	XMFLOAT3 max, min;
-	XMStoreFloat3(&max, XMVector3TransformCoord(maxV, mxObject2World));
-	XMStoreFloat3(&min, XMVector3TransformCoord(minV, mxObject2World));
+	HFloat3 max = m_aabb.max.TransformCoord(worldMatrix);
+	HFloat3 min = m_aabb.min.TransformCoord(worldMatrix);
 	return AABB(min, max);
 }
 
@@ -42,7 +38,7 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 
 	auto d3dDevice = m_dxResources->GetD3DDevice();
 
-	const UINT vertexBufferSize = UINT(sizeof(VertexPNT) * m_vertices.size());
+	const HUInt vertexBufferSize = HUInt(sizeof(VertexPNT) * m_vertices.size());
 
 	CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 	CD3DX12_RESOURCE_DESC vertexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
@@ -80,7 +76,7 @@ void HPrimitive::GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pComm
 		pCommandList->ResourceBarrier(1, &vertexBufferResourceBarrier);
 	}
 
-	const UINT indexBufferSize = UINT(sizeof(unsigned short) * m_indices.size());
+	const HUInt indexBufferSize = HUInt(sizeof(HUShort) * m_indices.size());
 
 	CD3DX12_RESOURCE_DESC indexBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
 	DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
@@ -124,10 +120,10 @@ void HPrimitive::SetPrimitiveBuffer(const PrimitiveBuffer& primitiveBuffer)
 	// 创建顶点/索引缓冲区视图。
 	m_vertexBufferView.BufferLocation = primitiveBuffer.VB->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = sizeof(VertexPNT);
-	m_vertexBufferView.SizeInBytes = (UINT)(sizeof(VertexPNT) * m_vertices.size());
+	m_vertexBufferView.SizeInBytes = (HUInt)(sizeof(VertexPNT) * m_vertices.size());
 
 	m_indexBufferView.BufferLocation = primitiveBuffer.IB->GetGPUVirtualAddress();
-	m_indexBufferView.SizeInBytes = (UINT)(sizeof(USHORT) * m_indices.size());
+	m_indexBufferView.SizeInBytes = (HUInt)(sizeof(HUShort) * m_indices.size());
 	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 
 	m_primitiveBuffer = primitiveBuffer;

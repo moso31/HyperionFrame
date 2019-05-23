@@ -27,7 +27,7 @@ public:
 	virtual ~BSDF() {}
 
 	void Add(BxDF* bxdf);
-	int NumComponents(BxDFType type);
+	HInt NumComponents(BxDFType type);
 
 	HFloat3 f(const HFloat3 & woW, const HFloat3 & wiW, BxDFType flags = BSDF_ALL);
 	HFloat3 Sample_f(const HFloat3& woW, HFloat3 *wiW, const HFloat2 &u, HFloat *pdf, BxDFType type);
@@ -39,7 +39,7 @@ private:
 	HFloat3 n, s, t;
 	HFloat eta;
 
-	static const int MAXBxDFs = 8;
+	static const HInt MAXBxDFs = 8;
 	vector<BxDF*> m_bxdfs;
 };
 

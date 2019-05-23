@@ -7,9 +7,9 @@ struct Triangle
 	{
 		struct
 		{
-			XMFLOAT3 A, B, C;
+			HFloat3 A, B, C;
 		};
-		XMFLOAT3 p[3];
+		HFloat3 p[3];
 	};
 };
 
@@ -19,9 +19,9 @@ struct TriangleUV
 	{
 		struct
 		{
-			XMFLOAT2 A, B, C;
+			HFloat2 A, B, C;
 		};
-		XMFLOAT2 p[3];
+		HFloat2 p[3];
 	};
 };
 
@@ -35,9 +35,9 @@ public:
 	virtual void Update() = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
-	UINT GetFaceCount();
-	Triangle GetFace(UINT faceIndex);
-	TriangleUV GetUVs(UINT faceIndex);
+	HUInt GetFaceCount();
+	Triangle GetFace(HUInt faceIndex);
+	TriangleUV GetUVs(HUInt faceIndex);
 
 	shared_ptr<HMaterial> GetMaterial() { return m_material; }
 	void SetMaterial(shared_ptr<HMaterial> mat);
@@ -45,7 +45,7 @@ public:
 	virtual bool Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit) = 0;
 	virtual bool IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1) = 0;
 
-	virtual UINT GetAlignedConstantBufferSize();
+	virtual HUInt GetAlignedConstantBufferSize();
 
 protected:
 	shared_ptr<DXResource>		m_dxResources;

@@ -16,7 +16,7 @@ App::~App()
 {
 }
 
-LRESULT App::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT App::MsgProc(HWND hWnd, HUInt msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{

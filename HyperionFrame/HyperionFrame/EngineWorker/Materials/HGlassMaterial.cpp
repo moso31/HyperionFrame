@@ -18,8 +18,8 @@ HGlassMaterial::~HGlassMaterial()
 
 void HGlassMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
-	HFloat3 R = Clamp(Kr, 0.0f, 1.0f);
-	HFloat3 T = Clamp(Kt, 0.0f, 1.0f);
+	HFloat3 R = Kr.Clamp(0.0f, 1.0f);
+	HFloat3 T = Kt.Clamp(0.0f, 1.0f);
 
 	si->bsdf = new BSDF(*si, eta);
 

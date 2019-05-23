@@ -36,7 +36,7 @@ void HSceneManager::SetTargetScene(shared_ptr<HScene> pTargetScene)
 	m_pTargetScene = pTargetScene;
 }
 
-shared_ptr<Box> HSceneManager::CreateBox(string name, float width, float height, float depth)
+shared_ptr<Box> HSceneManager::CreateBox(string name, HFloat width, HFloat height, HFloat depth)
 {
 	auto box = make_shared<Box>(m_dxResources);
 	box->InitParameters();
@@ -48,7 +48,7 @@ shared_ptr<Box> HSceneManager::CreateBox(string name, float width, float height,
 	return box;
 }
 
-shared_ptr<Sphere> HSceneManager::CreateSphere(string name, float radius, int segmentHorizontal, int segmentVertical)
+shared_ptr<Sphere> HSceneManager::CreateSphere(string name, HFloat radius, HInt segmentHorizontal, HInt segmentVertical)
 {
 	auto sphere = make_shared<Sphere>(m_dxResources);
 	sphere->InitParameters(radius, segmentHorizontal, segmentVertical);
@@ -100,7 +100,7 @@ shared_ptr<HPointLight> HSceneManager::CreatePointLight()
 	return pointLight;
 }
 
-shared_ptr<HMatteMaterial> HSceneManager::CreateMatteMaterial(const HFloat3& kd, const float sigma)
+shared_ptr<HMatteMaterial> HSceneManager::CreateMatteMaterial(const HFloat3& kd, const HFloat sigma)
 {
 	auto mat = make_shared<HMatteMaterial>(kd, sigma);
 	m_pTargetScene->materials.push_back(mat);
@@ -114,7 +114,7 @@ shared_ptr<HMirrorMaterial> HSceneManager::CreateMirrorMaterial(const HFloat3 & 
 	return mat;
 }
 
-shared_ptr<HGlassMaterial> HSceneManager::CreateGlassMaterial(const HFloat3 & Kr, const HFloat3 & Kt, const float eta)
+shared_ptr<HGlassMaterial> HSceneManager::CreateGlassMaterial(const HFloat3 & Kr, const HFloat3 & Kt, const HFloat eta)
 {
 	auto mat = make_shared<HGlassMaterial>(Kr, Kt, eta);
 	m_pTargetScene->materials.push_back(mat);

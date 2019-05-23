@@ -83,7 +83,7 @@ void DXResource::CreateDeviceResources()
 	DX::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
 	DX::NAME_D3D12_OBJECT(m_dsvHeap);
 
-	for (UINT n = 0; n < c_frameCount; n++)
+	for (HUInt n = 0; n < c_frameCount; n++)
 	{
 		DX::ThrowIfFailed(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocators[n])));
 	}
@@ -106,7 +106,7 @@ void DXResource::CreateWindowSizeDependentResources()
 	WaitForGpu();
 
 	// 清除特定于先前窗口大小的内容，并更新所跟踪的围栏值。
-	for (UINT n = 0; n < c_frameCount; n++)
+	for (HUInt n = 0; n < c_frameCount; n++)
 	{
 		m_renderTargets[n] = nullptr;
 		m_fenceValues[n] = m_fenceValues[m_currentFrame];
@@ -125,8 +125,8 @@ void DXResource::CreateWindowSizeDependentResources()
 
 	m_d3dRenderTargetSize = m_outputSize;
 
-	UINT backBufferWidth = lround(m_d3dRenderTargetSize.x);
-	UINT backBufferHeight = lround(m_d3dRenderTargetSize.y);
+	HUInt backBufferWidth = lround(m_d3dRenderTargetSize.x);
+	HUInt backBufferHeight = lround(m_d3dRenderTargetSize.y);
 
 	if (m_swapChain != nullptr)
 	{
@@ -225,7 +225,7 @@ void DXResource::CreateWindowSizeDependentResources()
 	{
 		m_currentFrame = m_swapChain->GetCurrentBackBufferIndex();
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
-		for (UINT n = 0; n < c_frameCount; n++)
+		for (HUInt n = 0; n < c_frameCount; n++)
 		{
 			DX::ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
 			m_d3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), nullptr, rtvDescriptor);
@@ -277,7 +277,7 @@ void DXResource::GetHardWareAdapter(IDXGIAdapter1 ** out_ppAdapter)
 	ComPtr<IDXGIAdapter1> adapter;
 	*out_ppAdapter = nullptr;
 
-	for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, &adapter); adapterIndex++)
+	for (HUInt adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, &adapter); adapterIndex++)
 	{
 		DXGI_ADAPTER_DESC1 desc;
 		adapter->GetDesc1(&desc);
@@ -365,8 +365,8 @@ void DXResource::UpdateRenderTargetSize()
 	//// 并允许 GPU 在显示输出时缩放输出。
 	//if (!DisplayMetrics::SupportHighResolutions && m_dpi > DisplayMetrics::DpiThreshold)
 	//{
-	//	float width = DX::ConvertDipsToPixels(m_logicalSize.Width, m_dpi);
-	//	float height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_dpi);
+	//	HFloat width = DX::ConvertDipsToPixels(m_logicalSize.Width, m_dpi);
+	//	HFloat height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_dpi);
 
 	//	// 当设备为纵向时，高度大于宽度。将
 	//	// 较大尺寸与宽度阈值进行比较，将较小尺寸
@@ -383,6 +383,6 @@ void DXResource::UpdateRenderTargetSize()
 	//m_outputSize.Height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_effectiveDpi);
 
 	// 防止创建大小为零的 DirectX 内容。
-	m_outputSize.x = max(m_outputSize.x, (float)1);
-	m_outputSize.y = max(m_outputSize.y, (float)1);
+	m_outputSize.x = max(m_outputSize.x, (HFloat)1);
+	m_outputSize.y = max(m_outputSize.y, (HFloat)1);
 }

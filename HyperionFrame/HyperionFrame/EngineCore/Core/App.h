@@ -8,7 +8,7 @@ public:
 	App(HWND hwnd);
 	~App();
 
-	LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT MsgProc(HWND hWnd, HUInt msg, WPARAM wParam, LPARAM lParam);
 
 	void Init(HFloat2 windowSize);
 	void Run();

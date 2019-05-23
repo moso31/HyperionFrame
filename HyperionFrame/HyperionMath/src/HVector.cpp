@@ -1,6 +1,21 @@
+#pragma once
 #include "HVector.h"
 #include "HMatrix.h"
-#pragma once
+
+HFloat2::HFloat2(const HFloat2 & v) :
+	x(v.x), y(v.y)
+{
+}
+
+HFloat2::HFloat2(const HFloat3 & v) :
+	x(v.x), y(v.y)
+{
+}
+
+HFloat2::HFloat2(const HFloat4 & v) :
+	x(v.x), y(v.y)
+{
+}
 
 HFloat2 HFloat2::operator+(const HFloat2 & v) const
 {
@@ -200,6 +215,21 @@ bool HFloat2::Equal(const HFloat2 & v, HFloat tolerance)
 		fabsf(y - v.y) < tolerance);
 }
 
+HFloat3::HFloat3(const HFloat2 & v, const HFloat z) : 
+	x(v.x), y(v.y), z(z) 
+{
+}
+
+HFloat3::HFloat3(const HFloat3 & v) :
+	x(v.x), y(v.y), z(v.z)
+{
+}
+
+HFloat3::HFloat3(const HFloat4 & v) :
+	x(v.x), y(v.y), z(v.z)
+{
+}
+
 HFloat3 HFloat3::operator+(const HFloat3 & v) const
 {
 	return HFloat3(x + v.x, y + v.y, z + v.z);
@@ -351,7 +381,7 @@ HFloat3 HFloat3::Reciprocal() const
 HFloat HFloat3::Angle(const HFloat3 & v) const
 {
 	HFloat cosAngle = Dot(v) / (Length() * v.Length());
-	HFloat result = Clamp(cosAngle, -1.0f, 1.0f);
+	HFloat result = ::Clamp(cosAngle, -1.0f, 1.0f);
 	result = acosf(result);
 	return result;
 }
@@ -359,7 +389,7 @@ HFloat HFloat3::Angle(const HFloat3 & v) const
 HFloat HFloat3::AngleNormal(const HFloat3 & v) const
 {
 	HFloat cosAngle = Dot(v);
-	HFloat result = Clamp(cosAngle, -1.0f, 1.0f);
+	HFloat result = ::Clamp(cosAngle, -1.0f, 1.0f);
 	result = acosf(result);
 	return result;
 }
@@ -419,11 +449,31 @@ HFloat3 HFloat3::Permute(const HInt x, const HInt y, const HInt z) const
 	return HFloat3(v[x], v[y], v[z]);
 }
 
+HFloat3 HFloat3::Clamp(const HFloat3 & min, const HFloat3 & max) const
+{
+	return MaxVector(min).MinVector(max);
+}
+
 bool HFloat3::Equal(const HFloat3 & v, HFloat tolerance)
 {
 	return (fabsf(x - v.x) < tolerance &&
 		fabsf(y - v.y) < tolerance &&
 		fabsf(z - v.z) < tolerance);
+}
+
+HFloat4::HFloat4(const HFloat2 & v, const HFloat z, const HFloat w)
+	: x(v.x), y(v.y), z(z), w(w) 
+{
+}
+
+HFloat4::HFloat4(const HFloat3 & v, const HFloat w) : 
+	x(v.x), y(v.y), z(v.z), w(w)
+{
+}
+
+HFloat4::HFloat4(const HFloat4 & v) :
+	x(v.x), y(v.y), z(v.z), w(v.w)
+{
 }
 
 HFloat4 HFloat4::operator+(const HFloat4 & v) const

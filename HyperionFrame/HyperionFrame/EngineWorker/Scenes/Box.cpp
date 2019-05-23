@@ -86,7 +86,7 @@ void Box::InitParameters()
 void Box::Update()
 {
 	// 准备将更新的模型矩阵传递到着色器。
-	PipelineManager::s_constantBufferData.model = GetObject2World().Transpose();
+	PipelineManager::s_constantBufferData.model = worldMatrix.Transpose();
 
 	memcpy(m_mappedConstantBuffer, &PipelineManager::s_constantBufferData, sizeof(PipelineManager::s_constantBufferData));
 	memcpy(m_mappedConstantBuffer + 256, &m_cbMeshData, sizeof(m_cbMeshData));
@@ -103,11 +103,8 @@ void Box::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit)
 {
-	HFloat4x4 mxObject2World = GetObject2World();
-	HFloat4x4 mxWorld2Object = mxObject2World.Inverse();
-
-	HFloat3 vRayOrig = worldRay.origin.TransformCoord(mxWorld2Object);
-	HFloat3 vRayDir = worldRay.direction.TransformNormal(mxWorld2Object).Normalize();
+	HFloat3 vRayOrig = worldRay.origin.TransformCoord(worldMatrixInv);
+	HFloat3 vRayDir = worldRay.direction.TransformNormal(worldMatrixInv).Normalize();
 	HFloat3 vRayDirInv = vRayDir.Reciprocal();
 
 	HFloat3 tMax = (m_aabb.max - vRayOrig) * vRayDirInv;
@@ -123,7 +120,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 	*out_tHit = FLT_MAX;
 	if (tNear < tFar && tNear > H_EPSILON)
 	{
-		for (UINT i = 0; i < GetFaceCount(); i++)
+		for (HUInt i = 0; i < GetFaceCount(); i++)
 		{
 			Triangle tri = GetFace(i);
 
@@ -135,9 +132,9 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 			HFloat3 p1t = p1 - vRayOrig;
 			HFloat3 p2t = p2 - vRayOrig;
 
-			int kz = 0;
+			HInt kz = 0;
 			HFloat kValue = fabsf(vRayDir[0]);
-			for (int i = 1; i < 4; i++)
+			for (HInt i = 1; i < 4; i++)
 			{
 				HFloat getByIdx = fabsf(vRayDir[i]);
 				if (kValue < getByIdx)
@@ -146,9 +143,9 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 					kz = i;
 				}
 			}
-			int kx = kz + 1;
+			HInt kx = kz + 1;
 			if (kx == 3) kx = 0;
-			int ky = kx + 1;
+			HInt ky = kx + 1;
 			if (ky == 3) ky = 0;
 
 			HFloat3 d = vRayDir.Permute(kx, ky, kz);
@@ -232,11 +229,11 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 		{
 			// isect 转换成世界坐标
 			SurfaceInteraction result;
-			result.p = record.p.TransformCoord(mxObject2World);
-			result.n = record.n.TransformNormal(mxObject2World).Normalize();
-			result.wo = record.wo.TransformNormal(mxObject2World).Normalize();
-			result.dpdu = record.dpdu.TransformNormal(mxObject2World).Normalize();
-			result.dpdv = record.dpdv.TransformNormal(mxObject2World).Normalize();
+			result.p = record.p.TransformCoord(worldMatrix);
+			result.n = record.n.TransformNormal(worldMatrix).Normalize();
+			result.wo = record.wo.TransformNormal(worldMatrix).Normalize();
+			result.dpdu = record.dpdu.TransformNormal(worldMatrix).Normalize();
+			result.dpdv = record.dpdv.TransformNormal(worldMatrix).Normalize();
 			result.uv = record.uv;
 			result.bsdf = record.bsdf;
 			result.shape = record.shape;
@@ -251,11 +248,8 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 
 bool Box::IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1)
 {
-	HFloat4x4 mxObject2World = GetObject2World();
-	HFloat4x4 mxWorld2Object = mxObject2World.Inverse();
-
-	HFloat3 vRayOrig = worldRay.origin.TransformCoord(mxWorld2Object);
-	HFloat3 vRayDir = worldRay.direction.TransformNormal(mxWorld2Object).Normalize();
+	HFloat3 vRayOrig = worldRay.origin.TransformCoord(worldMatrixInv);
+	HFloat3 vRayDir = worldRay.direction.TransformNormal(worldMatrixInv).Normalize();
 	HFloat3 vRayDirInv = vRayDir.Reciprocal();
 
 	HFloat3 tMax = (m_aabb.max - vRayOrig) * vRayDirInv;

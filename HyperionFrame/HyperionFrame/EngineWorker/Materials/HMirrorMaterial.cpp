@@ -17,7 +17,7 @@ HMirrorMaterial::~HMirrorMaterial()
 void HMirrorMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
 	si->bsdf = new BSDF(*si);
-	HFloat3 r = Clamp(Kr, 0.0f, 1.0f); /* = Kd->Evaluate(*si).Clamp();*/
+	HFloat3 r = Kr.Clamp(0.0f, 1.0f);	//Kr->Evaluate(*si).Clamp();
 	if (r != 0.0f)
 	{
 		si->bsdf->Add(new SpecularReflection(r, new FresnelNoOp()));

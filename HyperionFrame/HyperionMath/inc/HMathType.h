@@ -8,6 +8,8 @@ typedef int HInt;
 typedef __int64 HInt64;
 typedef unsigned int HUInt;
 typedef unsigned __int64 HUInt64;
+typedef long HLong;
+typedef unsigned long HULong;
 typedef float HFloat;
 typedef double HDouble;
 

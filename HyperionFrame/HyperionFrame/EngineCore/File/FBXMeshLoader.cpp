@@ -5,7 +5,7 @@ namespace FBXMeshLoader
 {
 	void LoadContent(FbxScene* pScene, shared_ptr<HMesh>& pEngineMesh)
 	{
-		int i;
+		HInt i;
 		FbxNode* lNode = pScene->GetRootNode();
 
 		if (lNode)
@@ -20,7 +20,7 @@ namespace FBXMeshLoader
 	void LoadContent(FbxNode* pNode, shared_ptr<HMesh>& pEngineMesh)
 	{
 		FbxNodeAttribute::EType lAttributeType;
-		int i;
+		HInt i;
 
 		if (pNode->GetNodeAttribute() == NULL)
 		{
@@ -94,17 +94,17 @@ namespace FBXMeshLoader
 
 	void LoadPolygons(FbxMesh * pMesh, shared_ptr<HMesh>& pEngineMesh)
 	{
-		int i, j, lPolygonCount = pMesh->GetPolygonCount();
+		HInt i, j, lPolygonCount = pMesh->GetPolygonCount();
 		FbxVector4* lControlPoints = pMesh->GetControlPoints();
 		char header[100];
 
 		//DisplayString("    Polygons");
 
-		int vertexId = 0;
+		HInt vertexId = 0;
 		for (i = 0; i < lPolygonCount; i++)
 		{
 			//DisplayInt("        Polygon ", i);
-			int l;
+			HInt l;
 
 			for (l = 0; l < pMesh->GetElementPolygonGroupCount(); l++)
 			{
@@ -115,7 +115,7 @@ namespace FBXMeshLoader
 					if (lePolgrp->GetReferenceMode() == FbxGeometryElement::eIndex)
 					{
 						FBXSDK_sprintf(header, 100, "        Assigned to group: ");
-						int polyGroupId = lePolgrp->GetIndexArray().GetAt(i);
+						HInt polyGroupId = lePolgrp->GetIndexArray().GetAt(i);
 						//DisplayInt(header, polyGroupId);
 						break;
 					}
@@ -127,11 +127,11 @@ namespace FBXMeshLoader
 			}
 
 			VertexPNT vertex;
-			int lPolygonSize = pMesh->GetPolygonSize(i);
+			HInt lPolygonSize = pMesh->GetPolygonSize(i);
 
 			for (j = 0; j < lPolygonSize; j++)
 			{
-				int lControlPointIndex = pMesh->GetPolygonVertex(i, j);
+				HInt lControlPointIndex = pMesh->GetPolygonVertex(i, j);
 				vertex.pos = ReadHFLOAT3(lControlPoints[lControlPointIndex]);
 
 				for (l = 0; l < pMesh->GetElementVertexColorCount(); l++)
@@ -151,7 +151,7 @@ namespace FBXMeshLoader
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
-							int id = leVtxc->GetIndexArray().GetAt(lControlPointIndex);
+							HInt id = leVtxc->GetIndexArray().GetAt(lControlPointIndex);
 							//DisplayColor(header, leVtxc->GetDirectArray().GetAt(id));
 						}
 						break;
@@ -169,7 +169,7 @@ namespace FBXMeshLoader
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
-							int id = leVtxc->GetIndexArray().GetAt(vertexId);
+							HInt id = leVtxc->GetIndexArray().GetAt(vertexId);
 							//DisplayColor(header, leVtxc->GetDirectArray().GetAt(id));
 						}
 						break;
@@ -202,7 +202,7 @@ namespace FBXMeshLoader
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
-							int id = leUV->GetIndexArray().GetAt(lControlPointIndex);
+							HInt id = leUV->GetIndexArray().GetAt(lControlPointIndex);
 							vertex.uv = ReadHFLOAT2(leUV->GetDirectArray().GetAt(id));
 						}
 						break;
@@ -213,7 +213,7 @@ namespace FBXMeshLoader
 
 					case FbxGeometryElement::eByPolygonVertex:
 					{
-						int lTextureUVIndex = pMesh->GetTextureUVIndex(i, j);
+						HInt lTextureUVIndex = pMesh->GetTextureUVIndex(i, j);
 						switch (leUV->GetReferenceMode())
 						{
 						case FbxGeometryElement::eDirect:
@@ -248,7 +248,7 @@ namespace FBXMeshLoader
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
-							int id = leNormal->GetIndexArray().GetAt(vertexId);
+							HInt id = leNormal->GetIndexArray().GetAt(vertexId);
 							vertex.norm = ReadHFLOAT3(leNormal->GetDirectArray().GetAt(id));
 						}
 						break;
@@ -272,7 +272,7 @@ namespace FBXMeshLoader
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
-							int id = leTangent->GetIndexArray().GetAt(vertexId);
+							HInt id = leTangent->GetIndexArray().GetAt(vertexId);
 							//Display3DVector(header, leTangent->GetDirectArray().GetAt(id));
 						}
 						break;
@@ -297,7 +297,7 @@ namespace FBXMeshLoader
 							break;
 						case FbxGeometryElement::eIndexToDirect:
 						{
-							int id = leBinormal->GetIndexArray().GetAt(vertexId);
+							HInt id = leBinormal->GetIndexArray().GetAt(vertexId);
 							//Display3DVector(header, leBinormal->GetDirectArray().GetAt(id));
 						}
 						break;
@@ -309,8 +309,8 @@ namespace FBXMeshLoader
 				vertexId++;
 
 				pEngineMesh->AddVertex(vertex);
-				int x = i * 3 + j;
-				int meshIdx = i * 3 + j;
+				HInt x = i * 3 + j;
+				HInt meshIdx = i * 3 + j;
 				if (j % 3 == 1) meshIdx++;
 				else if (j % 3 == 2) meshIdx--;
 				pEngineMesh->AddIndex(meshIdx);
@@ -318,7 +318,7 @@ namespace FBXMeshLoader
 		} // for polygonCount
 
 		//check visibility for the edges of the mesh
-		for (int l = 0; l < pMesh->GetElementVisibilityCount(); ++l)
+		for (HInt l = 0; l < pMesh->GetElementVisibilityCount(); ++l)
 		{
 			FbxGeometryElementVisibility* leVisibility = pMesh->GetElementVisibility(l);
 			//FBXSDK_sprintf(header, 100, "    Edge Visibility : ");
@@ -366,7 +366,7 @@ namespace FBXMeshLoader
 
 		if (lNode)
 		{
-			for (int i = 0; i < lNode->GetChildCount(); i++)
+			for (HInt i = 0; i < lNode->GetChildCount(); i++)
 			{
 				LoadContent(lNode->GetChild(i), pEngineMesh);
 			}

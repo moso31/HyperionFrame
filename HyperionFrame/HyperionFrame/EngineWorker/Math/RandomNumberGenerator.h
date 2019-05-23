@@ -1,4 +1,4 @@
 #pragma once
 
-unsigned int ulrand();
-float randRange01();
+HUInt ulrand();
+HFloat randRange01();

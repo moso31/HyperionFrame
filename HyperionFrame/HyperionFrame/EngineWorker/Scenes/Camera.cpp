@@ -147,9 +147,9 @@ Ray Camera::GenerateRay(HFloat screenX, HFloat screenY)
 	return Ray(vOrigWorld, vDirWorld);
 }
 
-UINT Camera::GetAlignedConstantBufferSize()
+HUInt Camera::GetAlignedConstantBufferSize()
 {
-	return (UINT)(sizeof(CBufferEyePos) + 255) & ~255;
+	return (HUInt)(sizeof(CBufferEyePos) + 255) & ~255;
 }
 
 void Camera::SetCameraBuffer()

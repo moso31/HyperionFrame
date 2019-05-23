@@ -21,8 +21,8 @@ public:
 
 private:
 	shared_ptr<Camera> m_pCamera;
-	float m_fMoveSpeed;
-	float m_fSensitivity;
+	HFloat m_fMoveSpeed;
+	HFloat m_fSensitivity;
 
 	// +X, +Y, +Z, -X, -Y, -Z
 	bool m_bMoveState[6]; 

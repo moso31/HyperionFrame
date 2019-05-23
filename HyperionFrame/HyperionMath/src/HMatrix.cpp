@@ -331,6 +331,6 @@ HFloat4x4 HFloat4x4::SetPerspLH(const HFloat width, const HFloat height, const H
 HFloat4x4 HFloat4x4::SetPerspFovLH(const float fovY, const float aspectRatio, const float zNear, const float zFar)
 {
 	HFloat halfFov = 0.5f * fovY;
-	HFloat Height = cos(halfFov) / sin(halfFov);
+	HFloat Height = cosf(halfFov) / sinf(halfFov);
 	return SetPerspLH(Height / aspectRatio, Height, zNear, zFar);
 }

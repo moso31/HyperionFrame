@@ -12,34 +12,34 @@ enum HBVHSplitMode
 struct HBVHPrimitiveInfo
 {
 	AABB aabb;
-	int index;
+	HInt index;
 };
 
 struct HBVHBucketInfo
 {
 	AABB aabb;
-	int nPrimitive = 0;
+	HInt nPrimitive = 0;
 };
 
 struct HBVHTreeNode
 {
 	HBVHTreeNode* child[2];
 	AABB aabb;
-	int index;
-	int offset;
+	HInt index;
+	HInt offset;
 };
 
 struct HBVHMortonPrimitiveInfo
 {
-	int mortonCode;
-	int index;
+	HInt mortonCode;
+	HInt index;
 	AABB aabb;
 };
 
 struct HBVHTreeletInfo
 {
-	int startIndex;
-	int nPrimitive;
+	HInt startIndex;
+	HInt nPrimitive;
 	HBVHTreeNode* node;
 };
 
@@ -54,20 +54,20 @@ public:
 
 	// BVH碰撞检测。
 	// 给定世界坐标射线，输出SurfaceInteraction和对象的索引号hitIndex，
-	void Intersect(const Ray& worldRay, SurfaceInteraction* si, int* out_hitIndex, float tMax = FLT_MAX);
+	void Intersect(const Ray& worldRay, SurfaceInteraction* si, HInt* out_hitIndex, HFloat tMax = FLT_MAX);
 
 private:
-	void BuildTree(HBVHTreeNode* node, int stIndex, int edIndex, HBVHSplitMode mode);
-	void RecursiveIntersect(HBVHTreeNode* node, const Ray& worldRay, SurfaceInteraction* si, float* out_tResult, int* out_hitIndex);
+	void BuildTree(HBVHTreeNode* node, HInt stIndex, HInt edIndex, HBVHSplitMode mode);
+	void RecursiveIntersect(HBVHTreeNode* node, const Ray& worldRay, SurfaceInteraction* si, HFloat* out_tResult, HInt* out_hitIndex);
 
 	// 构建HLBVH所需要用到的treelet。一次构建一个。
-	HBVHTreeNode* BuildTreelet(int stIndex, int edIndex, int bitIndex);
+	HBVHTreeNode* BuildTreelet(HInt stIndex, HInt edIndex, HInt bitIndex);
 
 	// 构建上层总树。
-	void BuildUpperTree(HBVHTreeNode* node, int stIndex, int edIndex);
+	void BuildUpperTree(HBVHTreeNode* node, HInt stIndex, HInt edIndex);
 
 private:
-	const int SPLIT_COST = 4;
+	const HInt SPLIT_COST = 4;
 
 	HBVHTreeNode* root;
 	shared_ptr<HScene> m_scene;

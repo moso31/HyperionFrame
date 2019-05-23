@@ -12,5 +12,5 @@ public:
 
 private:
 	HFloat3 Kr, Kt;
-	float eta;
+	HFloat eta;
 };

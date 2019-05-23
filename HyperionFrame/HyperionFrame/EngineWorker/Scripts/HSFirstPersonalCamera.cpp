@@ -12,21 +12,17 @@ HSFirstPersonalCamera::HSFirstPersonalCamera(shared_ptr<HObject> pObject) :
 
 void HSFirstPersonalCamera::Update()
 {
-	XMFLOAT3 pos = m_pCamera->GetTranslation();
-	XMVECTOR posV = XMLoadFloat3(&pos);
-	XMFLOAT3 fw = m_pCamera->GetForward();
-	XMVECTOR fwV = XMLoadFloat3(&fw);
-	XMFLOAT3 left = m_pCamera->GetLeft();
-	XMVECTOR leftV = XMLoadFloat3(&left);
+	HFloat3 pos = m_pCamera->GetTranslation();
+	HFloat3 fw = m_pCamera->GetForward();
+	HFloat3 left = m_pCamera->GetLeft();
 
-	XMVECTOR moveCommandV = { 0.0f, 0.0f, 0.0f, 0.0f };
-	if (m_bMoveState[POSITIVE_Z]) moveCommandV += fwV;
-	if (m_bMoveState[NEGATIVE_Z]) moveCommandV -= fwV;
-	if (m_bMoveState[POSITIVE_X]) moveCommandV += leftV;
-	if (m_bMoveState[NEGATIVE_X]) moveCommandV -= leftV;
+	HFloat3 moveCommandV(0.0f);
+	if (m_bMoveState[POSITIVE_Z]) moveCommandV += fw;
+	if (m_bMoveState[NEGATIVE_Z]) moveCommandV -= fw;
+	if (m_bMoveState[POSITIVE_X]) moveCommandV += left;
+	if (m_bMoveState[NEGATIVE_X]) moveCommandV -= left;
 	
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, posV + moveCommandV * m_fMoveSpeed);
+	HFloat3 result = pos + moveCommandV * m_fMoveSpeed;
 	m_pCamera->SetTranslation(result.x, result.y, result.z);
 }
 
@@ -41,8 +37,8 @@ void HSFirstPersonalCamera::OnKeyDown(HEventArg eArg)
 	if (eArg.VKey == 'P')
 	{
 		string name = m_pCamera->GetName();
-		XMFLOAT3 t = m_pCamera->GetTransform().GetTranslation();
-		XMFLOAT3 r = m_pCamera->GetTransform().GetRotation();
+		HFloat3 t = m_pCamera->GetTransform().GetTranslation();
+		HFloat3 r = m_pCamera->GetTransform().GetRotation();
 		printf("Camera info: name: %s translation: %.3f, %.3f, %.3f rotation: %.3f, %.3f, %.3f\n", 
 			name.c_str(), t.x, t.y, t.z, r.x, r.y, r.z);
 	}
@@ -63,7 +59,7 @@ void HSFirstPersonalCamera::OnMouseDown(HEventArg eArg)
 void HSFirstPersonalCamera::OnMouseMove(HEventArg eArg)
 {
 	auto rot = m_pCamera->GetRotation();
-	rot.y -= (float)eArg.LastX * m_fSensitivity;	// yaw
-	rot.x += (float)eArg.LastY * m_fSensitivity;	// pitch
+	rot.y -= (HFloat)eArg.LastX * m_fSensitivity;	// yaw
+	rot.x += (HFloat)eArg.LastY * m_fSensitivity;	// pitch
 	m_pCamera->SetRotation(rot.x, rot.y, rot.z);
 }

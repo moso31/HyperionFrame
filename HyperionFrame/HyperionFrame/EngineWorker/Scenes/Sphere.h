@@ -10,7 +10,7 @@ public:
 
 	ePrimitiveType GetType() { return m_type; }
 
-	void InitParameters(float radius = 1.0f, int segmentHorizontal = 16, int segmentVertical = 16);
+	void InitParameters(HFloat radius = 1.0f, HInt segmentHorizontal = 16, HInt segmentVertical = 16);
 
 	void Update();
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList);
@@ -19,7 +19,7 @@ public:
 	bool IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1);
 
 private:
-	float m_radius;
-	int m_segmentVertical;
-	int m_segmentHorizontal;
+	HFloat m_radius;
+	HInt m_segmentVertical;
+	HInt m_segmentHorizontal;
 };

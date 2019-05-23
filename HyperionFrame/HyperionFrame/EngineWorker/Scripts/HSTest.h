@@ -8,5 +8,5 @@ public:
 	void Update();
 
 private:
-	float m_fRotationY;
+	HFloat m_fRotationY;
 };

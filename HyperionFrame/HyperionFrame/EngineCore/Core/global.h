@@ -1,7 +1,7 @@
 #pragma once
 #include "App.h"
 
-extern const float WINDOW_RATIO;
+extern const HFloat WINDOW_RATIO;
 
 extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;

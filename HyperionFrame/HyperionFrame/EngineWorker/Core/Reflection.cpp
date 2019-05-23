@@ -98,9 +98,9 @@ void BSDF::Add(BxDF * bxdf)
 	m_bxdfs.push_back(bxdf);
 }
 
-int BSDF::NumComponents(BxDFType type)
+HInt BSDF::NumComponents(BxDFType type)
 {
-	int num = 0;
+	HInt num = 0;
 	for (size_t i = 0; i < m_bxdfs.size(); ++i)
 		if (m_bxdfs[i]->MatchesFlags(type)) ++num;
 	return num;
@@ -118,7 +118,7 @@ HFloat3 BSDF::f(const HFloat3 & woW, const HFloat3 & wiW, BxDFType flags)
 	//printf("normal: %f, %f, %f, reflect: %f\n", n.x, n.y, n.z, reflect);
 
 	HFloat3 f(0.0f); 
-	for (UINT i = 0; i < m_bxdfs.size(); ++i)
+	for (HUInt i = 0; i < m_bxdfs.size(); ++i)
 		if (m_bxdfs[i]->MatchesFlags(flags) &&
 			((isReflect && (m_bxdfs[i]->type & BSDF_REFLECTION)) ||
 			(!isReflect && (m_bxdfs[i]->type & BSDF_TRANSMISSION))))
@@ -130,16 +130,16 @@ HFloat3 BSDF::f(const HFloat3 & woW, const HFloat3 & wiW, BxDFType flags)
 
 HFloat3 BSDF::Sample_f(const HFloat3 & woW, HFloat3 * wiW, const HFloat2 & u, HFloat * pdf, BxDFType type/*, BxDFType *sampledType*/)
 {
-	int matchingComps = NumComponents(type);
+	HInt matchingComps = NumComponents(type);
 	if (matchingComps == 0) {
 		*pdf = 0;
 		//if (sampledType) *sampledType = BxDFType(0);
 		return { 0.0f, 0.0f, 0.0f };
 	}
 
-	int comp = min((int)floorf(u.x * matchingComps), matchingComps - 1);
+	HInt comp = min((HInt)floorf(u.x * matchingComps), matchingComps - 1);
 	BxDF *bxdf = nullptr;
-	int count = comp;
+	HInt count = comp;
 	for (size_t i = 0; i < m_bxdfs.size(); ++i)
 	{
 		if (m_bxdfs[i]->MatchesFlags(type) && count-- == 0)
@@ -165,7 +165,7 @@ HFloat3 BSDF::Sample_f(const HFloat3 & woW, HFloat3 * wiW, const HFloat2 & u, HF
 	*wiW = ReflectionToWorldCoord(wi);
 
 	//if (!(bxdf->type & BSDF_SPECULAR) && matchingComps > 1)
-	//	for (int i = 0; i < nBxDFs; ++i)
+	//	for (HInt i = 0; i < nBxDFs; ++i)
 	//		if (bxdfs[i] != bxdf && bxdfs[i]->MatchesFlags(type))
 	//			*pdf += bxdfs[i]->Pdf(wo, wi);
 	//if (matchingComps > 1) *pdf /= matchingComps;

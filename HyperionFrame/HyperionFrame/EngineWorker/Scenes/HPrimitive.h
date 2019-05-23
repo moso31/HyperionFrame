@@ -68,7 +68,7 @@ protected:
 	eRenderType					m_renderType;
 
 	vector<VertexPNT>			m_vertices;
-	vector<USHORT>				m_indices;
+	vector<HUShort>				m_indices;
 	AABB						m_aabb;
 
 	PrimitiveBuffer				m_primitiveBuffer;
