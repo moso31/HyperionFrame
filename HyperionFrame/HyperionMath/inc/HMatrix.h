@@ -52,6 +52,8 @@ public:
 	HFloat4x4 SetPerspLH(const HFloat width, const HFloat height, const HFloat zNear, const HFloat zFar);
 	HFloat4x4 SetPerspFovLH(const float fovY, const float aspectRatio, const float zNear, const float zFar);
 
+	HFloat3 GetEulerXYZ();
+
 public:
 	union
 	{

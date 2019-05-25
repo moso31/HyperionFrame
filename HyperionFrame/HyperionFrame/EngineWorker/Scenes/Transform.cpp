@@ -14,7 +14,7 @@ void Transform::UpdateTransformData()
 	mxR.SetRotationXYZ(rotation);
 	mxT.SetTranslation(translation);
 
-	worldMatrix = mxS * mxR * mxT;
+	worldMatrix = mxT * mxR * mxS;
 	worldMatrixInv = worldMatrix.Inverse();
 }
 

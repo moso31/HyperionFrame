@@ -17,7 +17,7 @@
 
 #include "HSTest.h"
 #include "HSFirstPersonalCamera.h"
-#define CreateScriptConverted(classType, scriptType, pObject) dynamic_pointer_cast<classType>(m_sceneManager->CreateScript(scriptType, pObject))
+#define BindScript(classType, scriptType, pObject) dynamic_pointer_cast<classType>(m_sceneManager->CreateScript(scriptType, pObject))
 #define RegisterEventListener(object, script, eventType, pFunction) m_sceneManager->AddEventListener(eventType, object, std::bind(&pFunction, script, std::placeholders::_1));
 
 HScene::HScene()
@@ -73,8 +73,9 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 void HScene::InitPrimitiveData()
 {
 	m_mainCamera = m_sceneManager->CreateCamera();
-	m_mainCamera->SetTranslation(4.0f, 0.0f, 4.0f);
-	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
+	m_mainCamera->SetTranslation(9.0f, 6.0f, 4.0f);
+	//m_mainCamera->SetLookAt(9.0f, 0.0f, 4.0001f);
+	m_mainCamera->SetRotation(0.0f, -0.0f, 0.0f);
 
 	//// float percision test.
 	//m_mainCamera->SetTranslation(6.853f, 3.138f, -0.139f);
@@ -82,11 +83,11 @@ void HScene::InitPrimitiveData()
 
 	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
 
-	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = CreateScriptConverted(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
+	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = BindScript(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
 
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
-	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
+	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
 	HFloat3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
@@ -136,18 +137,18 @@ void HScene::InitPrimitiveData()
 	//pShape->SetMaterial(mtrl[5]);
 	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
-	pShape->SetMaterial(mtrl[6]);
-	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	pShape->SetScale(5.0f, 5.0f, 5.0f);
-	pShape->SetRotation(0.0f, H_PIDIV4, 0.0f);
-	//pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
-
-	//pShape = m_sceneManager->CreateBox("box big");
+	//pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
+	//pShape->SetMaterial(mtrl[6]);
 	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	//pShape->SetScale(5.0f, 5.0f, 5.0f);
-	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
-	//pShape->SetMaterial(mtrl[4]);
+	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	//pScript = BindScript(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
+
+	pShape = m_sceneManager->CreateBox("box big");
+	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	pShape->SetScale(5.0f, 5.0f, 5.0f);
+	pShape->SetRotation(0.0f, -0.3f, 0.0f);
+	pShape->SetMaterial(mtrl[4]);
 
 	//pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
 	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
@@ -159,15 +160,12 @@ void HScene::InitPrimitiveData()
 	//pShape->SetScale(2.0f, 2.0f, 2.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	//for (HFloat i = 0.0f; i < 3.0f; i++)
-	//{
-	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3( 10.0f, i,  10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3( 10.0f, i, -10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3(-10.0f, i,  10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3(-10.0f, i, -10.0f));
-	//	pLine = m_sceneManager->CreateSegment("segment", HFloat3(0.0f, i, 0.0f), HFloat3(-10.0f, i, -10.0f));
-	//	pScript = CreateScriptConverted(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pLine);
-	//}
+	int iLineCount = 20;
+	for (HInt i = -iLineCount; i <= iLineCount; i++)
+	{
+		pLine = m_sceneManager->CreateSegment("segment", HFloat3(i, 0.0f, -iLineCount), HFloat3(i, 0.0f, iLineCount));
+		pLine = m_sceneManager->CreateSegment("segment", HFloat3(-iLineCount, 0.0f, i), HFloat3(iLineCount, 0.0f, i));
+	}
 
 	//HInt chessSize = 9;
 	//for (HInt i = -chessSize; i <= chessSize; i++)

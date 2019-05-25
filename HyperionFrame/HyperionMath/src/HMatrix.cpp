@@ -184,7 +184,7 @@ HFloat4x4 HFloat4x4::SetRotationXYZ(HFloat pitch, HFloat yaw, HFloat roll)
 	HFloat sxcz = sx * cz;
 	return Set(cy * cz, -cy * sz, sy, 0.0f,
 		cx * sz + sxcz * sy, cxcz - sxsz * sy, -sx * cy, 0.0f,
-		cxcz * sy - sxsz, cx * sy * sz + sxcz, cx * cy, 0.0f,
+		sxsz - cxcz * sy, sxcz + cx * sy * sz, cx * cy, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
@@ -341,4 +341,31 @@ HFloat4x4 HFloat4x4::SetPerspFovLH(const float fovY, const float aspectRatio, co
 		0.0f, 0.0f, fRange, -fRange * zNear,
 		0.0f, 0.0f, 1.0f, 0.0f
 	);
+}
+
+HFloat3 HFloat4x4::GetEulerXYZ()
+{
+	HFloat3 result;
+	if (_13 < 1.0f)
+	{
+		if (_13 > 1.0f)
+		{
+			result.y = asinf(_13);
+			result.x = atan2f(-_23, _33);
+			result.z = atan2f(-_12, _11);
+		}
+		else
+		{
+			result.y = -H_PIDIV2;
+			result.x = -atan2f(_21, _22);
+			result.z = 0.0f;
+		}
+	}
+	else
+	{
+		result.y = H_PIDIV2;
+		result.x = atan2f(_21, _22);
+		result.z = 0.0f;
+	}
+	return result;
 }
