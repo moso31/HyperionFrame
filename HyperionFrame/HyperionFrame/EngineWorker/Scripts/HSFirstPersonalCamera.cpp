@@ -58,8 +58,16 @@ void HSFirstPersonalCamera::OnMouseDown(HEventArg eArg)
 
 void HSFirstPersonalCamera::OnMouseMove(HEventArg eArg)
 {
-	auto rot = m_pCamera->GetRotation();
-	rot.y += (HFloat)eArg.LastX * m_fSensitivity;	// yaw
-	rot.x -= (HFloat)eArg.LastY * m_fSensitivity;	// pitch
-	m_pCamera->SetRotation(rot.x, rot.y, rot.z);
+	HFloat fYaw = (HFloat)eArg.LastX * m_fSensitivity;
+	HFloat fPitch = (HFloat)eArg.LastY * m_fSensitivity;
+
+	HFloat3 vUp = m_pCamera->GetUp();
+	HFloat3 vRight = m_pCamera->GetRight();
+	HFloat4x4 mxOld, mxRotUp, mxRotRight;
+	mxOld.SetRotationXYZ(m_pCamera->GetRotation());
+	mxRotUp.SetRotationAxis(vUp, fYaw);
+	mxRotRight.SetRotationAxis(vRight, fPitch);
+
+	HFloat3 result = (mxRotUp * mxRotRight * mxOld).GetEulerXYZ();
+	m_pCamera->SetRotation(result.x, result.y, result.z);
 }
