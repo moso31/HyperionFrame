@@ -348,7 +348,7 @@ HFloat3 HFloat4x4::GetEulerXYZ()
 	HFloat3 result;
 	if (_13 < 1.0f)
 	{
-		if (_13 > 1.0f)
+		if (_13 > -1.0f)
 		{
 			result.y = asinf(_13);
 			result.x = atan2f(-_23, _33);
