@@ -2,10 +2,6 @@
 #include "PipelineManager.h"
 #include "DirectXHelper.h"
 
-Camera::Camera()
-{
-}
-
 Camera::Camera(const shared_ptr<DXResource>& dxResources) :
 	m_dxResources(dxResources)
 {
@@ -83,14 +79,11 @@ void Camera::SetLookAt(HFloat x, HFloat y, HFloat z)
 	m_at = { x, y, z };
 	m_up = { 0.0f, 1.0f, 0.0f };
 
-	HFloat3 dir = m_at - translation;
-	HFloat dis = sqrtf(dir.x * dir.x + dir.z * dir.z);
-
-	rotation = HFloat3(
-		atan2f(-dir.y, dis),	// pitch
-		atan2f(dir.x, dir.z),	// yaw
-		0.0f					// roll
-	);
+	HFloat3 vForward = (m_at - translation).Normalize();
+	HFloat3 vAxis = HFloat3(0.0f, 0.0f, 1.0f).Cross(vForward);
+	HFloat fAngle = vForward.AngleNormal(HFloat3(0.0f, 0.0f, 1.0f));
+	HQuaternion q(vAxis.Normalize(), fAngle);
+	rotation = q.ToEulerXYZ();
 
 	m_viewMatrix.SetLookAtLH(translation, m_at, m_up);
 }

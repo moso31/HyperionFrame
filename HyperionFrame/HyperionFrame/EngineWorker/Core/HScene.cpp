@@ -73,8 +73,8 @@ void HScene::InitPrimitiveData()
 {
 	m_mainCamera = m_sceneManager->CreateCamera();
 	m_mainCamera->SetTranslation(9.0f, 6.0f, 4.0f);
-	//m_mainCamera->SetLookAt(9.0f, 0.0f, 4.0001f);
-	m_mainCamera->SetRotation(0.0f, -0.0f, 0.0f);
+	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
+	//m_mainCamera->SetRotation(0.0f, -0.0f, 0.0f);
 
 	//// float percision test.
 	//m_mainCamera->SetTranslation(6.853f, 3.138f, -0.139f);
@@ -86,7 +86,7 @@ void HScene::InitPrimitiveData()
 
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
-	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
+	//RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
 	HFloat3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
@@ -111,81 +111,81 @@ void HScene::InitPrimitiveData()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	//pShape = m_sceneManager->CreateBox("wall y+");
-	//pShape->SetTranslation(0.0f, 10.6f, 0.0f);
-	//pShape->SetMaterial(mtrl[1]);
-	//pShape->SetScale(20.0f, 1.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall y+");
+	pShape->SetTranslation(0.0f, 10.6f, 0.0f);
+	pShape->SetMaterial(mtrl[1]);
+	pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall x-");
-	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	//pShape->SetMaterial(mtrl[2]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall x-");
+	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[2]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall x+");
-	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	//pShape->SetMaterial(mtrl[0]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall x+");
+	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[0]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall z-");
-	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	//pShape->SetMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = m_sceneManager->CreateBox("wall z-");
+	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall z+");
-	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	//pShape->SetMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = m_sceneManager->CreateBox("wall z+");
+	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
-	//pShape->SetMaterial(mtrl[6]);
-	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	//pShape->SetScale(5.0f, 5.0f, 5.0f);
-	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
-	//pScript = BindScript(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
-
-	pShape = m_sceneManager->CreateBox("box big");
+	pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
+	pShape->SetMaterial(mtrl[6]);
 	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	pShape->SetScale(5.0f, 5.0f, 5.0f);
-	pShape->SetRotation(0.0f, -0.3f, 0.0f);
-	pShape->SetMaterial(mtrl[4]);
+	pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	//pScript = BindScript(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
-	//pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
-	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
-	//pShape->SetMaterial(mtrl[6]);
-
-	//pShape = m_sceneManager->CreateBox("box small");
-	//pShape->SetTranslation(5.0f, 1.0f, -2.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape = m_sceneManager->CreateBox("box big");
+	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	//pShape->SetScale(5.0f, 5.0f, 5.0f);
+	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	int iLineCount = 20;
-	for (HInt i = -iLineCount; i <= iLineCount; i++)
-	{
-		HFloat pi = (HFloat)i;
-		HFloat pLineCount = (HFloat)iLineCount;
-		pLine = m_sceneManager->CreateSegment("segment", HFloat3(pi, 0.0f, -pLineCount), HFloat3(pi, 0.0f, pLineCount));
-		pLine = m_sceneManager->CreateSegment("segment", HFloat3(-pLineCount, 0.0f, pi), HFloat3(pLineCount, 0.0f, pi));
-	}
+	pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
+	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[6]);
 
-	//HInt chessSize = 9;
-	//for (HInt i = -chessSize; i <= chessSize; i++)
+	pShape = m_sceneManager->CreateBox("box small");
+	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[4]);
+
+	//int iLineCount = 20;
+	//for (HInt i = -iLineCount; i <= iLineCount; i++)
 	//{
-	//	for (HInt j = -chessSize; j <= chessSize; j++)
-	//	{
-	//		pShape = m_sceneManager->CreateBox("chess boxes");
-	//		if ((i + j) % 2)
-	//		{
-	//			pShape->SetTranslation(-i, -0.7f, j);
-	//			pShape->SetMaterial(mtrl[1]);
-	//		}
-	//		else
-	//		{
-	//			pShape->SetTranslation(-i, -0.5f, j);
-	//			pShape->SetMaterial(mtrl[3]);
-	//		}
-	//	}
+	//	HFloat pi = (HFloat)i;
+	//	HFloat pLineCount = (HFloat)iLineCount;
+	//	pLine = m_sceneManager->CreateSegment("grid", HFloat3(pi, 0.0f, -pLineCount), HFloat3(pi, 0.0f, pLineCount));
+	//	pLine = m_sceneManager->CreateSegment("grid", HFloat3(-pLineCount, 0.0f, pi), HFloat3(pLineCount, 0.0f, pi));
 	//}
+
+	HInt chessSize = 9;
+	for (HInt i = -chessSize; i <= chessSize; i++)
+	{
+		for (HInt j = -chessSize; j <= chessSize; j++)
+		{
+			pShape = m_sceneManager->CreateBox("chess boxes");
+			if ((i + j) % 2)
+			{
+				pShape->SetTranslation(-i, -0.7f, j);
+				pShape->SetMaterial(mtrl[1]);
+			}
+			else
+			{
+				pShape->SetTranslation(-i, -0.5f, j);
+				pShape->SetMaterial(mtrl[3]);
+			}
+		}
+	}
 
 	auto pointLight = m_sceneManager->CreatePointLight();
 	HFloat3 lightPos = { 0.0f, 10.0f, 5.0f };

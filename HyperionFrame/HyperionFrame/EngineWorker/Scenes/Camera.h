@@ -7,7 +7,7 @@
 class Camera : public Transform
 {
 public:
-	Camera();
+	Camera() = default;
 	Camera(const shared_ptr<DXResource>& dxResources);
 	~Camera();
 
