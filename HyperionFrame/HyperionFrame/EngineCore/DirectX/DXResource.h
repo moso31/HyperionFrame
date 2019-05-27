@@ -6,7 +6,7 @@ class DXResource
 public:
 	static const HUInt c_frameCount = 3;		// 使用三重缓冲。
 
-	DXResource() {}
+	DXResource() = default;
 	DXResource(HWND hwnd, DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
 	~DXResource();
 

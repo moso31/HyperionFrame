@@ -9,8 +9,8 @@ DXResource::DXResource(HWND hwnd, DXGI_FORMAT backBufferFormat, DXGI_FORMAT dept
 	m_fenceEvent(0),
 	m_backBufferFormat(backBufferFormat),
 	m_depthBufferFormat(depthBufferFormat),
-	m_fenceValues{}
-	//m_d3dRenderTargetSize(),
+	m_fenceValues{},
+	m_d3dRenderTargetSize()
 	//m_outputSize(),
 	//m_logicalSize(),
 	//m_nativeOrientation(DisplayOrientations::None),

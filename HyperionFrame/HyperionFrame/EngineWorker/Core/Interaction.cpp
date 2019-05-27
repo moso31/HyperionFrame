@@ -3,23 +3,16 @@
 #include "HMaterial.h"
 #include "Reflection.h"
 
-SurfaceInteraction::SurfaceInteraction()
-{
-}
-
 SurfaceInteraction::SurfaceInteraction(const HFloat3 & p, const HFloat2 & uv, const HFloat3 & wo, const HFloat3 & dpdu, const HFloat3 & dpdv, HShape * shape) :
 	uv(uv),
 	dpdu(dpdu),
 	dpdv(dpdv),
-	shape(shape)
+	shape(shape),
+	bsdf(nullptr)
 {
 	this->p = p;
 	this->n = dpdv.Cross(dpdu).Normalize();
 	this->wo = wo;
-}
-
-SurfaceInteraction::~SurfaceInteraction()
-{
 }
 
 void SurfaceInteraction::ComputeScatterFunctions()

@@ -4,7 +4,7 @@
 class App
 {
 public:
-	App();
+	App() = default;
 	App(HWND hwnd);
 	~App();
 

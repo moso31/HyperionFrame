@@ -2,10 +2,6 @@
 #include "global.h"
 #include "HInput.h"
 
-App::App()
-{
-}
-
 App::App(HWND hwnd)
 {
 	m_hwnd = hwnd;

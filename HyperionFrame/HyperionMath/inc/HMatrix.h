@@ -4,8 +4,7 @@
 class HFloat4x4
 {
 public:
-	HFloat4x4() = default;
-	HFloat4x4(HFloat _11, HFloat _12, HFloat _13, HFloat _14, HFloat _21, HFloat _22, HFloat _23, HFloat _24, HFloat _31, HFloat _32, HFloat _33, HFloat _34, HFloat _41, HFloat _42, HFloat _43, HFloat _44);
+	HFloat4x4(HFloat _11 = 1.0f, HFloat _12 = 0.0f, HFloat _13 = 0.0f, HFloat _14 = 0.0f, HFloat _21 = 0.0f, HFloat _22 = 1.0f, HFloat _23 = 0.0f, HFloat _24 = 0.0f, HFloat _31 = 0.0f, HFloat _32 = 0.0f, HFloat _33 = 1.0f, HFloat _34 = 0.0f, HFloat _41 = 0.0f, HFloat _42 = 0.0f, HFloat _43 = 0.0f, HFloat _44 = 1.0f);
 	HFloat4x4(const HFloat4x4& m);
 	~HFloat4x4() {}
 	

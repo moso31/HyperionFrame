@@ -14,7 +14,7 @@
 class HScene : public HObject, public enable_shared_from_this<HScene>
 {
 public:
-	HScene();
+	HScene() = default;
 	HScene(const std::shared_ptr<DXResource>& dxResource);
 	~HScene();
 

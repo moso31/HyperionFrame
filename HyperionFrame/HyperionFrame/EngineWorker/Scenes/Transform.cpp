@@ -3,8 +3,11 @@
 Transform::Transform(HFloat3 _translation, HFloat3 _rotation, HFloat3 _scale) :
 	translation(_translation),
 	rotation(_rotation),
-	scale(_scale)
+	scale(_scale),
+	m_mappedConstantBuffer(nullptr)
 {
+	worldMatrix.SetIdentity();
+	worldMatrixInv.SetIdentity();
 }
 
 void Transform::UpdateTransformData()

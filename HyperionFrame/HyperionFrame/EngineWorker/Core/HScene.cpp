@@ -20,12 +20,11 @@
 #define BindScript(classType, scriptType, pObject) dynamic_pointer_cast<classType>(m_sceneManager->CreateScript(scriptType, pObject))
 #define RegisterEventListener(object, script, eventType, pFunction) m_sceneManager->AddEventListener(eventType, object, std::bind(&pFunction, script, std::placeholders::_1));
 
-HScene::HScene()
-{
-}
-
 HScene::HScene(const std::shared_ptr<DXResource>& dxResource) :
-	m_dxResources(dxResource)
+	m_dxResources(dxResource),
+	m_bvhTree(nullptr),
+	m_cbvDescriptorSize(0),
+	m_makingProcessIndex(0)
 {
 }
 
@@ -163,8 +162,10 @@ void HScene::InitPrimitiveData()
 	int iLineCount = 20;
 	for (HInt i = -iLineCount; i <= iLineCount; i++)
 	{
-		pLine = m_sceneManager->CreateSegment("segment", HFloat3(i, 0.0f, -iLineCount), HFloat3(i, 0.0f, iLineCount));
-		pLine = m_sceneManager->CreateSegment("segment", HFloat3(-iLineCount, 0.0f, i), HFloat3(iLineCount, 0.0f, i));
+		HFloat pi = (HFloat)i;
+		HFloat pLineCount = (HFloat)iLineCount;
+		pLine = m_sceneManager->CreateSegment("segment", HFloat3(pi, 0.0f, -pLineCount), HFloat3(pi, 0.0f, pLineCount));
+		pLine = m_sceneManager->CreateSegment("segment", HFloat3(-pLineCount, 0.0f, pi), HFloat3(pLineCount, 0.0f, pi));
 	}
 
 	//HInt chessSize = 9;
@@ -346,7 +347,7 @@ void HScene::MakeBMPImage()
 	memset(pRGB, 0, sizeof(ImageBMPData) * sampleCount);
 
 	printf("生成BMP位图...\n");
-	auto time_st = GetTickCount();
+	auto time_st = GetTickCount64();
 
 	thread* threads = new thread[tileCount.x * tileCount.y];
 
@@ -375,7 +376,7 @@ void HScene::MakeBMPImage()
 	//生成BMP图片
 	ImageGenerator::GenerateImageBMP((BYTE*)pRGB, screenSize.x, screenSize.y, "D:\\rgb.bmp");
 
-	auto time_ed = GetTickCount();
+	auto time_ed = GetTickCount64();
 	printf("done. 用时：%.2f 秒\n", (HFloat)(time_ed - time_st) / 1000.0f);
 }
 

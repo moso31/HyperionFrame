@@ -88,7 +88,7 @@ namespace Reflection
 using namespace Reflection;
 
 BSDF::BSDF(const SurfaceInteraction & si, HFloat eta)
-	: n(si.n), s(si.dpdu) 
+	: n(si.n), s(si.dpdu), eta(0.0f)
 {
 	t = n.Cross(s);
 }
@@ -123,7 +123,7 @@ HFloat3 BSDF::f(const HFloat3 & woW, const HFloat3 & wiW, BxDFType flags)
 			((isReflect && (m_bxdfs[i]->type & BSDF_REFLECTION)) ||
 			(!isReflect && (m_bxdfs[i]->type & BSDF_TRANSMISSION))))
 		{
-			 f += m_bxdfs[i]->f(wo, wi);
+			f += m_bxdfs[i]->f(wo, wi);
 		}
 	return f;
 }
@@ -154,8 +154,13 @@ HFloat3 BSDF::Sample_f(const HFloat3 & woW, HFloat3 * wiW, const HFloat2 & u, HF
 	HFloat3 wi, wo = WorldToReflectionCoord(woW);
 	if (wo.z == 0) return { 0.0f, 0.0f, 0.0f };
 	*pdf = 0.f;
-	//if (sampledType) *sampledType = bxdf->type;
-	HFloat3 f = bxdf->Sample_f(wo, &wi, uRemapped, pdf/*, sampledType*/);
+
+	HFloat3 f(0.0f);
+	if (bxdf)
+	{
+		//if (sampledType) *sampledType = bxdf->type;
+		f = bxdf->Sample_f(wo, &wi, uRemapped, pdf/*, sampledType*/);
+	}
 
 	if (*pdf == 0) 
 	{

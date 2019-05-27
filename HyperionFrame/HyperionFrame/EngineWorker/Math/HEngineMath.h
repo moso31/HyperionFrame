@@ -85,7 +85,7 @@ inline HDouble NextFloatDown(HDouble v, HInt delta = 1)
 class EFloat
 {
 public:
-	EFloat() {}
+	EFloat() : v(H_NANF), low(H_NANF), high(H_NANF), ld(H_NAN) {}
 	EFloat(HFloat v, HFloat err = 0.0f);
 	EFloat(HFloat v, HDouble ld, HFloat err);
 	EFloat(const EFloat& ef);

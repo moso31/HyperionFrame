@@ -2,6 +2,7 @@
 #include "HEngineMath.h"
 
 enum BxDFType {
+	BSDF_NONE = 0,
 	BSDF_REFLECTION = 1 << 0,
 	BSDF_TRANSMISSION = 1 << 1,
 	BSDF_DIFFUSE = 1 << 2,
@@ -22,7 +23,7 @@ namespace Reflection
 class BSDF
 {
 public:
-	BSDF() {}
+	BSDF() : n(0.0f), s(0.0f), t(0.0f), eta(0.0f) {}
 	BSDF(const SurfaceInteraction &si, HFloat eta = 1);
 	virtual ~BSDF() {}
 
@@ -46,6 +47,7 @@ private:
 class BxDF
 {
 public:
+	BxDF() = default;
 	BxDF(BxDFType type) : type(type) {}
 	virtual ~BxDF() {}
 
@@ -71,6 +73,7 @@ private:
 class FresnelConductor : public Fresnel
 {
 public:
+	FresnelConductor() = default;
 	FresnelConductor(const HFloat3& etaI, const HFloat3& etaT, const HFloat3& k) : etaI(etaI), etaT(etaT), k(k) {};
 	HFloat3 Evaluate(HFloat cosThetaI) const;
 
@@ -81,6 +84,7 @@ private:
 class FresnelDielectric : public Fresnel
 {
 public:
+	FresnelDielectric() = default;
 	FresnelDielectric(HFloat etaI, HFloat etaT) : etaI(etaI), etaT(etaT) {};
 	HFloat3 Evaluate(HFloat cosThetaI) const;
 
@@ -91,12 +95,14 @@ private:
 class FresnelNoOp : public Fresnel
 {
 public:
+	FresnelNoOp() = default;
 	HFloat3 Evaluate(HFloat value) const;
 };
 
 class SpecularReflection : public BxDF
 {
 public:
+	SpecularReflection() = default;
 	SpecularReflection(const HFloat3 &R, Fresnel* fresnel) : BxDF(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR)), R(R), fresnel(fresnel) {}
 	HFloat3 f(const HFloat3 &wo, const HFloat3 &wi) const;
 	HFloat3 Sample_f(const HFloat3 &wo, HFloat3 *wi, const HFloat2 &sample,
@@ -111,6 +117,7 @@ private:
 class SpecularTransmission : public BxDF {
 public:
 	// SpecularTransmission Public Methods
+	SpecularTransmission() = default;
 	SpecularTransmission(const HFloat3 &T, HFloat etaA, HFloat etaB);
 	HFloat3 f(const HFloat3 &wo, const HFloat3 &wi) const;
 	HFloat3 Sample_f(const HFloat3 &wo, HFloat3 *wi, const HFloat2 &sample, HFloat *pdf) const;
@@ -125,6 +132,7 @@ private:
 class LambertianReflection : public BxDF
 {
 public:
+	LambertianReflection() = default;
 	LambertianReflection(const HFloat3 &R) : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R) {}
 	HFloat3 f(const HFloat3 &wo, const HFloat3 &wi) const;
 

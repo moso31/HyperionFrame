@@ -110,6 +110,7 @@
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>26444;26451;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;HyperionMath.lib;FBXImporter.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -146,6 +147,7 @@
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include;..\HyperionMath\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>26444;26451;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
