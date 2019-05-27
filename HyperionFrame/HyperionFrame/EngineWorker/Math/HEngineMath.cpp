@@ -108,7 +108,7 @@ bool Quadratic(HFloat a, HFloat b, HFloat c, HFloat& out_t0, HFloat& out_t1)
 	if (dt < 0.0f)
 		return false;
 
-	HFloat sqrtdt = sqrt(dt);
+	HFloat sqrtdt = sqrtf(dt);
 	HFloat q0 = b + sqrtdt, q1 = b - sqrtdt;
 
 	HFloat inv2a = -0.5f / a;

@@ -33,10 +33,10 @@ void Sphere::InitParameters(HFloat radius, HInt segmentHorizontal, HInt segmentV
 			HFloat segNext = (HFloat)(j + 1) / (HFloat)segmentHorizontal;
 			HFloat angleNow = segNow * H_2PI;
 			HFloat angleNext = segNext * H_2PI;
-			HFloat xNow = sin(angleNow);
-			HFloat zNow = cos(angleNow);
-			HFloat xNext = sin(angleNext);
-			HFloat zNext = cos(angleNext);
+			HFloat xNow = sinf(angleNow);
+			HFloat zNow = cosf(angleNow);
+			HFloat xNext = sinf(angleNext);
+			HFloat zNext = cosf(angleNext);
 
 			HFloat3 pNowUp = { xNow * radiusUp, yUp, zNow * radiusUp };
 			HFloat3 pNextUp = { xNext * radiusUp, yUp, zNext * radiusUp };
@@ -130,19 +130,19 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_
 	HFloat3 pHit = ray.GetT(tShapeHit.v);
 	pHit *= m_radius / pHit.Length();
 	
-	HFloat phi = atan2(pHit.y, pHit.x);
+	HFloat phi = atan2f(pHit.y, pHit.x);
 	if (phi < 0.0f) phi += H_2PI;
 
 	HFloat u = phi / H_2PI;
-	HFloat theta = acos(Clamp(pHit.z / m_radius, -1.0f, 1.0f));
+	HFloat theta = acosf(Clamp(pHit.z / m_radius, -1.0f, 1.0f));
 	HFloat v = theta / H_PI;
 
-	HFloat zRadius = std::sqrt(pHit.x * pHit.x + pHit.y * pHit.y);
+	HFloat zRadius = sqrtf(pHit.x * pHit.x + pHit.y * pHit.y);
 	HFloat invZRadius = 1.0f / zRadius;
 	HFloat cosPhi = pHit.x * invZRadius;
 	HFloat sinPhi = pHit.y * invZRadius;
 	HFloat3 dpdu(-H_2PI * pHit.y, H_2PI * pHit.x, 0.0f);
-	HFloat3 dpdv = HFloat3(H_PI * pHit.z * cosPhi, H_PI * pHit.z * sinPhi, H_PI * -m_radius * std::sin(theta));
+	HFloat3 dpdv = HFloat3(H_PI * pHit.z * cosPhi, H_PI * pHit.z * sinPhi, H_PI * -m_radius * sinf(theta));
 
 	{
 		SurfaceInteraction isect;

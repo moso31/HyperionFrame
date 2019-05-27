@@ -126,10 +126,10 @@ inline EFloat operator-(HFloat f, EFloat other) { return EFloat(f) - other; }
 inline EFloat sqrt(EFloat other) 
 {
 	EFloat r;
-	r.v = sqrt(other.v);
+	r.v = sqrtf(other.v);
 	r.ld = sqrt(other.ld);
-	r.low = NextFloatDown(sqrt(other.low));
-	r.high = NextFloatUp(sqrt(other.high));
+	r.low = NextFloatDown(sqrtf(other.low));
+	r.high = NextFloatUp(sqrtf(other.high));
 	r.Check();
 	return r;
 }

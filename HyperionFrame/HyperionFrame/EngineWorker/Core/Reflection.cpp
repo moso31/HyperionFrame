@@ -246,10 +246,10 @@ HFloat3 CosineSampleHemisphere(const HFloat2 & u)
 			r = uOffset.y;
 			theta = H_PIDIV2 - H_PIDIV4 * (uOffset.x / uOffset.y);
 		}
-		d = HFloat2(r * cos(theta), r * sin(theta));
+		d = HFloat2(r * cosf(theta), r * sinf(theta));
 	}
 
-	HFloat z = sqrt(max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
+	HFloat z = sqrtf(max(0.0f, 1.0f - d.x * d.x - d.y * d.y));
 	return HFloat3(d.x, d.y, z);
 }
 
