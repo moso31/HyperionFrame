@@ -84,7 +84,7 @@ void Camera::SetLookAt(HFloat x, HFloat y, HFloat z)
 	if (vAxis.LengthSq() == 0.0f) vAxis.y = 1.0f;
 
 	HFloat fAngle = vForward.AngleNormal(HFloat3(0.0f, 0.0f, 1.0f));
-	HQuaternion q(vAxis.Normalize(), fAngle);
+	HQuaternion q(vAxis, fAngle);
 	rotation = q.ToEulerXYZ();
 
 	m_viewMatrix.SetLookAtLH(translation, m_at, m_up);
@@ -136,13 +136,11 @@ Ray Camera::GenerateRay(HFloat screenX, HFloat screenY)
 	HFloat y = (1.0f - 2.0f * screenY / outputSize.y) / m_projectionMatrix._22;
 
 	HFloat3 vOrig(0.0f);
-	HFloat3 vDir(-x, y, 1.0f);
+	HFloat3 vDir = HFloat3(x, y, 1.0f).Normalize();
 
-	HFloat4x4 mxR;
-	mxR.SetRotationXYZ(rotation);
-
-	HFloat3 vOrigWorld = vOrig.TransformCoord(m_viewMatrix.Inverse());
-	HFloat3 vDirWorld = vDir.TransformNormal(mxR);
+	HFloat4x4 viewMatrixInv = m_viewMatrix.Inverse();
+	HFloat3 vOrigWorld = vOrig.TransformCoord(viewMatrixInv);
+	HFloat3 vDirWorld = vDir.TransformNormal(viewMatrixInv);
 
 	return Ray(vOrigWorld, vDirWorld);
 }

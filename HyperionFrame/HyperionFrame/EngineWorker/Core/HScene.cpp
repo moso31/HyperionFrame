@@ -284,6 +284,7 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 void HScene::OnMouseDown(HEventArg eArg)
 {
 	Ray ray = m_mainCamera->GenerateRay(HFloat(eArg.X), HFloat(eArg.Y));
+	ray = m_mainCamera->GenerateRay(0, 0);
 	unique_ptr<HDefaultSampler> sampler = make_unique<HDefaultSampler>(1, 1, false, 4);
 	//printf("orig: %f, %f, %f  dir: %f, %f, %f\n", ray.GetOrigin().x, ray.GetOrigin().y, ray.GetOrigin().z, ray.GetDirection().x, ray.GetDirection().y, ray.GetDirection().z);
 	WhittedIntegrator whi;

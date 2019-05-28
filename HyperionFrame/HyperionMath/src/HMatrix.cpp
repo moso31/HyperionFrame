@@ -294,14 +294,14 @@ HFloat4x4 HFloat4x4::SetLookAtLH(const HFloat3 & eyePos, const HFloat3 & focusPo
 
 HFloat4x4 HFloat4x4::SetLookToLH(const HFloat3 & eyePos, const HFloat3 & eyeDir, const HFloat3 & upDir) 
 {
-	HFloat3 dir = eyeDir.Normalize();
-	HFloat3 left = upDir.Cross(dir).Normalize();
-	HFloat3 up = dir.Cross(left);
+	HFloat3 vZ = eyeDir.Normalize();
+	HFloat3 vX = upDir.Cross(vZ).Normalize();
+	HFloat3 vY = vZ.Cross(vX);
 
 	return Set(
-		left.x, left.y, left.z, -left.Dot(eyePos),
-		up.x,	up.y,	up.z,	-up.Dot(eyePos),
-		dir.x,	dir.y,	dir.z,	-dir.Dot(eyePos),
+		vX.x,	vX.y,	vX.z,	-vX.Dot(eyePos),
+		vY.x,	vY.y,	vY.z,	-vY.Dot(eyePos),
+		vZ.x,	vZ.y,	vZ.z,	-vZ.Dot(eyePos),
 		0.0f,	0.0f,	0.0f,	1.0f
 	);
 }
