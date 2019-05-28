@@ -11,18 +11,21 @@ enum HBVHSplitMode
 
 struct HBVHPrimitiveInfo
 {
+	HBVHPrimitiveInfo() = default;
 	AABB aabb;
 	HInt index;
 };
 
 struct HBVHBucketInfo
 {
+	HBVHBucketInfo() = default;
 	AABB aabb;
 	HInt nPrimitive = 0;
 };
 
 struct HBVHTreeNode
 {
+	HBVHTreeNode() = default;
 	HBVHTreeNode* child[2];
 	AABB aabb;
 	HInt index;
@@ -31,6 +34,7 @@ struct HBVHTreeNode
 
 struct HBVHMortonPrimitiveInfo
 {
+	HBVHMortonPrimitiveInfo() = default;
 	HInt mortonCode;
 	HInt index;
 	AABB aabb;
@@ -38,6 +42,7 @@ struct HBVHMortonPrimitiveInfo
 
 struct HBVHTreeletInfo
 {
+	HBVHTreeletInfo() = default;
 	HInt startIndex;
 	HInt nPrimitive;
 	HBVHTreeNode* node;

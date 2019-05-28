@@ -64,7 +64,7 @@ void AABB::Merge(HFloat3 point)
 
 bool AABB::IntersectP(Ray ray, HFloat* hit0, HFloat* hit1)
 {
-	HFloat3 vRayDirInv = ray.origin.Reciprocal();
+	HFloat3 vRayDirInv = ray.direction.Reciprocal();
 	HFloat3 tMax = (max - ray.origin) * vRayDirInv;
 	HFloat3 tMin = (min - ray.origin) * vRayDirInv;
 
@@ -217,8 +217,8 @@ EFloat EFloat::operator/(EFloat other) const
 	else
 	{
 		HFloat div[4] = { low / other.low, low / other.high, high / other.low, high / other.high };
-		result.low = NextFloatDown((min(div[0], div[1]), min(div[2], div[3])));
-		result.high = NextFloatUp((max(div[0], div[1]), max(div[2], div[3])));
+		result.low = NextFloatDown(min(min(div[0], div[1]), min(div[2], div[3])));
+		result.high = NextFloatUp(max(max(div[0], div[1]), max(div[2], div[3])));
 	}
 	result.Check();
 	return result;

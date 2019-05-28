@@ -29,7 +29,7 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 		return;
 	}
 
-	auto time_st = GetTickCount();
+	auto time_st = GetTickCount64();
 
 	m_mode_temp = mode;
 
@@ -113,7 +113,7 @@ void HBVHTree::BuildTreesWithScene(HBVHSplitMode mode)
 		BuildUpperTree(root, 0, (HInt)m_treeletInfo.size());
 	}
 
-	auto time_ed = GetTickCount();
+	auto time_ed = GetTickCount64();
 	printf("BVH done. ”√ ±£∫%.3f √Î\n", (HFloat)(time_ed - time_st) / 1000.0f);
 }
 

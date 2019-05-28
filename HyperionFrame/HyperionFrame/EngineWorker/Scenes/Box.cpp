@@ -132,17 +132,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 			HFloat3 p1t = p1 - vRayOrig;
 			HFloat3 p2t = p2 - vRayOrig;
 
-			HInt kz = 0;
-			HFloat kValue = fabsf(vRayDir[0]);
-			for (HInt i = 1; i < 4; i++)
-			{
-				HFloat getByIdx = fabsf(vRayDir[i]);
-				if (kValue < getByIdx)
-				{
-					kValue = getByIdx;
-					kz = i;
-				}
-			}
+			HInt kz = vRayDir.Abs().MaxDimension();
 			HInt kx = kz + 1;
 			if (kx == 3) kx = 0;
 			HInt ky = kx + 1;

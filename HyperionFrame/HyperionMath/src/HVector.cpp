@@ -219,6 +219,11 @@ HFloat2 HFloat2::Permute(const HInt x, const HInt y) const
 	return HFloat2(v[x], v[y]);
 }
 
+HInt HFloat2::MaxDimension() const
+{
+	return x > y ? 0 : 1;
+}
+
 bool HFloat2::Equal(const HFloat2 & v, HFloat tolerance)
 {
 	return (fabsf(x - v.x) < tolerance &&
@@ -467,6 +472,11 @@ HFloat3 HFloat3::TransformNormal(const HFloat4x4 & m) const
 HFloat3 HFloat3::Permute(const HInt x, const HInt y, const HInt z) const
 {
 	return HFloat3(v[x], v[y], v[z]);
+}
+
+HInt HFloat3::MaxDimension() const
+{
+	return (x > y) ? ((x > z) ? 0 : 2) : ((y > z) ? 1 : 2);
 }
 
 HFloat3 HFloat3::Clamp(const HFloat3 & min, const HFloat3 & max) const

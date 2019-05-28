@@ -47,6 +47,7 @@ public:
 	HFloat2 Sqrt() const;
 	HFloat2 Normalize() const;
 	HFloat2 Permute(const HInt x, const HInt y) const;
+	HInt MaxDimension() const;
 	bool Equal(const HFloat2& v, HFloat tolerance = H_EPSILON);
 
 public:
@@ -107,6 +108,7 @@ public:
 	HFloat3 TransformCoord(const HFloat4x4& m) const;
 	HFloat3 TransformNormal(const HFloat4x4& m) const;
 	HFloat3 Permute(const HInt x, const HInt y, const HInt z) const;
+	HInt MaxDimension() const;
 	HFloat3 Clamp(const HFloat3& min, const HFloat3& max) const;
 	bool Equal(const HFloat3& v, HFloat tolerance = H_EPSILON);
 

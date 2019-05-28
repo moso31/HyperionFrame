@@ -81,6 +81,8 @@ void Camera::SetLookAt(HFloat x, HFloat y, HFloat z)
 
 	HFloat3 vForward = (m_at - translation).Normalize();
 	HFloat3 vAxis = HFloat3(0.0f, 0.0f, 1.0f).Cross(vForward);
+	if (vAxis.LengthSq() == 0.0f) vAxis.y = 1.0f;
+
 	HFloat fAngle = vForward.AngleNormal(HFloat3(0.0f, 0.0f, 1.0f));
 	HQuaternion q(vAxis.Normalize(), fAngle);
 	rotation = q.ToEulerXYZ();
