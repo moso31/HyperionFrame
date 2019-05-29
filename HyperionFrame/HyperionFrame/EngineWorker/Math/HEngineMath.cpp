@@ -197,8 +197,8 @@ EFloat EFloat::operator*(EFloat other) const
 	result.ld = ld * other.ld;
 
 	HFloat pro[4] = { low * other.low, low * other.high, high * other.low, high * other.high };
-	result.low = NextFloatDown((min(pro[0], pro[1]), min(pro[2], pro[3])));
-	result.high = NextFloatUp((max(pro[0], pro[1]), max(pro[2], pro[3])));
+	result.low = NextFloatDown(min(min(pro[0], pro[1]), min(pro[2], pro[3])));
+	result.high = NextFloatUp(max(max(pro[0], pro[1]), max(pro[2], pro[3])));
 	result.Check();
 	return result;
 }

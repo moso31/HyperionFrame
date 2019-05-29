@@ -227,7 +227,7 @@ HFloat3 FresnelDielectric::Evaluate(HFloat cosThetaI) const
 
 HFloat3 LambertianReflection::f(const HFloat3 & wo, const HFloat3 & wi) const
 {
-	return HFloat3(R.x * H_1DIVPI, R.y * H_1DIVPI, R.z * H_1DIVPI);
+	return R * H_1DIVPI;
 }
 
 HFloat3 CosineSampleHemisphere(const HFloat2 & u)
