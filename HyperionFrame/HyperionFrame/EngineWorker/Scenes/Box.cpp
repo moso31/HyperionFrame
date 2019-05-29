@@ -241,6 +241,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 			// isect 转换成世界坐标
 			SurfaceInteraction result;
 			result.p = record.p.TransformCoord(worldMatrix);
+			result.pError = record.pError;
 			result.n = record.n.TransformNormal(worldMatrix).Normalize();
 			result.wo = record.wo.TransformNormal(worldMatrix).Normalize();
 			result.dpdu = record.dpdu.TransformNormal(worldMatrix).Normalize();

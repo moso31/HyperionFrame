@@ -106,8 +106,12 @@ public:
 	HFloat3 Normalize() const;
 	HFloat3 Abs() const;
 	HFloat3 Sqrt() const;
-	HFloat3 TransformCoord(const HFloat4x4& m) const;
-	HFloat3 TransformNormal(const HFloat4x4& m) const;
+	//HFloat3 TransformCoord(const HFloat4x4& m) const;
+	HFloat3 TransformCoord(const HFloat4x4& m, HFloat3& out_pError) const;
+	HFloat3 TransformCoord(const HFloat4x4& m, const HFloat3& pError, HFloat3& out_pError) const;
+	//HFloat3 TransformNormal(const HFloat4x4& m) const;
+	HFloat3 TransformNormal(const HFloat4x4& m, HFloat3& out_pError) const;
+	HFloat3 TransformNormal(const HFloat4x4& m, const HFloat3& pError, HFloat3& out_pError) const;
 	HFloat3 Permute(const HInt x, const HInt y, const HInt z) const;
 	HInt MaxDimension() const;
 	HFloat MaxComponent() const;
@@ -162,7 +166,7 @@ public:
 	HFloat4 Reciprocal() const;
 	HFloat4 Abs() const;
 	HFloat4 Sqrt() const;
-	HFloat4 Transform(const HFloat4x4& m) const;
+	HFloat4 Transform(const HFloat4x4& m, HFloat4& out_pError) const;
 	HFloat4 Permute(const HInt x, const HInt y, const HInt z, const HInt w) const;
 	bool Equal(const HFloat4& v, HFloat tolerance = H_EPSILON);
 

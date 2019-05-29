@@ -460,15 +460,60 @@ HFloat3 HFloat3::Sqrt() const
 	return HFloat3(sqrtf(x), sqrtf(y), sqrtf(z));
 }
 
-HFloat3 HFloat3::TransformCoord(const HFloat4x4 & m) const
+//HFloat3 HFloat3::TransformCoord(const HFloat4x4& m) const
+//{
+//	return HFloat3(m._11 * x + m._12 * y + m._13 * z + m._14,
+//		m._21 * x + m._22 * y + m._23 * z + m._24,
+//		m._31 * x + m._32 * y + m._33 * z + m._34);
+//}
+
+HFloat3 HFloat3::TransformCoord(const HFloat4x4 & m, HFloat3& out_pError) const
 {
+	HFloat xAbsSum = abs(m._11 * x) + abs(m._12 * y) + abs(m._13 * z) + abs(m._14);
+	HFloat yAbsSum = abs(m._21 * x) + abs(m._22 * y) + abs(m._23 * z) + abs(m._24);
+	HFloat zAbsSum = abs(m._31 * x) + abs(m._32 * y) + abs(m._33 * z) + abs(m._34);
+	out_pError = gamma(3) * HFloat3(xAbsSum, yAbsSum, zAbsSum);
+
 	return HFloat3(m._11 * x + m._12 * y + m._13 * z + m._14,
 			m._21 * x + m._22 * y + m._23 * z + m._24,
 			m._31 * x + m._32 * y + m._33 * z + m._34);
 }
 
-HFloat3 HFloat3::TransformNormal(const HFloat4x4 & m) const
+HFloat3 HFloat3::TransformCoord(const HFloat4x4& m, const HFloat3& pError, HFloat3& out_pError) const
 {
+	out_pError.x = (gamma(3) + 1) * (abs(m._11) * pError.x + abs(m._12) * pError.y + abs(m._13) * pError.z) + gamma(3) * (abs(m._11 * x) + abs(m._12 * y) + abs(m._13 * z) + abs(m._14));
+	out_pError.y = (gamma(3) + 1) * (abs(m._21) * pError.x + abs(m._22) * pError.y + abs(m._23) * pError.z) + gamma(3) * (abs(m._21 * x) + abs(m._22 * y) + abs(m._23 * z) + abs(m._24));
+	out_pError.z = (gamma(3) + 1) * (abs(m._31) * pError.x + abs(m._32) * pError.y + abs(m._33) * pError.z) + gamma(3) * (abs(m._31 * x) + abs(m._32 * y) + abs(m._33 * z) + abs(m._34));
+
+	return HFloat3(m._11 * x + m._12 * y + m._13 * z + m._14,
+		m._21 * x + m._22 * y + m._23 * z + m._24,
+		m._31 * x + m._32 * y + m._33 * z + m._34);
+}
+
+//HFloat3 HFloat3::TransformNormal(const HFloat4x4& m) const
+//{
+//	return HFloat3(m._11 * x + m._12 * y + m._13 * z,
+//		m._21 * x + m._22 * y + m._23 * z,
+//		m._31 * x + m._32 * y + m._33 * z);
+//}
+
+HFloat3 HFloat3::TransformNormal(const HFloat4x4 & m, HFloat3& out_pError) const
+{
+	out_pError.x = gamma(3) * (abs(m._11 * x) + abs(m._12 * y) + abs(m._13 * z));
+	out_pError.y = gamma(3) * (abs(m._21 * x) + abs(m._22 * y) + abs(m._23 * z));
+	out_pError.z = gamma(3) * (abs(m._31 * x) + abs(m._32 * y) + abs(m._33 * z));
+
+	return HFloat3(m._11 * x + m._12 * y + m._13 * z,
+		m._21 * x + m._22 * y + m._23 * z,
+		m._31 * x + m._32 * y + m._33 * z);
+}
+
+HFloat3 HFloat3::TransformNormal(const HFloat4x4& m, const HFloat3& pError, HFloat3& out_pError) const
+{
+	out_pError.x = (gamma(3) + 1) * (abs(m._11) * pError.x + abs(m._12) * pError.y + abs(m._13) * pError.z) + gamma(3) * (abs(m._11 * x) + abs(m._12 * y) + abs(m._13 * z));
+	out_pError.y = (gamma(3) + 1) * (abs(m._21) * pError.x + abs(m._22) * pError.y + abs(m._23) * pError.z) + gamma(3) * (abs(m._21 * x) + abs(m._22 * y) + abs(m._23 * z));
+	out_pError.z = (gamma(3) + 1) * (abs(m._31) * pError.x + abs(m._32) * pError.y + abs(m._33) * pError.z) + gamma(3) * (abs(m._31 * x) + abs(m._32 * y) + abs(m._33 * z));
+
 	return HFloat3(m._11 * x + m._12 * y + m._13 * z,
 		m._21 * x + m._22 * y + m._23 * z,
 		m._31 * x + m._32 * y + m._33 * z);
@@ -692,7 +737,7 @@ HFloat4 HFloat4::Sqrt() const
 	return HFloat4(sqrtf(x), sqrtf(y), sqrtf(z), sqrtf(w));
 }
 
-HFloat4 HFloat4::Transform(const HFloat4x4 & m) const
+HFloat4 HFloat4::Transform(const HFloat4x4 & m, HFloat4& out_pError) const
 {
 	return HFloat4(
 		m._11 * v[0] + m._12 * v[1] + m._13 * v[2] + m._14 * v[3],
