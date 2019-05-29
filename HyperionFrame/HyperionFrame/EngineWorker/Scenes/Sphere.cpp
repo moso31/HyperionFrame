@@ -144,6 +144,7 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_
 	HFloat3 dpdu(-H_2PI * pHit.y, H_2PI * pHit.x, 0.0f);
 	HFloat3 dpdv = HFloat3(H_PI * pHit.z * cosPhi, H_PI * pHit.z * sinPhi, H_PI * -m_radius * sinf(theta));
 
+	HFloat3 pErr = gamma(5) * pHit;
 	{
 		SurfaceInteraction isect;
 		isect.p = pHit.TransformCoord(worldMatrix);

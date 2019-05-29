@@ -197,6 +197,23 @@ public:
 	HFloat3 direction;
 };
 
+inline HFloat3 OffsetRayOrigin(const HFloat3& p, const HFloat3& pError, const HFloat3& n, const HFloat3& w)
+{
+	HFloat d = n.Abs().Dot(pError);
+	HFloat3 offset = n * d;
+	if (w.Dot(n) < 0) 
+		offset = -offset;
+	HFloat3 result = p + offset;
+	for (int i = 0; i < 3; ++i) 
+	{
+		if (offset[i] > 0) 
+			result[i] = NextFloatUp(result[i]);
+		else if (offset[i] < 0) 
+			result[i] = NextFloatDown(result[i]);
+	}
+	return result;
+}
+
 class Segment
 {
 public:
@@ -236,7 +253,3 @@ public:
 	HFloat3 min;
 	HFloat3 max;
 };
-
-bool Quadratic(HFloat a, HFloat b, HFloat c, HFloat& out_t0, HFloat& out_t1);
-
-bool RayIntersectP(Ray ray, AABB aabb);

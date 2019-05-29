@@ -3,16 +3,14 @@
 #include "HMaterial.h"
 #include "Reflection.h"
 
-SurfaceInteraction::SurfaceInteraction(const HFloat3 & p, const HFloat2 & uv, const HFloat3 & wo, const HFloat3 & dpdu, const HFloat3 & dpdv, HShape * shape) :
+SurfaceInteraction::SurfaceInteraction(const HFloat3& p, const HFloat3& pError, const HFloat2& uv, const HFloat3& wo, const HFloat3& dpdu, const HFloat3& dpdv, HShape* shape) :
+	Interaction(p, pError, dpdv.Cross(dpdu).Normalize(), wo),
 	uv(uv),
 	dpdu(dpdu),
 	dpdv(dpdv),
 	shape(shape),
 	bsdf(nullptr)
 {
-	this->p = p;
-	this->n = dpdv.Cross(dpdu).Normalize();
-	this->wo = wo;
 }
 
 void SurfaceInteraction::ComputeScatterFunctions()
@@ -24,16 +22,20 @@ void SurfaceInteraction::ComputeScatterFunctions()
 
 Ray Interaction::SpawnRay(const HFloat3 & d) const
 {
-	//OffsetRayOrigin(p, n, d);
-	return Ray(p, d);
+	HFloat3 orig = OffsetRayOrigin(p, pError, n, d);
+	return Ray(orig, d);
 }
 
 Ray Interaction::SpawnRayTo(const HFloat3 & p1) const
 {
-	return Ray(p, p1 - p);
+	HFloat3 dir = p1 - p;
+	HFloat3 orig = OffsetRayOrigin(p, pError, n, dir);
+	return Ray(orig, dir);
 }
 
 Ray Interaction::SpawnRayTo(const Interaction & it) const
 {
-	return Ray(p, it.p - p);
+	HFloat3 dir = it.p - p;
+	HFloat3 orig = OffsetRayOrigin(p, pError, n, dir);
+	return Ray(orig, dir);
 }

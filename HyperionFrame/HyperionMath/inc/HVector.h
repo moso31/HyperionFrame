@@ -31,7 +31,7 @@ public:
 	HFloat2 operator-=(const HFloat& f);
 	HFloat2 operator*=(const HFloat& f);
 	HFloat2 operator/=(const HFloat& f);
-	HFloat operator[] (const HInt& index) { return v[index]; }
+	HFloat& operator[] (const HInt& index) { return v[index]; }
 	bool operator==(const HFloat2& v) const;
 	bool operator!=(const HFloat2& v) const;
 
@@ -48,6 +48,7 @@ public:
 	HFloat2 Normalize() const;
 	HFloat2 Permute(const HInt x, const HInt y) const;
 	HInt MaxDimension() const;
+	HFloat MaxComponent() const;
 	bool Equal(const HFloat2& v, HFloat tolerance = H_EPSILON);
 
 public:
@@ -89,7 +90,7 @@ public:
 	HFloat3 operator-=(const HFloat& f);
 	HFloat3 operator*=(const HFloat& f);
 	HFloat3 operator/=(const HFloat& f);
-	HFloat operator[] (const HInt& index) { return v[index]; }
+	HFloat& operator[] (const HInt& index) { return v[index]; }
 	bool operator==(const HFloat3& v) const;
 	bool operator!=(const HFloat3& v) const;
 
@@ -109,6 +110,7 @@ public:
 	HFloat3 TransformNormal(const HFloat4x4& m) const;
 	HFloat3 Permute(const HInt x, const HInt y, const HInt z) const;
 	HInt MaxDimension() const;
+	HFloat MaxComponent() const;
 	HFloat3 Clamp(const HFloat3& min, const HFloat3& max) const;
 	bool Equal(const HFloat3& v, HFloat tolerance = H_EPSILON);
 
@@ -151,7 +153,7 @@ public:
 	HFloat4 operator-=(const HFloat& f);
 	HFloat4 operator*=(const HFloat& f);
 	HFloat4 operator/=(const HFloat& f);
-	HFloat operator[] (const HInt& index) { return v[index]; }
+	HFloat& operator[] (const HInt& index) { return v[index]; }
 	bool operator==(const HFloat4& v) const;
 	bool operator!=(const HFloat4& v) const;
 

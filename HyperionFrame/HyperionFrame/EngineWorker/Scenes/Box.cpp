@@ -190,6 +190,22 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 			HFloat b2 = e2 * invDet;
 			HFloat t = tScaled * invDet;
 
+			HFloat maxZt = HFloat3(p0t.z, p1t.z, p2t.z).Abs().MaxComponent();
+			HFloat deltaZ = gamma(3) * maxZt;
+
+			HFloat maxXt = HFloat3(p0t.x, p1t.x, p2t.x).Abs().MaxComponent();
+			HFloat maxYt = HFloat3(p0t.y, p1t.y, p2t.y).Abs().MaxComponent();
+			HFloat deltaX = gamma(5) * (maxXt + maxZt);
+			HFloat deltaY = gamma(5) * (maxYt + maxZt);
+
+			HFloat deltaE = 2 * (gamma(2) * maxXt * maxYt + deltaY * maxXt + deltaX * maxYt);
+
+			HFloat maxE = HFloat3(e0, e1, e2).Abs().MaxComponent();
+			HFloat deltaT = 3 * (gamma(3) * maxE * maxZt + deltaE * maxZt + deltaZ * maxE) * abs(invDet);
+			
+			if (t <= deltaT) 
+				return false;
+
 			TriangleUV uv = GetUVs(i);
 
 			HFloat du02 = uv.p[0].x - uv.p[2].x;
@@ -203,6 +219,11 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 			HFloat3 dpdu = dv12 * dp02 - dv02 * dp12;
 			HFloat3 dpdv = du02 * dp12 - du12 * dp02;
 
+			HFloat xAbsSum = abs(b0 * p0.x) + abs(b1 * p1.x) + abs(b2 * p2.x);
+			HFloat yAbsSum = abs(b0 * p0.y) + abs(b1 * p1.y) + abs(b2 * p2.y);
+			HFloat zAbsSum = abs(b0 * p0.z) + abs(b1 * p1.z) + abs(b2 * p2.z);
+			HFloat3 pError = gamma(7) * HFloat3(xAbsSum, yAbsSum, zAbsSum);
+
 			HFloat3 pHit = b0 * p0 + b1 * p1 + b2 * p2;
 			HFloat2 uvHit = b0 * uv.p[0] + b1 * uv.p[1] + b2 * uv.p[2];
 
@@ -211,7 +232,7 @@ bool Box::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHi
 				*out_tHit = t;
 				HFloat3 hitPos = vRayOrig + t * vRayDir;
 				HFloat3 wo = -vRayDir;
-				record = SurfaceInteraction(hitPos, uvHit, wo, dpdu, dpdv, this);
+				record = SurfaceInteraction(hitPos, pError, uvHit, wo, dpdu, dpdv, this);
 			}
 		}
 

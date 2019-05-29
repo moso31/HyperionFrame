@@ -11,10 +11,10 @@
       <Filter>EngineCore\File</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\Renderer\SceneRenderer.cpp">
-      <Filter>EngineCore\Renderer</Filter>
+      <Filter>EngineCore\Input\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp">
-      <Filter>EngineCore\Renderer</Filter>
+      <Filter>EngineCore\Input\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\main.cpp">
       <Filter>EngineCore</Filter>
@@ -148,13 +148,13 @@
       <Filter>EngineCore\File</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\Renderer\SceneRenderer.h">
-      <Filter>EngineCore\Renderer</Filter>
+      <Filter>EngineCore\Input\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\Renderer\ShaderStructures.h">
-      <Filter>EngineCore\Renderer</Filter>
+      <Filter>EngineCore\Input\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\Renderer\PipelineManager.h">
-      <Filter>EngineCore\Renderer</Filter>
+      <Filter>EngineCore\Input\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\header.h">
       <Filter>EngineCore</Filter>
@@ -290,9 +290,6 @@
     <Filter Include="EngineCore\Shader">
       <UniqueIdentifier>{3517e472-2a50-411a-927a-f5f6bb514031}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EngineCore\Renderer">
-      <UniqueIdentifier>{8ad2fe49-f34d-4df2-bd65-71a520214917}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EngineWorker">
       <UniqueIdentifier>{0f506a41-ecad-4da5-b340-53e93f36df28}</UniqueIdentifier>
     </Filter>
@@ -328,6 +325,9 @@
     </Filter>
     <Filter Include="EngineWorker\Scripts">
       <UniqueIdentifier>{d8cdd7ef-7ae2-4f3a-80d3-4a04ba788dbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineCore\Input\Renderer">
+      <UniqueIdentifier>{8ad2fe49-f34d-4df2-bd65-71a520214917}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

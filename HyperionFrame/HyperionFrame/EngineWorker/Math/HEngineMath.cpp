@@ -121,22 +121,6 @@ bool Quadratic(HFloat a, HFloat b, HFloat c, HFloat& out_t0, HFloat& out_t1)
 	return true;
 }
 
-bool RayIntersectP(Ray ray, AABB aabb)
-{
-	HFloat3 vRayDirInv = ray.origin.Reciprocal();
-	HFloat3 tMax = (aabb.max - ray.origin) * vRayDirInv;
-	HFloat3 tMin = (aabb.min - ray.origin) * vRayDirInv;
-
-	HFloat3 t1 = tMin.MinVector(tMax);
-	HFloat3 t2 = tMin.MaxVector(tMax);
-
-	HFloat tNear = max(t1.x, max(t1.y, t1.z));
-	HFloat tFar = min(t2.x, min(t2.y, t2.z));
-	
-	tFar *= (1 + 2 * gamma(3));
-	return tNear < tFar;
-}
-
 EFloat::EFloat(HFloat v, HFloat err) :
 	v(v)
 {

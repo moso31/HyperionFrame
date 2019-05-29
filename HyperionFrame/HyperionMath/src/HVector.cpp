@@ -224,6 +224,11 @@ HInt HFloat2::MaxDimension() const
 	return x > y ? 0 : 1;
 }
 
+HFloat HFloat2::MaxComponent() const
+{
+	return max(x, y);
+}
+
 bool HFloat2::Equal(const HFloat2 & v, HFloat tolerance)
 {
 	return (fabsf(x - v.x) < tolerance &&
@@ -477,6 +482,11 @@ HFloat3 HFloat3::Permute(const HInt x, const HInt y, const HInt z) const
 HInt HFloat3::MaxDimension() const
 {
 	return (x > y) ? ((x > z) ? 0 : 2) : ((y > z) ? 1 : 2);
+}
+
+HFloat HFloat3::MaxComponent() const
+{
+	return max(x, max(y, z));
 }
 
 HFloat3 HFloat3::Clamp(const HFloat3 & min, const HFloat3 & max) const
