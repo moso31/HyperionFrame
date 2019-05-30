@@ -72,14 +72,8 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 void HScene::InitPrimitiveData()
 {
 	m_mainCamera = m_sceneManager->CreateCamera();
-	//m_mainCamera->SetTranslation(9.0f, 6.0f, 4.0f);
-	//m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
-
-	//// float percision test.
-	m_mainCamera->SetTranslation(6.853f, 3.138f, 0.139f);
-	m_mainCamera->SetRotation(0.682f, 3.897f, 0.000f);
-
-	//m_mainCamera->SetRotation(20.0f * H_DEGTORAD, -70.0f * H_DEGTORAD, 0.0f * H_DEGTORAD);
+	m_mainCamera->SetTranslation(9.0f, 6.0f, 4.0f);
+	m_mainCamera->SetLookAt(0.0f, 0.0f, 0.0f);
 
 	shared_ptr<HSFirstPersonalCamera> pScript_first_personal_camera = BindScript(HSFirstPersonalCamera, HSCRIPT_FIRST_PERSONAL_CAMERA, m_mainCamera);
 
