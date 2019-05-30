@@ -140,7 +140,7 @@ Ray Camera::GenerateRay(HFloat screenX, HFloat screenY)
 
 	HFloat4x4 viewMatrixInv = m_viewMatrix.Inverse();
 	HFloat3 vOrigWorld = vOrig.TransformCoord(viewMatrixInv);
-	HFloat3 vDirWorld = vDir.TransformNormal(viewMatrixInv);
+	HFloat3 vDirWorld = vDir.TransformNormal(viewMatrixInv).Normalize();
 
 	return Ray(vOrigWorld, vDirWorld);
 }

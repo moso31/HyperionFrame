@@ -53,18 +53,29 @@ void HMesh::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit)
 {
-	HFloat3 vRayOrig = worldRay.origin.TransformCoord(worldMatrixInv);
-	HFloat3 vRayDir = worldRay.direction.TransformNormal(worldMatrixInv).Normalize();
-	HFloat3 vRayDirInv = vRayDir.Reciprocal();
+	HFloat3 oErr, dErr;
+	Ray ray = worldRay.Transform(worldMatrixInv, oErr, dErr);
 
-	HFloat3 tMax = (m_aabb.max - vRayOrig) * vRayDirInv;
-	HFloat3 tMin = (m_aabb.min - vRayOrig) * vRayDirInv;
+	EFloat ox(ray.origin.x, oErr.x), oy(ray.origin.y, oErr.y), oz(ray.origin.z, oErr.z);
+	EFloat dx(ray.direction.x, dErr.x), dy(ray.direction.y, dErr.y), dz(ray.direction.z, dErr.z);
+	EFloat dInvx(1.0f / dx), dInvy(1.0f / dy), dInvz(1.0f / dz);
 
-	HFloat3 t1 = tMin.MinVector(tMax);
-	HFloat3 t2 = tMin.MaxVector(tMax);
+	EFloat tMaxx = (EFloat(m_aabb.max.x) - ox) * dInvx;
+	EFloat tMaxy = (EFloat(m_aabb.max.y) - oy) * dInvy;
+	EFloat tMaxz = (EFloat(m_aabb.max.z) - oz) * dInvz;
+	EFloat tMinx = (EFloat(m_aabb.min.x) - ox) * dInvx;
+	EFloat tMiny = (EFloat(m_aabb.min.y) - oy) * dInvy;
+	EFloat tMinz = (EFloat(m_aabb.min.z) - oz) * dInvz;
 
-	HFloat tNear = max(t1.x, max(t1.y, t1.z));
-	HFloat tFar = min(t2.x, min(t2.y, t2.z));
+	HFloat t1x = min(tMinx.low, tMaxx.low);
+	HFloat t1y = min(tMiny.low, tMaxy.low);
+	HFloat t1z = min(tMinz.low, tMaxz.low);
+	HFloat t2x = max(tMinx.high, tMaxx.high);
+	HFloat t2y = max(tMiny.high, tMaxy.high);
+	HFloat t2z = max(tMinz.high, tMaxz.high);
+
+	HFloat tNear = max(t1x, max(t1y, t1z));
+	HFloat tFar = min(t2x, min(t2y, t2z));
 
 	SurfaceInteraction record;
 	*out_tHit = FLT_MAX;
@@ -78,17 +89,17 @@ bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_t
 			HFloat3 p1 = tri.p[1];
 			HFloat3 p2 = tri.p[2];
 
-			HFloat3 p0t = p0 - vRayOrig;
-			HFloat3 p1t = p1 - vRayOrig;
-			HFloat3 p2t = p2 - vRayOrig;
+			HFloat3 p0t = p0 - ray.origin;
+			HFloat3 p1t = p1 - ray.origin;
+			HFloat3 p2t = p2 - ray.origin;
 
-			HInt kz = vRayDir.Abs().MaxDimension();
+			HInt kz = ray.direction.Abs().MaxDimension();
 			HInt kx = kz + 1;
 			if (kx == 3) kx = 0;
 			HInt ky = kx + 1;
 			if (ky == 3) ky = 0;
 
-			HFloat3 d = vRayDir.Permute(kx, ky, kz);
+			HFloat3 d = ray.direction.Permute(kx, ky, kz);
 			HFloat3 fp0t = p0t.Permute(kx, ky, kz);
 			HFloat3 fp1t = p1t.Permute(kx, ky, kz);
 			HFloat3 fp2t = p2t.Permute(kx, ky, kz);
@@ -180,8 +191,8 @@ bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_t
 			if (out_tHit->v > t && t > 1e-5f)
 			{
 				*out_tHit = t;
-				HFloat3 hitPos = vRayOrig + t * vRayDir;
-				HFloat3 wo = -vRayDir;
+				HFloat3 hitPos = ray.origin + t * ray.direction;
+				HFloat3 wo = -ray.direction;
 				record = SurfaceInteraction(hitPos, pError, uvHit, wo, dpdu, dpdv, this);
 			}
 		}
@@ -190,7 +201,7 @@ bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_t
 		{
 			// isect 转换成世界坐标
 			SurfaceInteraction result;
-			result.p = record.p.TransformCoord(worldMatrix);
+			result.p = record.p.TransformCoord(worldMatrix, record.pError, result.pError);
 			result.n = record.n.TransformNormal(worldMatrix).Normalize();
 			result.wo = record.wo.TransformNormal(worldMatrix).Normalize();
 			result.dpdu = record.dpdu.TransformNormal(worldMatrix).Normalize();
@@ -209,20 +220,31 @@ bool HMesh::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_t
 
 bool HMesh::IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1)
 {
-	HFloat3 vRayOrig = worldRay.origin.TransformCoord(worldMatrixInv);
-	HFloat3 vRayDir = worldRay.direction.TransformNormal(worldMatrixInv).Normalize();
-	HFloat3 vRayDirInv = vRayDir.Reciprocal();
+	HFloat3 oErr, dErr;
+	Ray ray = worldRay.Transform(worldMatrixInv, oErr, dErr);
 
-	HFloat3 tMax = (m_aabb.max - vRayOrig) * vRayDirInv;
-	HFloat3 tMin = (m_aabb.min - vRayOrig) * vRayDirInv;
+	EFloat ox(ray.origin.x, oErr.x), oy(ray.origin.y, oErr.y), oz(ray.origin.z, oErr.z);
+	EFloat dx(ray.direction.x, dErr.x), dy(ray.direction.y, dErr.y), dz(ray.direction.z, dErr.z);
+	EFloat dInvx(1.0f / dx), dInvy(1.0f / dy), dInvz(1.0f / dz);
 
-	HFloat3 t1 = tMin.MinVector(tMax);
-	HFloat3 t2 = tMin.MaxVector(tMax);
+	EFloat tMaxx = (EFloat(m_aabb.max.x) - ox) * dInvx;
+	EFloat tMaxy = (EFloat(m_aabb.max.y) - oy) * dInvy;
+	EFloat tMaxz = (EFloat(m_aabb.max.z) - oz) * dInvz;
+	EFloat tMinx = (EFloat(m_aabb.min.x) - ox) * dInvx;
+	EFloat tMiny = (EFloat(m_aabb.min.y) - oy) * dInvy;
+	EFloat tMinz = (EFloat(m_aabb.min.z) - oz) * dInvz;
 
-	HFloat tNear = max(t1.x, max(t1.y, t1.z));
-	HFloat tFar = min(t2.x, min(t2.y, t2.z));
+	HFloat t1x = min(tMinx.low, tMaxx.low);
+	HFloat t1y = min(tMiny.low, tMaxy.low);
+	HFloat t1z = min(tMinz.low, tMaxz.low);
+	HFloat t2x = max(tMinx.high, tMaxx.high);
+	HFloat t2y = max(tMiny.high, tMaxy.high);
+	HFloat t2z = max(tMinz.high, tMaxz.high);
+
+	HFloat tNear = max(t1x, max(t1y, t1z));
+	HFloat tFar = min(t2x, min(t2y, t2z));
 
 	*out_t0 = tNear;
-	*out_t1 = tFar;
+	*out_t1 = tFar * (1 + 2 * gamma(3));
 	return tNear > 0 && tNear < tFar;
 }

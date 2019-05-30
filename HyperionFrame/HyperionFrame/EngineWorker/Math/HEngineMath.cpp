@@ -11,6 +11,20 @@ HFloat3 Ray::GetT(HFloat t)
 	return origin + t * direction;
 }
 
+Ray Ray::Transform(const HFloat4x4& m, HFloat3& out_oError, HFloat3& out_dError)
+{
+	HFloat3 o = origin.TransformCoord(m, out_oError);
+	HFloat3 d = direction.TransformNormal(m, out_dError);
+	
+	HFloat lenSq = d.LengthSq();
+	if (lenSq > 0)
+	{
+		HFloat dt = d.Abs().Dot(out_oError) / lenSq;
+		o += d * dt;
+	}
+	return Ray(o, d);
+}
+
 Segment::Segment(const HFloat3 & point1, const HFloat3 & point2) :
 	point1(point1),
 	point2(point2)
@@ -168,8 +182,8 @@ EFloat EFloat::operator-(EFloat other) const
 	result.v = v - other.v;
 	result.ld = ld - other.ld;
 
-	result.low = NextFloatDown(low - other.low);
-	result.high = NextFloatUp(high - other.high);
+	result.low = NextFloatDown(low - other.high);
+	result.high = NextFloatUp(high - other.low);
 	result.Check();
 	return result;
 }

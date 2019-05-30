@@ -77,6 +77,7 @@ HFloat3 WhittedIntegrator::SpecularReflect(const Ray & ray, const SurfaceInterac
 	if (f != 0.0 && fabsf(wi.Dot(ns)) > H_EPSILON)
 	{
 		Ray ray = isect.SpawnRay(wi);
+		ray.direction = ray.direction.Normalize();
 		HFloat3 LiTemp = Li(ray, sampler, scene, depth + 1, out_debug_rayTraceData);
 		L = f * LiTemp * fabsf(wi.Dot(ns));// / pdf);
 	}
@@ -98,6 +99,7 @@ HFloat3 WhittedIntegrator::SpecularTransmit(const Ray & ray, const SurfaceIntera
 	if (f != 0.0 && fabsf(wi.Dot(ns)) > H_EPSILON)
 	{
 		Ray ray = isect.SpawnRay(wi);
+		ray.direction = ray.direction.Normalize();
 		HFloat3 LiTemp = Li(ray, sampler, scene, depth + 1, out_debug_rayTraceData);
 		L = f * LiTemp * fabsf(wi.Dot(ns));// / pdf);
 	}

@@ -101,16 +101,14 @@ void Sphere::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_tHit)
 {
-	HFloat3 ro = worldRay.origin.TransformCoord(worldMatrixInv);
-	HFloat3 rd = worldRay.direction.TransformNormal(worldMatrixInv);
-	Ray ray(ro, rd);
+	HFloat3 oErr, dErr;
+	Ray ray = worldRay.Transform(worldMatrixInv, oErr, dErr);
 
-	EFloat dx(rd.x), dy(rd.y), dz(rd.z);
-	EFloat ox(ro.x), oy(ro.y), oz(ro.z);
-
+	EFloat ox(ray.origin.x, oErr.x), oy(ray.origin.y, oErr.y), oz(ray.origin.z, oErr.z);
+	EFloat dx(ray.direction.x, dErr.x), dy(ray.direction.y, dErr.y), dz(ray.direction.z, dErr.z);
 	EFloat a = dx * dx + dy * dy + dz * dz;
 	EFloat b = 2.0f * (dx * ox + dy * oy + dz * oz);
-	EFloat c = ox * ox + oy * oy + oz * oz - m_radius * m_radius;
+	EFloat c = ox * ox + oy * oy + oz * oz - EFloat(m_radius) * EFloat(m_radius);
 
 	EFloat t0, t1;
 	if (!Quadratic(a, b, c, &t0, &t1)) return false;
@@ -129,6 +127,7 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_
 
 	HFloat3 pHit = ray.GetT(tShapeHit.v);
 	pHit *= m_radius / pHit.Length();
+	if (pHit.x == 0 && pHit.y == 0) pHit.x = 1e-5f * m_radius;
 	
 	HFloat phi = atan2f(pHit.y, pHit.x);
 	if (phi < 0.0f) phi += H_2PI;
@@ -145,30 +144,31 @@ bool Sphere::Intersect(Ray worldRay, SurfaceInteraction* out_isect, EFloat* out_
 	HFloat3 dpdv = HFloat3(H_PI * pHit.z * cosPhi, H_PI * pHit.z * sinPhi, H_PI * -m_radius * sinf(theta));
 
 	HFloat3 pErr = gamma(5) * pHit;
-	{
-		SurfaceInteraction isect;
-		isect.p = pHit.TransformCoord(worldMatrix);
-		isect.wo = -rd.TransformNormal(worldMatrix).Normalize();
-		isect.dpdu = dpdu.TransformNormal(worldMatrix).Normalize();
-		isect.dpdv = dpdv.TransformNormal(worldMatrix).Normalize();
-		isect.n = dpdv.Cross(dpdu).Normalize();
-		isect.uv = HFloat2(u, v);
-		isect.shape = this;
 
-		*out_isect = isect;
-	}
+	SurfaceInteraction isect;
+	isect.p = pHit.TransformCoord(worldMatrix, pErr, isect.pError);
+	isect.wo = -ray.direction.TransformNormal(worldMatrix).Normalize();
+	isect.dpdu = dpdu.TransformNormal(worldMatrix).Normalize();
+	isect.dpdv = dpdv.TransformNormal(worldMatrix).Normalize();
+	isect.n = dpdv.Cross(dpdu).Normalize();
+	isect.uv = HFloat2(u, v);
+	isect.shape = this;
+
+	*out_isect = isect;
+
 	return true;
 }
 
 bool Sphere::IntersectP(Ray worldRay, EFloat* out_t0, EFloat* out_t1)
 {
-	HFloat3 ro = worldRay.origin.TransformCoord(worldMatrixInv);
-	HFloat3 rd = worldRay.direction.TransformNormal(worldMatrixInv);
-	Ray ray(ro, rd);
+	HFloat3 oErr, dErr;
+	Ray ray = worldRay.Transform(worldMatrixInv, oErr, dErr);
 
-	EFloat a = rd.x * rd.x + rd.y * rd.y + rd.z * rd.z;
-	EFloat b = 2.0f * (rd.x * ro.x + rd.y * ro.y + rd.z * ro.z);
-	EFloat c = ro.x * ro.x + ro.y * ro.y + ro.z * ro.z - m_radius * m_radius;
+	EFloat ox(ray.origin.x, oErr.x), oy(ray.origin.y, oErr.y), oz(ray.origin.z, oErr.z);
+	EFloat dx(ray.direction.x, dErr.x), dy(ray.direction.y, dErr.y), dz(ray.direction.z, dErr.z);
+	EFloat a = dx * dx + dy * dy + dz * dz;
+	EFloat b = 2.0f * (dx * ox + dy * oy + dz * oz);
+	EFloat c = ox * ox + oy * oy + oz * oz - EFloat(m_radius) * EFloat(m_radius);
 
 	if (!Quadratic(a, b, c, out_t0, out_t1)) return false;
 

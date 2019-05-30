@@ -177,6 +177,7 @@ public:
 	~Ray() {}
 
 	HFloat3 GetT(HFloat t);
+	Ray Transform(const HFloat4x4& m, HFloat3& out_oError, HFloat3& out_dError);
 
 public:
 	HFloat3 origin;
