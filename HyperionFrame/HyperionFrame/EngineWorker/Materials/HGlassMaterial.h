@@ -4,7 +4,7 @@
 class HGlassMaterial : public HMaterial
 {
 public:
-	HGlassMaterial();
+	HGlassMaterial() = default;
 	HGlassMaterial(const HFloat3 & _Kr, const HFloat3 & _Kt, HFloat _eta);
 	~HGlassMaterial();
 

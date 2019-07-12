@@ -8,6 +8,7 @@ enum eMaterialType
 	HMAT_MATTE,
 	HMAT_GLASS,
 	HMAT_MIRROR,
+	HMAT_PLASTIC,
 };
 
 class HMaterial

@@ -1,9 +1,5 @@
 #include "HMatteMaterial.h"
 
-HMatteMaterial::HMatteMaterial()
-{
-}
-
 HMatteMaterial::HMatteMaterial(const HFloat3 & _Kd, const HFloat & _sigma) :
 	HMaterial(HMAT_MATTE)
 {

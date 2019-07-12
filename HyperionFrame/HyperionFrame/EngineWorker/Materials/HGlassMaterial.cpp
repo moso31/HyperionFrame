@@ -1,9 +1,5 @@
 #include "HGlassMaterial.h"
 
-HGlassMaterial::HGlassMaterial()
-{
-}
-
 HGlassMaterial::HGlassMaterial(const HFloat3 & _Kr, const HFloat3 & _Kt, HFloat _eta) :
 	HMaterial(HMAT_GLASS)
 {

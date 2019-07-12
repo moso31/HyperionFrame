@@ -1,9 +1,5 @@
 #include "HMirrorMaterial.h"
 
-HMirrorMaterial::HMirrorMaterial()
-{
-}
-
 HMirrorMaterial::HMirrorMaterial(const HFloat3 & _Kr) : 
 	HMaterial(HMAT_MIRROR)
 {

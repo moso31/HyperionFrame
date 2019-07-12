@@ -4,7 +4,7 @@
 class Sphere : public HShape
 {
 public:
-	Sphere();
+	Sphere() = default;
 	Sphere(const shared_ptr<DXResource>& dxResources);
 	~Sphere();
 

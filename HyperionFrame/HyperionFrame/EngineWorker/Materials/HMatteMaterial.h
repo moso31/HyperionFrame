@@ -4,7 +4,7 @@
 class HMatteMaterial : public HMaterial
 {
 public:
-	HMatteMaterial();
+	HMatteMaterial() = default;
 	HMatteMaterial(const HFloat3& _Kd, const HFloat& _sigma);
 	~HMatteMaterial();
 

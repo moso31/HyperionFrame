@@ -4,7 +4,7 @@
 class HMirrorMaterial : public HMaterial
 {
 public:
-	HMirrorMaterial();
+	HMirrorMaterial() = default;
 	HMirrorMaterial(const HFloat3& _Kr);
 	~HMirrorMaterial();
 
