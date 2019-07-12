@@ -1,9 +1,9 @@
 #include "HShape.h"
 #include "DirectXHelper.h"
 
-#include "HMatteMaterial.h"
-#include "HGlassMaterial.h"
-#include "HMirrorMaterial.h"
+#include "HPBRMaterialMatte.h"
+#include "HPBRMaterialGlass.h"
+#include "HPBRMaterialMirror.h"
 
 HShape::HShape()
 {
@@ -46,6 +46,13 @@ TriangleUV HShape::GetUVs(HUInt faceIndex)
 void HShape::SetMaterial(shared_ptr<HMaterial> mat)
 {
 	m_material = mat;
+}
+
+void HShape::SetPBRMaterial(shared_ptr<HPBRMaterial> mat)
+{
+	m_materialPBR = mat;
+	
+	// 这里临时使用PBR材质的漫反射作为材质的实时显示颜色。
 	m_cbMeshData.vertColor = mat->GetDiffuse();
 }
 

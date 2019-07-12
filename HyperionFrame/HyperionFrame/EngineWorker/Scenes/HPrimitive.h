@@ -39,7 +39,7 @@ struct PrimitiveBuffer
 class HPrimitive : public Transform
 {
 public:
-	HPrimitive();
+	HPrimitive() = default;
 	HPrimitive(const shared_ptr<DXResource>& dxResources);
 	virtual ~HPrimitive();
 
@@ -55,7 +55,6 @@ public:
 
 	virtual void Update() = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
-
 
 	virtual HUInt GetAlignedConstantBufferSize() = 0;
 	void GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList);
