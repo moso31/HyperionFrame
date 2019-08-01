@@ -76,18 +76,6 @@
     <ClCompile Include="EngineWorker\Math\RandomNumberGenerator.cpp">
       <Filter>EngineWorker\Math</Filter>
     </ClCompile>
-    <ClCompile Include="EngineWorker\Materials\HMatteMaterial.cpp">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineWorker\Materials\HMirrorMaterial.cpp">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineWorker\Materials\HGlassMaterial.cpp">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineWorker\Materials\HMaterial.cpp">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClCompile>
     <ClCompile Include="EngineCore\File\FBXDataConvert.cpp">
       <Filter>EngineCore\File</Filter>
     </ClCompile>
@@ -129,6 +117,27 @@
     </ClCompile>
     <ClCompile Include="EngineWorker\Math\HEngineMath.cpp">
       <Filter>EngineWorker\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterial.cpp">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterialGlass.cpp">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterialMatte.cpp">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterialMirror.cpp">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWorker\Materials\HMaterial.cpp">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineCore\File\DDSTextureLoader12.cpp">
+      <Filter>EngineCore\File</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineCore\File\WICTextureLoader12.cpp">
+      <Filter>EngineCore\File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -216,18 +225,6 @@
     <ClInclude Include="EngineWorker\Math\RandomNumberGenerator.h">
       <Filter>EngineWorker\Math</Filter>
     </ClInclude>
-    <ClInclude Include="EngineWorker\Materials\HMatteMaterial.h">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineWorker\Materials\HMirrorMaterial.h">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineWorker\Materials\HGlassMaterial.h">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineWorker\Materials\HMaterial.h">
-      <Filter>EngineWorker\Materials</Filter>
-    </ClInclude>
     <ClInclude Include="EngineCore\File\FBXDataConvert.h">
       <Filter>EngineCore\File</Filter>
     </ClInclude>
@@ -275,6 +272,27 @@
     </ClInclude>
     <ClInclude Include="EngineWorker\Math\HEngineMath.h">
       <Filter>EngineWorker\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterial.h">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterialGlass.h">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterialMatte.h">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterialMirror.h">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Materials\HMaterial.h">
+      <Filter>EngineWorker\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\File\WICTextureLoader12.h">
+      <Filter>EngineCore\File</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineCore\File\DDSTextureLoader12.h">
+      <Filter>EngineCore\File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

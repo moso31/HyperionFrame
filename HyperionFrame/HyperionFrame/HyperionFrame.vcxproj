@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include;..\HyperionMath\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\File\Image;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include;..\HyperionMath\inc</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <UndefinePreprocessorDefinitions>
@@ -145,7 +145,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include;..\HyperionMath\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;.\EngineCore;.\EngineCore\Core;.\EngineCore\DirectX;.\EngineCore\File;.\EngineCore\File\Image;.\EngineCore\Input;.\EngineCore\Renderer;.\EngineCore\Shader;.\EngineWorker;.\EngineWorker\Accelerators;.\EngineWorker\Core;.\EngineWorker\Integrators;.\EngineWorker\Lights;.\EngineWorker\Materials;.\EngineWorker\Math;.\EngineWorker\Samplers;.\EngineWorker\Scenes;.\EngineWorker\Scripts;..\FBXImporter\include;..\HyperionMath\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>26444;26451;</DisableSpecificWarnings>
     </ClCompile>
@@ -163,9 +163,11 @@
     <ClCompile Include="EngineCore\Core\App.cpp" />
     <ClCompile Include="EngineCore\Core\global.cpp" />
     <ClCompile Include="EngineCore\DirectX\DXResource.cpp" />
+    <ClCompile Include="EngineCore\File\DDSTextureLoader12.cpp" />
     <ClCompile Include="EngineCore\File\FBXDataConvert.cpp" />
     <ClCompile Include="EngineCore\File\FBXMeshLoader.cpp" />
     <ClCompile Include="EngineCore\File\ImageGenerator.cpp" />
+    <ClCompile Include="EngineCore\File\WICTextureLoader12.cpp" />
     <ClCompile Include="EngineCore\Input\HInput.cpp" />
     <ClCompile Include="EngineCore\main.cpp" />
     <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp" />
@@ -184,10 +186,11 @@
     <ClCompile Include="EngineWorker\Integrators\whitted.cpp" />
     <ClCompile Include="EngineWorker\Lights\HLight.cpp" />
     <ClCompile Include="EngineWorker\Lights\HPointLight.cpp" />
-    <ClCompile Include="EngineWorker\Materials\HGlassMaterial.cpp" />
     <ClCompile Include="EngineWorker\Materials\HMaterial.cpp" />
-    <ClCompile Include="EngineWorker\Materials\HMatteMaterial.cpp" />
-    <ClCompile Include="EngineWorker\Materials\HMirrorMaterial.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterialGlass.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterialMatte.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterialMirror.cpp" />
+    <ClCompile Include="EngineWorker\Materials\HPBRMaterial.cpp" />
     <ClCompile Include="EngineWorker\Math\HEngineMath.cpp" />
     <ClCompile Include="EngineWorker\Math\RandomNumberGenerator.cpp" />
     <ClCompile Include="EngineWorker\Samplers\HDefaultSampler.cpp" />
@@ -211,9 +214,11 @@
     <ClInclude Include="EngineCore\DirectX\d3dx12.h" />
     <ClInclude Include="EngineCore\DirectX\DirectXHelper.h" />
     <ClInclude Include="EngineCore\DirectX\DXResource.h" />
+    <ClInclude Include="EngineCore\File\DDSTextureLoader12.h" />
     <ClInclude Include="EngineCore\File\FBXDataConvert.h" />
     <ClInclude Include="EngineCore\File\FBXMeshLoader.h" />
     <ClInclude Include="EngineCore\File\ImageGenerator.h" />
+    <ClInclude Include="EngineCore\File\WICTextureLoader12.h" />
     <ClInclude Include="EngineCore\header.h" />
     <ClInclude Include="EngineCore\Input\HInput.h" />
     <ClInclude Include="EngineCore\Renderer\PipelineManager.h" />
@@ -233,10 +238,11 @@
     <ClInclude Include="EngineWorker\Integrators\whitted.h" />
     <ClInclude Include="EngineWorker\Lights\HLight.h" />
     <ClInclude Include="EngineWorker\Lights\HPointLight.h" />
-    <ClInclude Include="EngineWorker\Materials\HGlassMaterial.h" />
     <ClInclude Include="EngineWorker\Materials\HMaterial.h" />
-    <ClInclude Include="EngineWorker\Materials\HMatteMaterial.h" />
-    <ClInclude Include="EngineWorker\Materials\HMirrorMaterial.h" />
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterialGlass.h" />
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterialMatte.h" />
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterialMirror.h" />
+    <ClInclude Include="EngineWorker\Materials\HPBRMaterial.h" />
     <ClInclude Include="EngineWorker\Math\HEngineMath.h" />
     <ClInclude Include="EngineWorker\Math\RandomNumberGenerator.h" />
     <ClInclude Include="EngineWorker\Samplers\HDefaultSampler.h" />

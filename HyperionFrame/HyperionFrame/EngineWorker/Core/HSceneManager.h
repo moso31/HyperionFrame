@@ -20,9 +20,9 @@ public:
 
 	shared_ptr<Camera>				CreateCamera();
 	shared_ptr<HPointLight>			CreatePointLight();
-	shared_ptr<HMatteMaterial>		CreateMatteMaterial(const HFloat3& kd, const HFloat sigma);
-	shared_ptr<HMirrorMaterial>		CreateMirrorMaterial(const HFloat3& kr);
-	shared_ptr<HGlassMaterial>		CreateGlassMaterial(const HFloat3& Kr, const HFloat3& Kt, const HFloat eta);
+	shared_ptr<HPBRMaterialMatte>		CreateMatteMaterial(const HFloat3& kd, const HFloat sigma);
+	shared_ptr<HPBRMaterialMirror>		CreateMirrorMaterial(const HFloat3& kr);
+	shared_ptr<HPBRMaterialGlass>		CreateGlassMaterial(const HFloat3& Kr, const HFloat3& Kt, const HFloat eta);
 
 	shared_ptr<HScript>		CreateScript(const HSCRIPTTYPE scriptType, const shared_ptr<HObject>& pObject);
 

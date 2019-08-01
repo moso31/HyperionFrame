@@ -66,10 +66,10 @@ class HSegment;
 enum HSCRIPTTYPE;
 class HScript;
 
-class HMaterial;
-class HMatteMaterial;
-class HGlassMaterial;
-class HMirrorMaterial;
+class HPBRMaterial;
+class HPBRMaterialMatte;
+class HPBRMaterialGlass;
+class HPBRMaterialMirror;
 
 class HLight;
 class HPointLight;

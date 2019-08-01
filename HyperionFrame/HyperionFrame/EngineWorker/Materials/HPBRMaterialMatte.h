@@ -1,12 +1,12 @@
 #pragma once
-#include "HMaterial.h"
+#include "HPBRMaterial.h"
 
-class HMatteMaterial : public HMaterial
+class HPBRMaterialMatte : public HPBRMaterial
 {
 public:
-	HMatteMaterial() = default;
-	HMatteMaterial(const HFloat3& _Kd, const HFloat& _sigma);
-	~HMatteMaterial();
+	HPBRMaterialMatte() = default;
+	HPBRMaterialMatte(const HFloat3& _Kd, const HFloat& _sigma);
+	~HPBRMaterialMatte();
 
 	void ComputeScatterFunction(SurfaceInteraction* si);
 

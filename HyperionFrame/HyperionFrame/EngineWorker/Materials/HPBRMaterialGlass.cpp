@@ -1,18 +1,18 @@
-#include "HGlassMaterial.h"
+#include "HPBRMaterialGlass.h"
 
-HGlassMaterial::HGlassMaterial(const HFloat3 & _Kr, const HFloat3 & _Kt, HFloat _eta) :
-	HMaterial(HMAT_GLASS)
+HPBRMaterialGlass::HPBRMaterialGlass(const HFloat3 & _Kr, const HFloat3 & _Kt, HFloat _eta) :
+	HPBRMaterial(HMAT_GLASS)
 {
 	Kr = _Kr;
 	Kt = _Kt;
 	eta = _eta; 
 }
 
-HGlassMaterial::~HGlassMaterial()
+HPBRMaterialGlass::~HPBRMaterialGlass()
 {
 }
 
-void HGlassMaterial::ComputeScatterFunction(SurfaceInteraction * si)
+void HPBRMaterialGlass::ComputeScatterFunction(SurfaceInteraction * si)
 {
 	HFloat3 R = Kr.Clamp(0.0f, 1.0f);
 	HFloat3 T = Kt.Clamp(0.0f, 1.0f);

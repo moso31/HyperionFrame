@@ -4,7 +4,7 @@
 #include "HShape.h"
 #include "HLine.h"
 #include "Camera.h"
-#include "HMaterial.h"
+#include "HPBRMaterial.h"
 #include "HLight.h"
 #include "ImageGenerator.h"
 #include "HSceneManager.h"
@@ -64,7 +64,7 @@ public:
 	// 和其他类相互结合使用的情况比较多见，故直接暴露在外。
 	vector<shared_ptr<Camera>>			cameras;
 	vector<shared_ptr<HLight>>			lights;
-	vector<shared_ptr<HMaterial>>		materials;
+	vector<shared_ptr<HPBRMaterial>>		materials;
 	vector<shared_ptr<HPrimitive>>		primitives;
 	vector<shared_ptr<HLine>>			debugMsgLines;
 	vector<shared_ptr<HScript>>			scripts;
@@ -106,5 +106,5 @@ private:
 	// 即新添加物体的指令当前帧并不执行，而是交由此 预载列表 按序存储。
 	// 预载列表 中的物体会在下一帧UpdateTransform之前加载到场景中。之后会清空预载列表以防重复添加。
 	// Hyperion 采用这种 延迟加载 方案的原因是，只有在每帧 CommandList 关闭时才能对场景的 Buffer 进行变更。
-	vector<shared_ptr<HPrimitive>> m_prepareToLoadList;
+	vector<shared_ptr<HPrimitive>> m_preLoadList;
 };

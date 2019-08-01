@@ -1,11 +1,6 @@
 #include "HMaterial.h"
 
-HMaterial::HMaterial(eMaterialType mtrlType) : 
-	m_type(mtrlType)
+void HMaterial::Init()
 {
 
-}
-
-HMaterial::~HMaterial()
-{
 }

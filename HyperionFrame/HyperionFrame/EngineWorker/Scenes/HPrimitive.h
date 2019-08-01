@@ -39,7 +39,7 @@ struct PrimitiveBuffer
 class HPrimitive : public Transform
 {
 public:
-	HPrimitive();
+	HPrimitive() = default;
 	HPrimitive(const shared_ptr<DXResource>& dxResources);
 	virtual ~HPrimitive();
 

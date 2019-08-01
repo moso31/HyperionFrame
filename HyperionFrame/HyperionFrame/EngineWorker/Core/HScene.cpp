@@ -9,9 +9,9 @@
 #include "HMesh.h"
 #include "HSegment.h"
 #include "HPointLight.h"
-#include "HMatteMaterial.h"
-#include "HGlassMaterial.h"
-#include "HMirrorMaterial.h"
+#include "HPBRMaterialMatte.h"
+#include "HPBRMaterialGlass.h"
+#include "HPBRMaterialMirror.h"
 
 #include "HInput.h"
 
@@ -89,7 +89,7 @@ void HScene::InitPrimitiveData()
 		mirror_white = { 0.9f, 0.9f, 0.9f },
 		gray = { 0.8f, 0.8f, 0.8f };
 	HFloat sig = 90.0f;
-	shared_ptr<HMaterial> mtrl[7] = {
+	shared_ptr<HPBRMaterial> mtrl[7] = {
 		m_sceneManager->CreateMatteMaterial(green, sig),
 		m_sceneManager->CreateMatteMaterial(red, sig),
 		m_sceneManager->CreateMatteMaterial(blue, sig),
@@ -106,31 +106,31 @@ void HScene::InitPrimitiveData()
 
 	pShape = m_sceneManager->CreateBox("wall y+");
 	pShape->SetTranslation(0.0f, 10.6f, 0.0f);
-	pShape->SetMaterial(mtrl[1]);
+	pShape->SetPBRMaterial(mtrl[1]);
 	pShape->SetScale(20.0f, 1.0f, 20.0f);
 
 	pShape = m_sceneManager->CreateBox("wall x-");
 	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[2]);
+	pShape->SetPBRMaterial(mtrl[2]);
 	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
 	pShape = m_sceneManager->CreateBox("wall x+");
 	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	pShape->SetMaterial(mtrl[0]);
+	pShape->SetPBRMaterial(mtrl[0]);
 	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
 	pShape = m_sceneManager->CreateBox("wall z-");
 	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	pShape->SetMaterial(mtrl[5]);
+	pShape->SetPBRMaterial(mtrl[5]);
 	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
 	pShape = m_sceneManager->CreateBox("wall z+");
 	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	pShape->SetMaterial(mtrl[5]);
+	pShape->SetPBRMaterial(mtrl[5]);
 	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
 	pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
-	pShape->SetMaterial(mtrl[6]);
+	pShape->SetPBRMaterial(mtrl[6]);
 	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
 	pShape->SetScale(5.0f, 5.0f, 5.0f);
 	pShape->SetRotation(0.0f, 0.3f, 0.0f);
@@ -145,12 +145,12 @@ void HScene::InitPrimitiveData()
 	pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
 	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[6]);
+	pShape->SetPBRMaterial(mtrl[6]);
 
 	pShape = m_sceneManager->CreateBox("box small");
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetMaterial(mtrl[4]);
+	pShape->SetPBRMaterial(mtrl[4]);
 
 	//int iLineCount = 20;
 	//for (HInt i = -iLineCount; i <= iLineCount; i++)
@@ -170,12 +170,12 @@ void HScene::InitPrimitiveData()
 			if ((i + j) % 2)
 			{
 				pShape->SetTranslation(-i, -0.7f, j);
-				pShape->SetMaterial(mtrl[1]);
+				pShape->SetPBRMaterial(mtrl[1]);
 			}
 			else
 			{
 				pShape->SetTranslation(-i, -0.5f, j);
-				pShape->SetMaterial(mtrl[3]);
+				pShape->SetPBRMaterial(mtrl[3]);
 			}
 		}
 	}
@@ -249,6 +249,8 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
 	gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
+
+	
 
 	for (HUInt i = 0; i < primitiveCount; i++)
 	{
@@ -506,12 +508,12 @@ void HScene::UpdateAccelerateStructure()
 
 void HScene::UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	for (auto it = m_prepareToLoadList.begin(); it != m_prepareToLoadList.end(); it++)
+	for (auto it = m_preLoadList.begin(); it != m_preLoadList.end(); it++)
 	{
 		(*it)->GeneratePrimitiveBuffer(pCommandList);
 	}
 
-	m_prepareToLoadList.clear();
+	m_preLoadList.clear();
 
 	UpdateDescriptors();
 }
