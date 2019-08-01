@@ -30,8 +30,8 @@ void SceneRenderer::CreateSceneResources()
 		range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 		range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
 		range[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 2);
-		range[3].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3);
-		range[4].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 4);
+		range[3].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+		range[4].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 		parameter[0].InitAsDescriptorTable(1, &range[0], D3D12_SHADER_VISIBILITY_VERTEX);
 		parameter[1].InitAsDescriptorTable(1, &range[1], D3D12_SHADER_VISIBILITY_VERTEX);
 		parameter[2].InitAsDescriptorTable(1, &range[2], D3D12_SHADER_VISIBILITY_PIXEL);

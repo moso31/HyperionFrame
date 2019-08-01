@@ -64,7 +64,7 @@ public:
 	// 和其他类相互结合使用的情况比较多见，故直接暴露在外。
 	vector<shared_ptr<Camera>>			cameras;
 	vector<shared_ptr<HLight>>			lights;
-	vector<shared_ptr<HPBRMaterial>>		materials;
+	vector<shared_ptr<HPBRMaterial>>	materials;
 	vector<shared_ptr<HPrimitive>>		primitives;
 	vector<shared_ptr<HLine>>			debugMsgLines;
 	vector<shared_ptr<HScript>>			scripts;
@@ -99,7 +99,8 @@ private:
 	HInt					m_makingProcessIndex;
 	
 	// 用于存放场景内primitive的描述符堆。
-	ComPtr<ID3D12DescriptorHeap>	m_cbvHeap;
+	ComPtr<ID3D12DescriptorHeap>	m_cbvSrvHeap;
+	ComPtr<ID3D12DescriptorHeap>	m_samplerHeap;
 	HUInt							m_cbvDescriptorSize;
 
 	// Hyperion 中的场景实时变更采用的方法是 延迟加载。
