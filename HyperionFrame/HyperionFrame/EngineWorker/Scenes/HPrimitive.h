@@ -24,17 +24,6 @@ enum ePrimitiveType
 	SEGMENT
 };
 
-struct TextureInfo
-{
-	TextureInfo() : enable(false), texturePath("") {};
-
-	// 纹理是否可用
-	bool enable;
-	
-	// 图片路径
-	string texturePath;
-};
-
 struct PrimitiveBuffer
 {
 	// 立体几何的 Direct3D 资源。
@@ -67,7 +56,6 @@ public:
 	virtual void Update() = 0;
 	virtual void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList) = 0;
 
-
 	virtual HUInt GetAlignedConstantBufferSize() = 0;
 	void GeneratePrimitiveBuffer(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	virtual void SetPrimitiveBuffer(const PrimitiveBuffer& primitiveBuffer);
@@ -85,6 +73,4 @@ protected:
 	PrimitiveBuffer				m_primitiveBuffer;
 	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW		m_indexBufferView;
-
-	TextureInfo		m_texture;
 };

@@ -11,10 +11,10 @@
       <Filter>EngineCore\File</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\Renderer\SceneRenderer.cpp">
-      <Filter>EngineCore\Input\Renderer</Filter>
+      <Filter>EngineCore\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp">
-      <Filter>EngineCore\Input\Renderer</Filter>
+      <Filter>EngineCore\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="EngineCore\main.cpp">
       <Filter>EngineCore</Filter>
@@ -139,6 +139,9 @@
     <ClCompile Include="EngineCore\File\WICTextureLoader12.cpp">
       <Filter>EngineCore\File</Filter>
     </ClCompile>
+    <ClCompile Include="EngineWorker\Core\HTexture.cpp">
+      <Filter>EngineWorker\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -157,13 +160,13 @@
       <Filter>EngineCore\File</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\Renderer\SceneRenderer.h">
-      <Filter>EngineCore\Input\Renderer</Filter>
+      <Filter>EngineCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\Renderer\ShaderStructures.h">
-      <Filter>EngineCore\Input\Renderer</Filter>
+      <Filter>EngineCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\Renderer\PipelineManager.h">
-      <Filter>EngineCore\Input\Renderer</Filter>
+      <Filter>EngineCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="EngineCore\header.h">
       <Filter>EngineCore</Filter>
@@ -294,6 +297,9 @@
     <ClInclude Include="EngineCore\File\DDSTextureLoader12.h">
       <Filter>EngineCore\File</Filter>
     </ClInclude>
+    <ClInclude Include="EngineWorker\Core\HTexture.h">
+      <Filter>EngineWorker\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EngineCore">
@@ -344,7 +350,7 @@
     <Filter Include="EngineWorker\Scripts">
       <UniqueIdentifier>{d8cdd7ef-7ae2-4f3a-80d3-4a04ba788dbb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EngineCore\Input\Renderer">
+    <Filter Include="EngineCore\Renderer">
       <UniqueIdentifier>{8ad2fe49-f34d-4df2-bd65-71a520214917}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

@@ -1,14 +1,24 @@
 #pragma once
+#include <string>
 #include "ShaderStructures.h"
+
+using namespace std;
 
 class HMaterial
 {
 public:
 	HMaterial() = default;
 
-	void Init();
+	string GetTextureName() { return m_textureName; }
+
+	// ºÏ≤‚ «∑Ò”–Œ∆¿Ì°£
+	bool TextureEnable() { return m_textureEnable; }
+
+	void LoadTexture(string textureName);
 
 private:
 	CBufferMeshData m_color;
-	// HTexture m_texture;
+
+	bool m_textureEnable;
+	string m_textureName;
 };

@@ -1,5 +1,7 @@
 #include "HScene.h"
 #include "DirectXHelper.h"
+#include "DDSTextureLoader12.h"
+#include "WICTextureLoader12.h"
 
 #include "whitted.h"
 #include "HDefaultSampler.h"
@@ -12,6 +14,8 @@
 #include "HPBRMaterialMatte.h"
 #include "HPBRMaterialGlass.h"
 #include "HPBRMaterialMirror.h"
+#include "HMaterial.h"
+#include "HTexture.h"
 
 #include "HInput.h"
 
@@ -40,12 +44,14 @@ void HScene::OnResize()
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	InitRendererData(pCommandList);
+	InitTextureData(pCommandList);
 
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_KEYDOWN, HScene::OnKeyDown);
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_MOUSEDOWN, HScene::OnMouseDown);
 
 	InitPrimitiveData();
 	InitStructureData();
+	InitSamplers();
 }
 
 void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
@@ -70,6 +76,18 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	samplerHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&samplerHeapDesc, IID_PPV_ARGS(&m_samplerHeap)));
 	DX::NAME_D3D12_OBJECT(m_samplerHeap);
+}
+
+void HScene::InitTextureData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+{
+	auto pD3DDevice = m_dxResources->GetD3DDevice();
+
+	shared_ptr<HTexture> pTexture = make_shared<HTexture>();
+	pTexture->name = "firstTex";
+	pTexture->filePath = L"E:\\1.bmp";
+	DirectX::LoadWICTextureFromFile(pD3DDevice, pTexture->filePath.c_str(), pTexture->resource.GetAddressOf(), pTexture->mappedResource, pTexture->subresourceData);
+	
+	m_textureMap[pTexture->name] = pTexture;
 }
 
 void HScene::InitPrimitiveData()
@@ -154,6 +172,7 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetPBRMaterial(mtrl[4]);
+	pShape->GetMaterial()->LoadTexture("firstTexture");
 
 	//int iLineCount = 20;
 	//for (HInt i = -iLineCount; i <= iLineCount; i++)
@@ -220,6 +239,23 @@ void HScene::InitStructureData()
 	UpdateAccelerateStructure();
 }
 
+void HScene::InitSamplers()
+{
+	D3D12_SAMPLER_DESC samplerDesc;
+	::SecureZeroMemory(&samplerDesc, sizeof(D3D12_SAMPLER_DESC));
+	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+	samplerDesc.MipLODBias = 0;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
+	auto pD3DDevice = m_dxResources->GetD3DDevice();
+	pD3DDevice->CreateSampler(&samplerDesc, m_samplerHeap->GetCPUDescriptorHandleForHeapStart());
+}
+
 static HFloat xxxxx = 0;
 void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
@@ -241,7 +277,7 @@ void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs)
 {
-	ID3D12DescriptorHeap* ppHeaps[] = { m_cbvSrvHeap.Get() };
+	ID3D12DescriptorHeap* ppHeaps[] = { m_cbvSrvHeap.Get(), m_samplerHeap.Get() };
 	pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	HUInt primitiveCount = (HUInt)primitives.size();
@@ -250,33 +286,39 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	HUInt cbvIndex = DXResource::c_frameCount * renderCount;
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
-	gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
-	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
-
-	
 
 	for (HUInt i = 0; i < primitiveCount; i++)
 	{
 		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + i;
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
-		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
+		gpuHandle.Offset(m_cbvDescriptorSize);
 		primitives[i]->Render(pCommandList);
+
+		auto pShape = dynamic_pointer_cast<HShape>(primitives[i]);
+		if (pShape && pShape->GetMaterial()->TextureEnable())
+		{
+			string shapeTextureName = pShape->GetMaterial()->GetTextureName();
+			gpuHandle.Offset(m_cbvDescriptorSize);
+			pCommandList->SetGraphicsRootDescriptorTable(3, gpuHandle);
+		}
 	}
 
 	pCommandList->SetPipelineState(pPSOs.at("wireFrame").Get());
 	for (HUInt i = 0; i < debugMsgLineCount; i++)
 	{
 		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i;
-		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
-		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
+		gpuHandle.Offset(m_cbvDescriptorSize);
 		debugMsgLines[i]->Render(pCommandList);
 	}
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
+	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
+	gpuHandle.Offset(m_cbvDescriptorSize);
 }
 
 void HScene::OnMouseDown(HEventArg eArg)
@@ -430,68 +472,78 @@ void HScene::UpdateDescriptors()
 	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
 	HUInt renderCount = primitiveCount + debugMsgLineCount;
 
-	ComPtr<ID3D12DescriptorHeap>	pNewCbvHeap;
 	// 为常量缓冲区创建新的描述符堆。
+	ComPtr<ID3D12DescriptorHeap>	pNewCbvSrvHeap;
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		heapDesc.NumDescriptors = DXResource::c_frameCount * renderCount * 2 + 1;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&pNewCbvHeap)));
+		DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&pNewCbvSrvHeap)));
 
-		DX::NAME_D3D12_OBJECT(pNewCbvHeap);
+		DX::NAME_D3D12_OBJECT(pNewCbvSrvHeap);
 	}
 
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 	for (HUInt n = 0; n < DXResource::c_frameCount; n++)
 	{
 		for (HUInt i = 0; i < primitiveCount; i++)
 		{
 			HInt heapIndex = n * renderCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = primitives[i]->GetConstantBuffer()->GetGPUVirtualAddress();
-			//cbvGpuAddress += heapIndex * primitives[i]->GetAlignedConstantBufferSize();
-
-			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
-			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 			// 将数据写入该资源
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 			desc.SizeInBytes = 256;
 			desc.BufferLocation = cbvGpuAddress;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-
 			cbvCpuHandle.Offset(m_cbvDescriptorSize);
+
 			desc.BufferLocation += 256;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
+
+			auto pShape = dynamic_pointer_cast<HShape>(primitives[i]);
+			if (pShape)
+			{
+				if (pShape->GetMaterial()->TextureEnable())
+				{
+					string shapeTextureName = pShape->GetMaterial()->GetTextureName();
+					shared_ptr<HTexture> pTexture = m_textureMap[shapeTextureName];
+
+					D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+					::SecureZeroMemory(&srvDesc, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
+					srvDesc.Format = pTexture->resource.Get()->GetDesc().Format;
+					srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+					srvDesc.Texture2D.MipLevels = 1;
+					pD3DDevice->CreateShaderResourceView(pTexture->resource.Get(), &srvDesc, cbvCpuHandle);
+					cbvCpuHandle.Offset(m_cbvDescriptorSize);
+				}
+			}
 		}
 
 		for (HUInt i = 0; i < debugMsgLineCount; i++)
 		{
-			HInt heapIndex = n * renderCount + primitiveCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = debugMsgLines[i]->GetConstantBuffer()->GetGPUVirtualAddress();
-			//cbvGpuAddress += heapIndex * debugMsgLines[i]->GetAlignedConstantBufferSize();
-
-			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
-			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 
 			// 将数据写入该资源
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 			desc.SizeInBytes = 256;
 			desc.BufferLocation = cbvGpuAddress;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 
 			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 			desc.BufferLocation += 256;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 		}
 	}
 
-	HInt heapIndex = DXResource::c_frameCount * renderCount;
 	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_mainCamera->GetConstantBuffer()->GetGPUVirtualAddress();
-	//cbvGpuAddress += heapIndex * m_mainCamera->GetAlignedConstantBufferSize();
-
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
-	cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
+	cbvCpuHandle.Offset(m_cbvDescriptorSize);
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 	desc.SizeInBytes = 256;
@@ -500,7 +552,7 @@ void HScene::UpdateDescriptors()
 
 	//m_cbvHeap->Release();
 	m_dxResources->WaitForGpu();
-	m_cbvSrvHeap = pNewCbvHeap;
+	m_cbvSrvHeap = pNewCbvSrvHeap;
 }
 
 void HScene::UpdateAccelerateStructure()

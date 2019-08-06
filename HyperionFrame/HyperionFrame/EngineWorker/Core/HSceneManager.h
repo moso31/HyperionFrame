@@ -5,7 +5,7 @@
 class HSceneManager
 {
 public:
-	HSceneManager();
+	HSceneManager() = default;
 	HSceneManager(std::shared_ptr<DXResource> dxResources, const shared_ptr<HScene>& pTargetScene);
 	~HSceneManager();
 
@@ -18,8 +18,8 @@ public:
 	shared_ptr<HMesh>		CreateMesh(string name, string filepath);
 	shared_ptr<HSegment>	CreateSegment(string name, HFloat3 point1, HFloat3 point2);
 
-	shared_ptr<Camera>				CreateCamera();
-	shared_ptr<HPointLight>			CreatePointLight();
+	shared_ptr<Camera>					CreateCamera();
+	shared_ptr<HPointLight>				CreatePointLight();
 	shared_ptr<HPBRMaterialMatte>		CreateMatteMaterial(const HFloat3& kd, const HFloat sigma);
 	shared_ptr<HPBRMaterialMirror>		CreateMirrorMaterial(const HFloat3& kr);
 	shared_ptr<HPBRMaterialGlass>		CreateGlassMaterial(const HFloat3& Kr, const HFloat3& Kt, const HFloat eta);
@@ -29,6 +29,13 @@ public:
 	shared_ptr<HListener>	AddEventListener(const HEVENTTYPE eventType, const shared_ptr<HObject>& pObject, const function<void(HEventArg)>& pFunc);
 
 private:
+	void UpdateDescriptorCount_CreateShape();
+	void UpdateDescriptorCount_CreateDebugLine();
+
+private:
 	shared_ptr<DXResource>	m_dxResources;
 	shared_ptr<HScene>		m_pTargetScene;
+
+	// ÃèÊö·û¼ÆÊýÆ÷¡£
+	HUInt m_descriptorCount;
 };

@@ -43,6 +43,11 @@ TriangleUV HShape::GetUVs(HUInt faceIndex)
 	return triUV;
 }
 
+void HShape::SetMaterial(shared_ptr<HMaterial> mat)
+{
+	m_material = mat;
+}
+
 void HShape::SetPBRMaterial(shared_ptr<HPBRMaterial> mat)
 {
 	m_materialPBR = mat;

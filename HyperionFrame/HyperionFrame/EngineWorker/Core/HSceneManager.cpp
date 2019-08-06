@@ -17,13 +17,10 @@
 #include "HSTest.h"
 #include "HSFirstPersonalCamera.h"
 
-HSceneManager::HSceneManager()
-{
-}
-
 HSceneManager::HSceneManager(std::shared_ptr<DXResource> dxResources, const shared_ptr<HScene>& pTargetScene) :
 	m_dxResources(dxResources),
-	m_pTargetScene(pTargetScene)
+	m_pTargetScene(pTargetScene), 
+	m_descriptorCount(0)
 {
 }
 
@@ -45,6 +42,7 @@ shared_ptr<Box> HSceneManager::CreateBox(string name, HFloat width, HFloat heigh
 	m_pTargetScene->primitives.push_back(box);
 	m_pTargetScene->m_preLoadList.push_back(box);
 
+	UpdateDescriptorCount_CreateShape();
 	return box;
 }
 
@@ -57,6 +55,7 @@ shared_ptr<Sphere> HSceneManager::CreateSphere(string name, HFloat radius, HInt 
 	m_pTargetScene->primitives.push_back(sphere);
 	m_pTargetScene->m_preLoadList.push_back(sphere);
 
+	UpdateDescriptorCount_CreateShape();
 	return sphere;
 }
 
@@ -69,6 +68,7 @@ shared_ptr<HMesh> HSceneManager::CreateMesh(string name, string filepath)
 	m_pTargetScene->primitives.push_back(mesh);
 	m_pTargetScene->m_preLoadList.push_back(mesh);
 
+	UpdateDescriptorCount_CreateShape();
 	return mesh;
 }
 
@@ -176,4 +176,14 @@ shared_ptr<HListener> HSceneManager::AddEventListener(const HEVENTTYPE eventType
 		return nullptr;
 	}
 	return pListener;
+}
+
+void HSceneManager::UpdateDescriptorCount_CreateShape()
+{
+	m_descriptorCount += 2;
+}
+
+void HSceneManager::UpdateDescriptorCount_CreateDebugLine()
+{
+	m_descriptorCount += 2;
 }

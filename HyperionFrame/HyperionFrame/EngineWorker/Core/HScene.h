@@ -26,11 +26,16 @@ public:
 	// 初始化渲染器信息，主要处理描述符堆的数据。
 	void InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
+	void InitTextureData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+
 	// 初始化图元信息。
 	void InitPrimitiveData();
 
 	// 初始化结构信息。需要在所有primitive创建之后，第一次更新前执行一次，以提供Transform和BVH加速结构信息。
 	void InitStructureData();
+
+	// 初始化采样器
+	void InitSamplers();
 
 	void Update(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs);
@@ -93,10 +98,10 @@ private:
 	std::shared_ptr<HSceneManager>	m_sceneManager;
 
 	shared_ptr<Camera>				m_mainCamera;
-	AABB				m_aabb;
-	HBVHTree*			m_bvhTree;
+	AABB							m_aabb;
+	HBVHTree*						m_bvhTree;
 
-	HInt					m_makingProcessIndex;
+	HInt							m_makingProcessIndex;
 	
 	// 用于存放场景内primitive的描述符堆。
 	ComPtr<ID3D12DescriptorHeap>	m_cbvSrvHeap;
@@ -107,5 +112,8 @@ private:
 	// 即新添加物体的指令当前帧并不执行，而是交由此 预载列表 按序存储。
 	// 预载列表 中的物体会在下一帧UpdateTransform之前加载到场景中。之后会清空预载列表以防重复添加。
 	// Hyperion 采用这种 延迟加载 方案的原因是，只有在每帧 CommandList 关闭时才能对场景的 Buffer 进行变更。
-	vector<shared_ptr<HPrimitive>> m_preLoadList;
+	vector<shared_ptr<HPrimitive>>	m_preLoadList;
+
+	// 纹理列表
+	map<string, shared_ptr<HTexture>>			m_textureMap;
 };

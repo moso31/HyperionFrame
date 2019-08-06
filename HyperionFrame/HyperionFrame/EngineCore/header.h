@@ -66,6 +66,11 @@ class HSegment;
 enum HSCRIPTTYPE;
 class HScript;
 
+struct HTexture;
+// General Material.
+class HMaterial;
+
+// PBR Materials.
 class HPBRMaterial;
 class HPBRMaterialMatte;
 class HPBRMaterialGlass;
