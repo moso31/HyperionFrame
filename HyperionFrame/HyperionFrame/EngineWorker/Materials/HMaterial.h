@@ -14,7 +14,7 @@ public:
 	// ºÏ≤‚ «∑Ò”–Œ∆¿Ì°£
 	bool TextureEnable() { return m_textureEnable; }
 
-	void LoadTexture(string textureName);
+	void SetTexture(string textureName);
 
 private:
 	CBufferMeshData m_color;

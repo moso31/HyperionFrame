@@ -1,5 +1,7 @@
 #include "HSceneManager.h"
 #include "DirectXHelper.h"
+#include "DDSTextureLoader12.h"
+#include "WICTextureLoader12.h"
 
 #include "HScene.h"
 
@@ -9,6 +11,9 @@
 #include "HSegment.h"
 #include "Camera.h"
 #include "HPointLight.h"
+
+#include "HTexture.h"
+#include "HMaterial.h"
 #include "HPBRMaterialMatte.h"
 #include "HPBRMaterialGlass.h"
 #include "HPBRMaterialMirror.h"
@@ -81,7 +86,46 @@ shared_ptr<HSegment> HSceneManager::CreateSegment(string name, HFloat3 point1, H
 	m_pTargetScene->primitives.push_back(segment);
 	m_pTargetScene->m_preLoadList.push_back(segment);
 
+	UpdateDescriptorCount_CreateDebugLine();
 	return segment;
+}
+
+shared_ptr<HTexture> HSceneManager::CreateTexture(string name, wstring texPath)
+{
+	auto pD3DDevice = m_dxResources->GetD3DDevice();
+
+	shared_ptr<HTexture> pTexture = make_shared<HTexture>();
+	pTexture->name = name;
+	pTexture->filePath = texPath;
+	DirectX::LoadWICTextureFromFile(pD3DDevice, pTexture->filePath.c_str(), pTexture->resource.GetAddressOf(), pTexture->mappedResource, pTexture->subresourceData);
+
+	if (pTexture)
+	{
+		m_textureMap[pTexture->name] = pTexture;
+		return pTexture;
+	}
+	return nullptr;
+}
+
+bool HSceneManager::BindTextureToShape(shared_ptr<HShape> pShape, string name)
+{
+	auto it = m_textureMap.find(name);
+	bool texExist = it != m_textureMap.end();
+	if (texExist)
+	{
+		pShape->GetMaterial()->SetTexture(name);
+		UpdateDescriptorCount_AssignTextureToShape();
+	}
+	return texExist;
+}
+
+shared_ptr<HTexture> HSceneManager::GetTexture(string name)
+{
+	auto it = m_textureMap.find(name);
+	bool texExist = it != m_textureMap.end();
+	if (texExist)
+		return it->second;
+	return nullptr;
 }
 
 shared_ptr<Camera> HSceneManager::CreateCamera()
@@ -178,6 +222,11 @@ shared_ptr<HListener> HSceneManager::AddEventListener(const HEVENTTYPE eventType
 	return pListener;
 }
 
+void HSceneManager::AddDescriptorCount(HUInt value)
+{
+	m_descriptorCount += value;
+}
+
 void HSceneManager::UpdateDescriptorCount_CreateShape()
 {
 	m_descriptorCount += 2;
@@ -186,4 +235,9 @@ void HSceneManager::UpdateDescriptorCount_CreateShape()
 void HSceneManager::UpdateDescriptorCount_CreateDebugLine()
 {
 	m_descriptorCount += 2;
+}
+
+void HSceneManager::UpdateDescriptorCount_AssignTextureToShape()
+{
+	m_descriptorCount += 1;
 }

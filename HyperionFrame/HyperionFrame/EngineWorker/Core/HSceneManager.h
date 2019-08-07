@@ -18,6 +18,10 @@ public:
 	shared_ptr<HMesh>		CreateMesh(string name, string filepath);
 	shared_ptr<HSegment>	CreateSegment(string name, HFloat3 point1, HFloat3 point2);
 
+	shared_ptr<HTexture> CreateTexture(string name, wstring texPath);
+	bool BindTextureToShape(shared_ptr<HShape> pShape, string name);
+	shared_ptr<HTexture> GetTexture(string name);
+
 	shared_ptr<Camera>					CreateCamera();
 	shared_ptr<HPointLight>				CreatePointLight();
 	shared_ptr<HPBRMaterialMatte>		CreateMatteMaterial(const HFloat3& kd, const HFloat sigma);
@@ -28,9 +32,13 @@ public:
 
 	shared_ptr<HListener>	AddEventListener(const HEVENTTYPE eventType, const shared_ptr<HObject>& pObject, const function<void(HEventArg)>& pFunc);
 
+	HUInt GetDescriptorCount() { return m_descriptorCount; }
+	void AddDescriptorCount(HUInt value);
+
 private:
 	void UpdateDescriptorCount_CreateShape();
 	void UpdateDescriptorCount_CreateDebugLine();
+	void UpdateDescriptorCount_AssignTextureToShape();
 
 private:
 	shared_ptr<DXResource>	m_dxResources;
@@ -38,4 +46,7 @@ private:
 
 	// 描述符计数器。
 	HUInt m_descriptorCount;
+
+	// 纹理列表
+	map<string, shared_ptr<HTexture>>	m_textureMap;
 };

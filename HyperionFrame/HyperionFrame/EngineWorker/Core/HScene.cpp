@@ -1,7 +1,5 @@
 #include "HScene.h"
 #include "DirectXHelper.h"
-#include "DDSTextureLoader12.h"
-#include "WICTextureLoader12.h"
 
 #include "whitted.h"
 #include "HDefaultSampler.h"
@@ -44,22 +42,21 @@ void HScene::OnResize()
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	InitRendererData(pCommandList);
-	InitTextureData(pCommandList);
+	InitTextures(pCommandList);
 
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_KEYDOWN, HScene::OnKeyDown);
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_MOUSEDOWN, HScene::OnMouseDown);
 
-	InitPrimitiveData();
+	InitCameras();
+	InitPrimitives();
 	InitStructureData();
 	InitSamplers();
 }
 
 void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	m_sceneManager = make_shared<HSceneManager>(m_dxResources, shared_from_this());
-
 	auto pD3DDevice = m_dxResources->GetD3DDevice();
-	
+	m_sceneManager = make_shared<HSceneManager>(m_dxResources, shared_from_this());
 	m_cbvDescriptorSize = pD3DDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
@@ -78,19 +75,12 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	DX::NAME_D3D12_OBJECT(m_samplerHeap);
 }
 
-void HScene::InitTextureData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
+void HScene::InitTextures(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	auto pD3DDevice = m_dxResources->GetD3DDevice();
-
-	shared_ptr<HTexture> pTexture = make_shared<HTexture>();
-	pTexture->name = "firstTex";
-	pTexture->filePath = L"E:\\1.bmp";
-	DirectX::LoadWICTextureFromFile(pD3DDevice, pTexture->filePath.c_str(), pTexture->resource.GetAddressOf(), pTexture->mappedResource, pTexture->subresourceData);
-	
-	m_textureMap[pTexture->name] = pTexture;
+	m_sceneManager->CreateTexture("firstTex", L"E:\\1.bmp");
 }
 
-void HScene::InitPrimitiveData()
+void HScene::InitCameras()
 {
 	m_mainCamera = m_sceneManager->CreateCamera();
 	m_mainCamera->SetTranslation(9.0f, 6.0f, 4.0f);
@@ -102,6 +92,11 @@ void HScene::InitPrimitiveData()
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
 
+	m_sceneManager->AddDescriptorCount(1);	// model_view_projection descriptor.
+}
+
+void HScene::InitPrimitives()
+{
 	HFloat3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
 		blue = { 0.0f, 0.0f, 1.0f },
@@ -172,7 +167,7 @@ void HScene::InitPrimitiveData()
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetPBRMaterial(mtrl[4]);
-	pShape->GetMaterial()->LoadTexture("firstTexture");
+	m_sceneManager->BindTextureToShape(pShape, "firstTex");
 
 	//int iLineCount = 20;
 	//for (HInt i = -iLineCount; i <= iLineCount; i++)
@@ -282,14 +277,11 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 
 	HUInt primitiveCount = (HUInt)primitives.size();
 	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
-	HUInt renderCount = primitiveCount + debugMsgLineCount;
-	HUInt cbvIndex = DXResource::c_frameCount * renderCount;
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
 
 	for (HUInt i = 0; i < primitiveCount; i++)
 	{
-		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + i;
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
@@ -299,7 +291,6 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 		auto pShape = dynamic_pointer_cast<HShape>(primitives[i]);
 		if (pShape && pShape->GetMaterial()->TextureEnable())
 		{
-			string shapeTextureName = pShape->GetMaterial()->GetTextureName();
 			gpuHandle.Offset(m_cbvDescriptorSize);
 			pCommandList->SetGraphicsRootDescriptorTable(3, gpuHandle);
 		}
@@ -308,7 +299,6 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 	pCommandList->SetPipelineState(pPSOs.at("wireFrame").Get());
 	for (HUInt i = 0; i < debugMsgLineCount; i++)
 	{
-		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i;
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
@@ -476,7 +466,7 @@ void HScene::UpdateDescriptors()
 	ComPtr<ID3D12DescriptorHeap>	pNewCbvSrvHeap;
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = DXResource::c_frameCount * renderCount * 2 + 1;
+		heapDesc.NumDescriptors = m_sceneManager->GetDescriptorCount();
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -490,7 +480,6 @@ void HScene::UpdateDescriptors()
 	{
 		for (HUInt i = 0; i < primitiveCount; i++)
 		{
-			HInt heapIndex = n * renderCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = primitives[i]->GetConstantBuffer()->GetGPUVirtualAddress();
 
 			// 将数据写入该资源
@@ -510,7 +499,7 @@ void HScene::UpdateDescriptors()
 				if (pShape->GetMaterial()->TextureEnable())
 				{
 					string shapeTextureName = pShape->GetMaterial()->GetTextureName();
-					shared_ptr<HTexture> pTexture = m_textureMap[shapeTextureName];
+					shared_ptr<HTexture> pTexture = m_sceneManager->GetTexture(shapeTextureName);
 
 					D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
 					::SecureZeroMemory(&srvDesc, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
@@ -535,7 +524,6 @@ void HScene::UpdateDescriptors()
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 			desc.BufferLocation += 256;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
 			cbvCpuHandle.Offset(m_cbvDescriptorSize);

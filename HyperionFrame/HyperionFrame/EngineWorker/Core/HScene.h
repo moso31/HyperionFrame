@@ -26,10 +26,10 @@ public:
 	// 初始化渲染器信息，主要处理描述符堆的数据。
 	void InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	void InitTextureData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
+	void InitTextures(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	// 初始化图元信息。
-	void InitPrimitiveData();
+	void InitCameras();
+	void InitPrimitives();
 
 	// 初始化结构信息。需要在所有primitive创建之后，第一次更新前执行一次，以提供Transform和BVH加速结构信息。
 	void InitStructureData();
@@ -113,7 +113,4 @@ private:
 	// 预载列表 中的物体会在下一帧UpdateTransform之前加载到场景中。之后会清空预载列表以防重复添加。
 	// Hyperion 采用这种 延迟加载 方案的原因是，只有在每帧 CommandList 关闭时才能对场景的 Buffer 进行变更。
 	vector<shared_ptr<HPrimitive>>	m_preLoadList;
-
-	// 纹理列表
-	map<string, shared_ptr<HTexture>>			m_textureMap;
 };
