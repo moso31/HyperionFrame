@@ -7,7 +7,7 @@ using namespace std;
 class HMaterial
 {
 public:
-	HMaterial() = default;
+	HMaterial(string name);
 
 	string GetTextureName() { return m_textureName; }
 
@@ -17,6 +17,8 @@ public:
 	void SetTexture(string textureName);
 
 private:
+	string m_name;
+
 	CBufferMeshData m_color;
 
 	bool m_textureEnable;

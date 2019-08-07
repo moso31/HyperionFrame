@@ -18,8 +18,10 @@ public:
 	shared_ptr<HMesh>		CreateMesh(string name, string filepath);
 	shared_ptr<HSegment>	CreateSegment(string name, HFloat3 point1, HFloat3 point2);
 
+	shared_ptr<HMaterial>	CreateMaterial(string name);
+
 	shared_ptr<HTexture> CreateTexture(string name, wstring texPath);
-	bool BindTextureToShape(shared_ptr<HShape> pShape, string name);
+	bool BindMaterialToShape(shared_ptr<HShape> pShape, shared_ptr<HMaterial> pMaterial);
 	shared_ptr<HTexture> GetTexture(string name);
 
 	shared_ptr<Camera>					CreateCamera();

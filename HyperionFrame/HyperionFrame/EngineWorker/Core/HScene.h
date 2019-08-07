@@ -69,10 +69,12 @@ public:
 	// 和其他类相互结合使用的情况比较多见，故直接暴露在外。
 	vector<shared_ptr<Camera>>			cameras;
 	vector<shared_ptr<HLight>>			lights;
-	vector<shared_ptr<HPBRMaterial>>	materials;
+	vector<shared_ptr<HPBRMaterial>>	pbrMaterials;
 	vector<shared_ptr<HPrimitive>>		primitives;
 	vector<shared_ptr<HLine>>			debugMsgLines;
 	vector<shared_ptr<HScript>>			scripts;
+
+	vector<shared_ptr<HMaterial>>		materials;
 
 private:
 	// 在新生成物体后需要执行此方法，更新描述符的数量。

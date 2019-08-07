@@ -107,16 +107,15 @@ shared_ptr<HTexture> HSceneManager::CreateTexture(string name, wstring texPath)
 	return nullptr;
 }
 
-bool HSceneManager::BindTextureToShape(shared_ptr<HShape> pShape, string name)
+bool HSceneManager::BindMaterialToShape(shared_ptr<HShape> pShape, shared_ptr<HMaterial> pMaterial)
 {
-	auto it = m_textureMap.find(name);
-	bool texExist = it != m_textureMap.end();
-	if (texExist)
-	{
-		pShape->GetMaterial()->SetTexture(name);
+	if (!pShape || !pMaterial)
+		return false;
+
+	pShape->SetMaterial(pMaterial);
+	if (pMaterial->TextureEnable())
 		UpdateDescriptorCount_AssignTextureToShape();
-	}
-	return texExist;
+	return true;
 }
 
 shared_ptr<HTexture> HSceneManager::GetTexture(string name)
@@ -147,21 +146,21 @@ shared_ptr<HPointLight> HSceneManager::CreatePointLight()
 shared_ptr<HPBRMaterialMatte> HSceneManager::CreateMatteMaterial(const HFloat3& kd, const HFloat sigma)
 {
 	auto mat = make_shared<HPBRMaterialMatte>(kd, sigma);
-	m_pTargetScene->materials.push_back(mat);
+	m_pTargetScene->pbrMaterials.push_back(mat);
 	return mat;
 }
 
 shared_ptr<HPBRMaterialMirror> HSceneManager::CreateMirrorMaterial(const HFloat3 & kr)
 {
 	auto mat = make_shared<HPBRMaterialMirror>(kr);
-	m_pTargetScene->materials.push_back(mat);
+	m_pTargetScene->pbrMaterials.push_back(mat);
 	return mat;
 }
 
 shared_ptr<HPBRMaterialGlass> HSceneManager::CreateGlassMaterial(const HFloat3 & Kr, const HFloat3 & Kt, const HFloat eta)
 {
 	auto mat = make_shared<HPBRMaterialGlass>(Kr, Kt, eta);
-	m_pTargetScene->materials.push_back(mat);
+	m_pTargetScene->pbrMaterials.push_back(mat);
 	return mat;
 }
 

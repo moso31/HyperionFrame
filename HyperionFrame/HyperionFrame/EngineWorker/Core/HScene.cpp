@@ -167,7 +167,11 @@ void HScene::InitPrimitives()
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetPBRMaterial(mtrl[4]);
-	m_sceneManager->BindTextureToShape(pShape, "firstTex");
+
+	shared_ptr<HMaterial> pMaterial = make_shared<HMaterial>("firstMaterial");
+	pMaterial->SetTexture("firstTex");
+	m_sceneManager->BindMaterialToShape(pShape, pMaterial);
+	materials.push_back(pMaterial);
 
 	//int iLineCount = 20;
 	//for (HInt i = -iLineCount; i <= iLineCount; i++)
@@ -306,9 +310,12 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 		debugMsgLines[i]->Render(pCommandList);
 	}
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
 	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 	gpuHandle.Offset(m_cbvDescriptorSize);
+
+	// 获取采样器。
+	gpuHandle = m_samplerHeap->GetGPUDescriptorHandleForHeapStart();
+	pCommandList->SetGraphicsRootDescriptorTable(4, gpuHandle);
 }
 
 void HScene::OnMouseDown(HEventArg eArg)
@@ -496,9 +503,10 @@ void HScene::UpdateDescriptors()
 			auto pShape = dynamic_pointer_cast<HShape>(primitives[i]);
 			if (pShape)
 			{
-				if (pShape->GetMaterial()->TextureEnable())
+				auto pMtrl = pShape->GetMaterial();
+				if (pMtrl && pMtrl->TextureEnable())
 				{
-					string shapeTextureName = pShape->GetMaterial()->GetTextureName();
+					string shapeTextureName = pMtrl->GetTextureName();
 					shared_ptr<HTexture> pTexture = m_sceneManager->GetTexture(shapeTextureName);
 
 					D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
