@@ -42,7 +42,6 @@ void HScene::OnResize()
 void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
 	InitRendererData(pCommandList);
-	InitTextures(pCommandList);
 
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_KEYDOWN, HScene::OnKeyDown);
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_MOUSEDOWN, HScene::OnMouseDown);
@@ -75,11 +74,6 @@ void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	DX::NAME_D3D12_OBJECT(m_samplerHeap);
 }
 
-void HScene::InitTextures(ComPtr<ID3D12GraphicsCommandList> pCommandList)
-{
-	m_sceneManager->CreateTexture("firstTex", L"E:\\1.bmp");
-}
-
 void HScene::InitCameras()
 {
 	m_mainCamera = m_sceneManager->CreateCamera();
@@ -91,8 +85,6 @@ void HScene::InitCameras()
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
-
-	m_sceneManager->AddDescriptorCount(1);	// model_view_projection descriptor.
 }
 
 void HScene::InitPrimitives()
@@ -120,36 +112,36 @@ void HScene::InitPrimitives()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	pShape = m_sceneManager->CreateBox("wall y+");
-	pShape->SetTranslation(0.0f, 10.6f, 0.0f);
-	pShape->SetPBRMaterial(mtrl[1]);
-	pShape->SetScale(20.0f, 1.0f, 20.0f);
+	//pShape = m_sceneManager->CreateBox("wall y+");
+	//pShape->SetTranslation(0.0f, 10.6f, 0.0f);
+	//pShape->SetPBRMaterial(mtrl[1]);
+	//pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	pShape = m_sceneManager->CreateBox("wall x-");
-	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	pShape->SetPBRMaterial(mtrl[2]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = m_sceneManager->CreateBox("wall x-");
+	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	//pShape->SetPBRMaterial(mtrl[2]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	pShape = m_sceneManager->CreateBox("wall x+");
-	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	pShape->SetPBRMaterial(mtrl[0]);
-	pShape->SetScale(1.0f, 20.0f, 20.0f);
+	//pShape = m_sceneManager->CreateBox("wall x+");
+	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	//pShape->SetPBRMaterial(mtrl[0]);
+	//pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	pShape = m_sceneManager->CreateBox("wall z-");
-	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	pShape->SetPBRMaterial(mtrl[5]);
-	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	//pShape = m_sceneManager->CreateBox("wall z-");
+	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	//pShape->SetPBRMaterial(mtrl[5]);
+	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = m_sceneManager->CreateBox("wall z+");
-	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	pShape->SetPBRMaterial(mtrl[5]);
-	pShape->SetScale(20.0f, 20.0f, 1.0f);
+	//pShape = m_sceneManager->CreateBox("wall z+");
+	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	//pShape->SetPBRMaterial(mtrl[5]);
+	//pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
-	pShape->SetPBRMaterial(mtrl[6]);
-	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	pShape->SetScale(5.0f, 5.0f, 5.0f);
-	pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	//pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
+	//pShape->SetPBRMaterial(mtrl[6]);
+	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	//pShape->SetScale(5.0f, 5.0f, 5.0f);
+	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
 	//pScript = BindScript(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//pShape = m_sceneManager->CreateBox("box big");
@@ -158,20 +150,20 @@ void HScene::InitPrimitives()
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
-	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetPBRMaterial(mtrl[6]);
+	//pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
+	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	//pShape->SetScale(2.0f, 2.0f, 2.0f);
+	//pShape->SetPBRMaterial(mtrl[6]);
 
 	pShape = m_sceneManager->CreateBox("box small");
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
 	pShape->SetPBRMaterial(mtrl[4]);
 
-	shared_ptr<HMaterial> pMaterial = make_shared<HMaterial>("firstMaterial");
-	pMaterial->SetTexture("firstTex");
-	m_sceneManager->BindMaterialToShape(pShape, pMaterial);
-	materials.push_back(pMaterial);
+	//shared_ptr<HMaterial> pMaterial = m_sceneManager->CreateMaterial("firstMaterial");
+	//shared_ptr<HTexture> pTexture = m_sceneManager->CreateTexture("firstTex", L"D:\\rgb.bmp");
+	//pMaterial->SetTexture(pTexture);
+	//m_sceneManager->BindMaterialToShape(pShape, pMaterial);
 
 	//int iLineCount = 20;
 	//for (HInt i = -iLineCount; i <= iLineCount; i++)
@@ -182,7 +174,7 @@ void HScene::InitPrimitives()
 	//	pLine = m_sceneManager->CreateSegment("grid", HFloat3(-pLineCount, 0.0f, pi), HFloat3(pLineCount, 0.0f, pi));
 	//}
 
-	HInt chessSize = 9;
+	HInt chessSize = -1;
 	for (HInt i = -chessSize; i <= chessSize; i++)
 	{
 		for (HInt j = -chessSize; j <= chessSize; j++)
@@ -293,10 +285,14 @@ void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<st
 		primitives[i]->Render(pCommandList);
 
 		auto pShape = dynamic_pointer_cast<HShape>(primitives[i]);
-		if (pShape && pShape->GetMaterial()->TextureEnable())
+		if (pShape)
 		{
-			gpuHandle.Offset(m_cbvDescriptorSize);
-			pCommandList->SetGraphicsRootDescriptorTable(3, gpuHandle);
+			auto pMaterial = pShape->GetMaterial();
+			if (pMaterial && pMaterial->TextureEnable())
+			{
+				gpuHandle.Offset(m_cbvDescriptorSize);
+				pCommandList->SetGraphicsRootDescriptorTable(3, gpuHandle);
+			}
 		}
 	}
 
@@ -506,8 +502,7 @@ void HScene::UpdateDescriptors()
 				auto pMtrl = pShape->GetMaterial();
 				if (pMtrl && pMtrl->TextureEnable())
 				{
-					string shapeTextureName = pMtrl->GetTextureName();
-					shared_ptr<HTexture> pTexture = m_sceneManager->GetTexture(shapeTextureName);
+					auto pTexture = pMtrl->GetTexture();
 
 					D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
 					::SecureZeroMemory(&srvDesc, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));

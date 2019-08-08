@@ -142,6 +142,9 @@
     <ClCompile Include="EngineWorker\Core\HTexture.cpp">
       <Filter>EngineWorker\Core</Filter>
     </ClCompile>
+    <ClCompile Include="EngineWorker\Core\HDescriptorManager.cpp">
+      <Filter>EngineWorker\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineCore\DirectX\DXResource.h">
@@ -298,6 +301,9 @@
       <Filter>EngineCore\File</Filter>
     </ClInclude>
     <ClInclude Include="EngineWorker\Core\HTexture.h">
+      <Filter>EngineWorker\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineWorker\Core\HDescriptorManager.h">
       <Filter>EngineWorker\Core</Filter>
     </ClInclude>
   </ItemGroup>

@@ -173,6 +173,7 @@
     <ClCompile Include="EngineCore\Renderer\PipelineManager.cpp" />
     <ClCompile Include="EngineCore\Renderer\SceneRenderer.cpp" />
     <ClCompile Include="EngineWorker\Accelerators\HBVH.cpp" />
+    <ClCompile Include="EngineWorker\Core\HDescriptorManager.cpp" />
     <ClCompile Include="EngineWorker\Core\HEvent.cpp" />
     <ClCompile Include="EngineWorker\Core\HListener.cpp" />
     <ClCompile Include="EngineWorker\Core\HObject.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="EngineCore\Renderer\SceneRenderer.h" />
     <ClInclude Include="EngineCore\Renderer\ShaderStructures.h" />
     <ClInclude Include="EngineWorker\Accelerators\HBVH.h" />
+    <ClInclude Include="EngineWorker\Core\HDescriptorManager.h" />
     <ClInclude Include="EngineWorker\Core\HEvent.h" />
     <ClInclude Include="EngineWorker\Core\HListener.h" />
     <ClInclude Include="EngineWorker\Core\HObject.h" />

@@ -1,6 +1,7 @@
 #pragma once
 #include "HPrimitive.h"
 #include "HEvent.h"
+#include "HDescriptorManager.h"
 
 class HSceneManager
 {
@@ -18,10 +19,10 @@ public:
 	shared_ptr<HMesh>		CreateMesh(string name, string filepath);
 	shared_ptr<HSegment>	CreateSegment(string name, HFloat3 point1, HFloat3 point2);
 
-	shared_ptr<HMaterial>	CreateMaterial(string name);
+	shared_ptr<HMaterial>	CreateMaterial(string nameMaterial);
 
 	shared_ptr<HTexture> CreateTexture(string name, wstring texPath);
-	bool BindMaterialToShape(shared_ptr<HShape> pShape, shared_ptr<HMaterial> pMaterial);
+	bool BindMaterialToShape(shared_ptr<HShape>& pShape, shared_ptr<HMaterial>& pMaterial);
 	shared_ptr<HTexture> GetTexture(string name);
 
 	shared_ptr<Camera>					CreateCamera();
@@ -34,20 +35,12 @@ public:
 
 	shared_ptr<HListener>	AddEventListener(const HEVENTTYPE eventType, const shared_ptr<HObject>& pObject, const function<void(HEventArg)>& pFunc);
 
-	HUInt GetDescriptorCount() { return m_descriptorCount; }
-	void AddDescriptorCount(HUInt value);
+	HUInt GetDescriptorCount() { return m_descriptorManager->GetDescriptorCount(); }
 
 private:
-	void UpdateDescriptorCount_CreateShape();
-	void UpdateDescriptorCount_CreateDebugLine();
-	void UpdateDescriptorCount_AssignTextureToShape();
-
-private:
-	shared_ptr<DXResource>	m_dxResources;
-	shared_ptr<HScene>		m_pTargetScene;
-
-	// 描述符计数器。
-	HUInt m_descriptorCount;
+	shared_ptr<DXResource>				m_dxResources;
+	shared_ptr<HScene>					m_pTargetScene;
+	shared_ptr<HDescriptorManager>		m_descriptorManager;
 
 	// 纹理列表
 	map<string, shared_ptr<HTexture>>	m_textureMap;

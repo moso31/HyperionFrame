@@ -1,26 +1,23 @@
 #pragma once
-#include <string>
+#include "header.h"
 #include "ShaderStructures.h"
-
-using namespace std;
 
 class HMaterial
 {
 public:
 	HMaterial(string name);
 
-	string GetTextureName() { return m_textureName; }
+	shared_ptr<HTexture> GetTexture();
+	void SetTexture(shared_ptr<HTexture> pTexture);
+	void ClearTexture();
 
-	// ºÏ≤‚ «∑Ò”–Œ∆¿Ì°£
-	bool TextureEnable() { return m_textureEnable; }
-
-	void SetTexture(string textureName);
+	bool TextureEnable();
 
 private:
 	string m_name;
 
 	CBufferMeshData m_color;
+	shared_ptr<HTexture> m_texture;
 
 	bool m_textureEnable;
-	string m_textureName;
 };

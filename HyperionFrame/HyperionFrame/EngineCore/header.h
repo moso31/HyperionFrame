@@ -45,6 +45,8 @@ struct HEventArg
 	HUShort VWheel;
 };
 
+class DXResource;
+
 class HListener;
 
 class SurfaceInteraction;
@@ -78,3 +80,5 @@ class HPBRMaterialMirror;
 
 class HLight;
 class HPointLight;
+
+class HDescriptorManager;

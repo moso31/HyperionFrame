@@ -4,6 +4,7 @@
 #include "WICTextureLoader12.h"
 
 #include "HScene.h"
+#include "HDescriptorManager.h"
 
 #include "Box.h"
 #include "Sphere.h"
@@ -24,9 +25,10 @@
 
 HSceneManager::HSceneManager(std::shared_ptr<DXResource> dxResources, const shared_ptr<HScene>& pTargetScene) :
 	m_dxResources(dxResources),
-	m_pTargetScene(pTargetScene), 
-	m_descriptorCount(0)
+	m_pTargetScene(pTargetScene)
 {
+	m_descriptorManager = make_shared<HDescriptorManager>();
+	m_descriptorManager->Init();
 }
 
 HSceneManager::~HSceneManager()
@@ -47,7 +49,7 @@ shared_ptr<Box> HSceneManager::CreateBox(string name, HFloat width, HFloat heigh
 	m_pTargetScene->primitives.push_back(box);
 	m_pTargetScene->m_preLoadList.push_back(box);
 
-	UpdateDescriptorCount_CreateShape();
+	m_descriptorManager->Trace(eDescriptorTraceType::DTT_CREATESHAPE);
 	return box;
 }
 
@@ -60,7 +62,7 @@ shared_ptr<Sphere> HSceneManager::CreateSphere(string name, HFloat radius, HInt 
 	m_pTargetScene->primitives.push_back(sphere);
 	m_pTargetScene->m_preLoadList.push_back(sphere);
 
-	UpdateDescriptorCount_CreateShape();
+	m_descriptorManager->Trace(eDescriptorTraceType::DTT_CREATESHAPE);
 	return sphere;
 }
 
@@ -73,7 +75,7 @@ shared_ptr<HMesh> HSceneManager::CreateMesh(string name, string filepath)
 	m_pTargetScene->primitives.push_back(mesh);
 	m_pTargetScene->m_preLoadList.push_back(mesh);
 
-	UpdateDescriptorCount_CreateShape();
+	m_descriptorManager->Trace(eDescriptorTraceType::DTT_CREATESHAPE);
 	return mesh;
 }
 
@@ -86,8 +88,16 @@ shared_ptr<HSegment> HSceneManager::CreateSegment(string name, HFloat3 point1, H
 	m_pTargetScene->primitives.push_back(segment);
 	m_pTargetScene->m_preLoadList.push_back(segment);
 
-	UpdateDescriptorCount_CreateDebugLine();
+	m_descriptorManager->Trace(eDescriptorTraceType::DTT_CREATEDEBUGMSGLINE);
 	return segment;
+}
+
+shared_ptr<HMaterial> HSceneManager::CreateMaterial(string nameMaterial)
+{
+	auto pMaterial = make_shared<HMaterial>(nameMaterial);
+	if (pMaterial)
+		m_pTargetScene->materials.push_back(pMaterial);
+	return pMaterial;
 }
 
 shared_ptr<HTexture> HSceneManager::CreateTexture(string name, wstring texPath)
@@ -107,14 +117,14 @@ shared_ptr<HTexture> HSceneManager::CreateTexture(string name, wstring texPath)
 	return nullptr;
 }
 
-bool HSceneManager::BindMaterialToShape(shared_ptr<HShape> pShape, shared_ptr<HMaterial> pMaterial)
+bool HSceneManager::BindMaterialToShape(shared_ptr<HShape>& pShape, shared_ptr<HMaterial>& pMaterial)
 {
 	if (!pShape || !pMaterial)
 		return false;
 
 	pShape->SetMaterial(pMaterial);
 	if (pMaterial->TextureEnable())
-		UpdateDescriptorCount_AssignTextureToShape();
+		m_descriptorManager->Trace(eDescriptorTraceType::DTT_BINDMATERIALTOSHAPE);
 	return true;
 }
 
@@ -219,24 +229,4 @@ shared_ptr<HListener> HSceneManager::AddEventListener(const HEVENTTYPE eventType
 		return nullptr;
 	}
 	return pListener;
-}
-
-void HSceneManager::AddDescriptorCount(HUInt value)
-{
-	m_descriptorCount += value;
-}
-
-void HSceneManager::UpdateDescriptorCount_CreateShape()
-{
-	m_descriptorCount += 2;
-}
-
-void HSceneManager::UpdateDescriptorCount_CreateDebugLine()
-{
-	m_descriptorCount += 2;
-}
-
-void HSceneManager::UpdateDescriptorCount_AssignTextureToShape()
-{
-	m_descriptorCount += 1;
 }
