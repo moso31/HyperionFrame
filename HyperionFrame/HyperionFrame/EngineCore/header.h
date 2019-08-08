@@ -45,8 +45,6 @@ struct HEventArg
 	HUShort VWheel;
 };
 
-class DXResource;
-
 class HListener;
 
 class SurfaceInteraction;
@@ -68,17 +66,10 @@ class HSegment;
 enum HSCRIPTTYPE;
 class HScript;
 
-struct HTexture;
-// General Material.
 class HMaterial;
-
-// PBR Materials.
-class HPBRMaterial;
-class HPBRMaterialMatte;
-class HPBRMaterialGlass;
-class HPBRMaterialMirror;
+class HMatteMaterial;
+class HGlassMaterial;
+class HMirrorMaterial;
 
 class HLight;
 class HPointLight;
-
-class HDescriptorManager;

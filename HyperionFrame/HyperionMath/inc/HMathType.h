@@ -1,26 +1,18 @@
 #pragma once
 #include <limits>
 
-typedef char				HChar;
-typedef unsigned char		HByte;
-typedef short				HShort;
-typedef unsigned short		HUShort;
-typedef int					HInt;
-typedef unsigned int		HUInt;
-
-typedef char				HInt8;
-typedef short				HInt16;
-typedef int					HInt32;
-typedef __int64				HInt64;
-typedef unsigned char		HUInt8;
-typedef unsigned short		HUInt16;
-typedef unsigned int		HUInt32;
-typedef unsigned __int64	HUInt64;
-
-typedef long				HLong;
-typedef unsigned long		HULong;
-typedef float				HFloat;
-typedef double				HDouble;
+typedef char HChar;
+typedef unsigned char HByte;
+typedef short HShort;
+typedef unsigned short HUShort;
+typedef int HInt;
+typedef __int64 HInt64;
+typedef unsigned int HUInt;
+typedef unsigned __int64 HUInt64;
+typedef long HLong;
+typedef unsigned long HULong;
+typedef float HFloat;
+typedef double HDouble;
 
 class HFloat2;
 class HFloat3;

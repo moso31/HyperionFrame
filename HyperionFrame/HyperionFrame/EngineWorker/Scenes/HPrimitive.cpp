@@ -1,6 +1,10 @@
 #include "HPrimitive.h"
 #include "DirectXHelper.h"
 
+HPrimitive::HPrimitive()
+{
+}
+
 HPrimitive::HPrimitive(const shared_ptr<DXResource>& dxResources) :
 	m_dxResources(dxResources),
 	m_type(ePrimitiveType::NONE),

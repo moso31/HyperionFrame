@@ -1,9 +1,9 @@
 #include "HLine.h"
 #include "DirectXHelper.h"
 
-#include "HPBRMaterialMatte.h"
-#include "HPBRMaterialGlass.h"
-#include "HPBRMaterialMirror.h"
+#include "HMatteMaterial.h"
+#include "HGlassMaterial.h"
+#include "HMirrorMaterial.h"
 
 HLine::HLine()
 {

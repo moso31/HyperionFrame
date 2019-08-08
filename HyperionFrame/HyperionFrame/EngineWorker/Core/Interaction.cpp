@@ -1,6 +1,6 @@
 #include "Interaction.h"
 #include "HShape.h"
-#include "HPBRMaterial.h"
+#include "HMaterial.h"
 #include "Reflection.h"
 
 SurfaceInteraction::SurfaceInteraction(const HFloat3& p, const HFloat3& pError, const HFloat2& uv, const HFloat3& wo, const HFloat3& dpdu, const HFloat3& dpdv, HShape* shape) :
@@ -15,7 +15,7 @@ SurfaceInteraction::SurfaceInteraction(const HFloat3& p, const HFloat3& pError, 
 
 void SurfaceInteraction::ComputeScatterFunctions()
 {
-	auto material = shape->GetPBRMaterial();
+	auto material = shape->GetMaterial();
 	if (material)
 		material->ComputeScatterFunction(this);
 }

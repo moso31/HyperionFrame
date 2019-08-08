@@ -13,13 +13,9 @@ cbuffer EyePos : register(b2)
 	float3 EyePos;
 }
 
-Texture2D<float4> g_tex : register(t0);
-sampler2D g_sampler : register(s0);
-
 // (内插)颜色数据的传递函数。
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-	//float4 tx = g_tex.Sample(input.uv);
 	float3 inPos = input.posW.xyz;
 	float3 eyeDir = normalize(EyePos - inPos);
 	float angle = dot(input.norm, eyeDir);

@@ -1,17 +1,21 @@
-#include "HPBRMaterialMatte.h"
+#include "HMatteMaterial.h"
 
-HPBRMaterialMatte::HPBRMaterialMatte(const HFloat3 & _Kd, const HFloat & _sigma) :
-	HPBRMaterial(HMAT_MATTE)
+HMatteMaterial::HMatteMaterial()
+{
+}
+
+HMatteMaterial::HMatteMaterial(const HFloat3 & _Kd, const HFloat & _sigma) :
+	HMaterial(HMAT_MATTE)
 {
 	Kd = _Kd;
 	sigma = _sigma;
 }
 
-HPBRMaterialMatte::~HPBRMaterialMatte()
+HMatteMaterial::~HMatteMaterial()
 {
 }
 
-void HPBRMaterialMatte::ComputeScatterFunction(SurfaceInteraction * si)
+void HMatteMaterial::ComputeScatterFunction(SurfaceInteraction * si)
 {
 	si->bsdf = new BSDF(*si);
 	HFloat3 r = Kd.Clamp(0.0f, 1.0f);	//Kd->Evaluate(*si).Clamp();

@@ -4,7 +4,7 @@
 #include "HShape.h"
 #include "HLine.h"
 #include "Camera.h"
-#include "HPBRMaterial.h"
+#include "HMaterial.h"
 #include "HLight.h"
 #include "ImageGenerator.h"
 #include "HSceneManager.h"
@@ -26,14 +26,11 @@ public:
 	// 初始化渲染器信息，主要处理描述符堆的数据。
 	void InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 
-	void InitCameras();
-	void InitPrimitives();
+	// 初始化图元信息。
+	void InitPrimitiveData();
 
 	// 初始化结构信息。需要在所有primitive创建之后，第一次更新前执行一次，以提供Transform和BVH加速结构信息。
 	void InitStructureData();
-
-	// 初始化采样器
-	void InitSamplers();
 
 	void Update(ComPtr<ID3D12GraphicsCommandList> pCommandList);
 	void Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs);
@@ -67,12 +64,10 @@ public:
 	// 和其他类相互结合使用的情况比较多见，故直接暴露在外。
 	vector<shared_ptr<Camera>>			cameras;
 	vector<shared_ptr<HLight>>			lights;
-	vector<shared_ptr<HPBRMaterial>>	pbrMaterials;
+	vector<shared_ptr<HMaterial>>		materials;
 	vector<shared_ptr<HPrimitive>>		primitives;
 	vector<shared_ptr<HLine>>			debugMsgLines;
 	vector<shared_ptr<HScript>>			scripts;
-
-	vector<shared_ptr<HMaterial>>		materials;
 
 private:
 	// 在新生成物体后需要执行此方法，更新描述符的数量。
@@ -94,23 +89,22 @@ private:
 	void UpdateConstantBuffer();
 
 private:
-	shared_ptr<DXResource>				m_dxResources;
-	shared_ptr<HSceneManager>			m_sceneManager;
+	std::shared_ptr<DXResource>		m_dxResources;
+	std::shared_ptr<HSceneManager>	m_sceneManager;
 
-	shared_ptr<Camera>					m_mainCamera;
-	AABB								m_aabb;
-	HBVHTree*							m_bvhTree;
+	shared_ptr<Camera>				m_mainCamera;
+	AABB				m_aabb;
+	HBVHTree*			m_bvhTree;
 
-	HInt								m_makingProcessIndex;
+	HInt					m_makingProcessIndex;
 	
 	// 用于存放场景内primitive的描述符堆。
-	ComPtr<ID3D12DescriptorHeap>		m_cbvSrvHeap;
-	ComPtr<ID3D12DescriptorHeap>		m_samplerHeap;
-	HUInt								m_cbvDescriptorSize;
+	ComPtr<ID3D12DescriptorHeap>	m_cbvHeap;
+	HUInt							m_cbvDescriptorSize;
 
 	// Hyperion 中的场景实时变更采用的方法是 延迟加载。
 	// 即新添加物体的指令当前帧并不执行，而是交由此 预载列表 按序存储。
 	// 预载列表 中的物体会在下一帧UpdateTransform之前加载到场景中。之后会清空预载列表以防重复添加。
 	// Hyperion 采用这种 延迟加载 方案的原因是，只有在每帧 CommandList 关闭时才能对场景的 Buffer 进行变更。
-	vector<shared_ptr<HPrimitive>>		m_preLoadList;
+	vector<shared_ptr<HPrimitive>> m_prepareToLoadList;
 };

@@ -24,19 +24,15 @@ void SceneRenderer::CreateSceneResources()
 
 	// 创建具有单个常量缓冲区槽的根签名。
 	{
-		CD3DX12_DESCRIPTOR_RANGE range[5];
-		CD3DX12_ROOT_PARAMETER parameter[5];
+		CD3DX12_DESCRIPTOR_RANGE range[3];
+		CD3DX12_ROOT_PARAMETER parameter[3];
 
 		range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 		range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
 		range[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 2);
-		range[3].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-		range[4].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 		parameter[0].InitAsDescriptorTable(1, &range[0], D3D12_SHADER_VISIBILITY_VERTEX);
 		parameter[1].InitAsDescriptorTable(1, &range[1], D3D12_SHADER_VISIBILITY_VERTEX);
 		parameter[2].InitAsDescriptorTable(1, &range[2], D3D12_SHADER_VISIBILITY_PIXEL);
-		parameter[3].InitAsDescriptorTable(1, &range[3], D3D12_SHADER_VISIBILITY_PIXEL);
-		parameter[4].InitAsDescriptorTable(1, &range[4], D3D12_SHADER_VISIBILITY_PIXEL);
 
 		D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // 只有输入汇编程序阶段才需要访问常量缓冲区。

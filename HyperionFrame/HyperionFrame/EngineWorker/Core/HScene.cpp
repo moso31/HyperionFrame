@@ -9,11 +9,9 @@
 #include "HMesh.h"
 #include "HSegment.h"
 #include "HPointLight.h"
-#include "HPBRMaterialMatte.h"
-#include "HPBRMaterialGlass.h"
-#include "HPBRMaterialMirror.h"
-#include "HMaterial.h"
-#include "HTexture.h"
+#include "HMatteMaterial.h"
+#include "HGlassMaterial.h"
+#include "HMirrorMaterial.h"
 
 #include "HInput.h"
 
@@ -46,35 +44,32 @@ void HScene::Init(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_KEYDOWN, HScene::OnKeyDown);
 	RegisterEventListener(shared_from_this(), shared_from_this(), HEVENTTYPE::HEVENT_MOUSEDOWN, HScene::OnMouseDown);
 
-	InitCameras();
-	InitPrimitives();
+	InitPrimitiveData();
 	InitStructureData();
-	InitSamplers();
 }
 
 void HScene::InitRendererData(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	auto pD3DDevice = m_dxResources->GetD3DDevice();
 	m_sceneManager = make_shared<HSceneManager>(m_dxResources, shared_from_this());
+
+	auto pD3DDevice = m_dxResources->GetD3DDevice();
+	
 	m_cbvDescriptorSize = pD3DDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-	heapDesc.NumDescriptors = DXResource::c_frameCount * 0 + 1;
-	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
-	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvSrvHeap)));
-	DX::NAME_D3D12_OBJECT(m_cbvSrvHeap);
+	// 为常量缓冲区创建描述符堆。
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = DXResource::c_frameCount * 0 + 1;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_cbvHeap)));
 
-	D3D12_DESCRIPTOR_HEAP_DESC samplerHeapDesc = {};
-	samplerHeapDesc.NumDescriptors = 1;
-	samplerHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
-	samplerHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&samplerHeapDesc, IID_PPV_ARGS(&m_samplerHeap)));
-	DX::NAME_D3D12_OBJECT(m_samplerHeap);
+		DX::NAME_D3D12_OBJECT(m_cbvHeap);
+	}
 }
 
-void HScene::InitCameras()
+void HScene::InitPrimitiveData()
 {
 	m_mainCamera = m_sceneManager->CreateCamera();
 	//m_mainCamera->SetTranslation(9.0f, 6.0f, 4.0f);
@@ -91,10 +86,7 @@ void HScene::InitCameras()
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYDOWN, HSFirstPersonalCamera::OnKeyDown);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_KEYUP, HSFirstPersonalCamera::OnKeyUp);
 	RegisterEventListener(m_mainCamera, pScript_first_personal_camera, HEVENTTYPE::HEVENT_MOUSEMOVE, HSFirstPersonalCamera::OnMouseMove);
-}
 
-void HScene::InitPrimitives()
-{
 	HFloat3 red = { 1.0f, 0.0f, 0.0f },
 		green = { 0.0f, 1.0f, 0.0f },
 		blue = { 0.0f, 0.0f, 1.0f },
@@ -103,7 +95,7 @@ void HScene::InitPrimitives()
 		mirror_white = { 0.9f, 0.9f, 0.9f },
 		gray = { 0.8f, 0.8f, 0.8f };
 	HFloat sig = 90.0f;
-	shared_ptr<HPBRMaterial> mtrl[7] = {
+	shared_ptr<HMaterial> mtrl[7] = {
 		m_sceneManager->CreateMatteMaterial(green, sig),
 		m_sceneManager->CreateMatteMaterial(red, sig),
 		m_sceneManager->CreateMatteMaterial(blue, sig),
@@ -118,36 +110,36 @@ void HScene::InitPrimitives()
 	shared_ptr<HShape> pShape;
 	shared_ptr<HLine> pLine;
 
-	//pShape = m_sceneManager->CreateBox("wall y+");
-	//pShape->SetTranslation(0.0f, 10.6f, 0.0f);
-	//pShape->SetPBRMaterial(mtrl[1]);
-	//pShape->SetScale(20.0f, 1.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall y+");
+	pShape->SetTranslation(0.0f, 10.6f, 0.0f);
+	pShape->SetMaterial(mtrl[1]);
+	pShape->SetScale(20.0f, 1.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall x-");
-	//pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
-	//pShape->SetPBRMaterial(mtrl[2]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall x-");
+	pShape->SetTranslation(-10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[2]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall x+");
-	//pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
-	//pShape->SetPBRMaterial(mtrl[0]);
-	//pShape->SetScale(1.0f, 20.0f, 20.0f);
+	pShape = m_sceneManager->CreateBox("wall x+");
+	pShape->SetTranslation(+10.0f, 0.0f, 0.0f);
+	pShape->SetMaterial(mtrl[0]);
+	pShape->SetScale(1.0f, 20.0f, 20.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall z-");
-	//pShape->SetTranslation(0.0f, 0.0f, -10.0f);
-	//pShape->SetPBRMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = m_sceneManager->CreateBox("wall z-");
+	pShape->SetTranslation(0.0f, 0.0f, -10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = m_sceneManager->CreateBox("wall z+");
-	//pShape->SetTranslation(0.0f, 0.0f, +10.0f);
-	//pShape->SetPBRMaterial(mtrl[5]);
-	//pShape->SetScale(20.0f, 20.0f, 1.0f);
+	pShape = m_sceneManager->CreateBox("wall z+");
+	pShape->SetTranslation(0.0f, 0.0f, +10.0f);
+	pShape->SetMaterial(mtrl[5]);
+	pShape->SetScale(20.0f, 20.0f, 1.0f);
 
-	//pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
-	//pShape->SetPBRMaterial(mtrl[6]);
-	//pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
-	//pShape->SetScale(5.0f, 5.0f, 5.0f);
-	//pShape->SetRotation(0.0f, 0.3f, 0.0f);
+	pShape = m_sceneManager->CreateMesh("MayaFBXObject", "D:\\test.fbx");
+	pShape->SetMaterial(mtrl[6]);
+	pShape->SetTranslation(-3.0f, 2.5f, -4.0f);
+	pShape->SetScale(5.0f, 5.0f, 5.0f);
+	pShape->SetRotation(0.0f, 0.3f, 0.0f);
 	//pScript = BindScript(HSTest, HSCRIPTTYPE::HSCRIPT_TEST, pShape);
 
 	//pShape = m_sceneManager->CreateBox("box big");
@@ -156,20 +148,15 @@ void HScene::InitPrimitives()
 	//pShape->SetRotation(0.0f, -0.3f, 0.0f);
 	//pShape->SetMaterial(mtrl[4]);
 
-	//pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
-	//pShape->SetTranslation(1.5f, 2.0f, 0.0f);
-	//pShape->SetScale(2.0f, 2.0f, 2.0f);
-	//pShape->SetPBRMaterial(mtrl[6]);
+	pShape = m_sceneManager->CreateSphere("sphere", 1.0f, 64, 64);
+	pShape->SetTranslation(1.5f, 2.0f, 0.0f);
+	pShape->SetScale(2.0f, 2.0f, 2.0f);
+	pShape->SetMaterial(mtrl[6]);
 
 	pShape = m_sceneManager->CreateBox("box small");
 	pShape->SetTranslation(5.0f, 1.0f, -2.0f);
 	pShape->SetScale(2.0f, 2.0f, 2.0f);
-	pShape->SetPBRMaterial(mtrl[4]);
-
-	//shared_ptr<HMaterial> pMaterial = m_sceneManager->CreateMaterial("firstMaterial");
-	//shared_ptr<HTexture> pTexture = m_sceneManager->CreateTexture("firstTex", L"D:\\rgb.bmp");
-	//pMaterial->SetTexture(pTexture);
-	//m_sceneManager->BindMaterialToShape(pShape, pMaterial);
+	pShape->SetMaterial(mtrl[4]);
 
 	//int iLineCount = 20;
 	//for (HInt i = -iLineCount; i <= iLineCount; i++)
@@ -180,7 +167,7 @@ void HScene::InitPrimitives()
 	//	pLine = m_sceneManager->CreateSegment("grid", HFloat3(-pLineCount, 0.0f, pi), HFloat3(pLineCount, 0.0f, pi));
 	//}
 
-	HInt chessSize = -1;
+	HInt chessSize = 9;
 	for (HInt i = -chessSize; i <= chessSize; i++)
 	{
 		for (HInt j = -chessSize; j <= chessSize; j++)
@@ -189,12 +176,12 @@ void HScene::InitPrimitives()
 			if ((i + j) % 2)
 			{
 				pShape->SetTranslation(-i, -0.7f, j);
-				pShape->SetPBRMaterial(mtrl[1]);
+				pShape->SetMaterial(mtrl[1]);
 			}
 			else
 			{
 				pShape->SetTranslation(-i, -0.5f, j);
-				pShape->SetPBRMaterial(mtrl[3]);
+				pShape->SetMaterial(mtrl[3]);
 			}
 		}
 	}
@@ -236,23 +223,6 @@ void HScene::InitStructureData()
 	UpdateAccelerateStructure();
 }
 
-void HScene::InitSamplers()
-{
-	D3D12_SAMPLER_DESC samplerDesc;
-	::SecureZeroMemory(&samplerDesc, sizeof(D3D12_SAMPLER_DESC));
-	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
-	samplerDesc.MipLODBias = 0;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-
-	auto pD3DDevice = m_dxResources->GetD3DDevice();
-	pD3DDevice->CreateSampler(&samplerDesc, m_samplerHeap->GetCPUDescriptorHandleForHeapStart());
-}
-
 static HFloat xxxxx = 0;
 void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
@@ -274,50 +244,40 @@ void HScene::Update(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 
 void HScene::Render(ComPtr<ID3D12GraphicsCommandList> pCommandList, const map<string, ComPtr<ID3D12PipelineState>>& pPSOs)
 {
-	ID3D12DescriptorHeap* ppHeaps[] = { m_cbvSrvHeap.Get(), m_samplerHeap.Get() };
+	ID3D12DescriptorHeap* ppHeaps[] = { m_cbvHeap.Get() };
 	pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	HUInt primitiveCount = (HUInt)primitives.size();
 	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
+	HUInt renderCount = primitiveCount + debugMsgLineCount;
+	HUInt cbvIndex = DXResource::c_frameCount * renderCount;
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+	gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
+	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
 
 	for (HUInt i = 0; i < primitiveCount; i++)
 	{
+		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + i;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
-		gpuHandle.Offset(m_cbvDescriptorSize);
 		primitives[i]->Render(pCommandList);
-
-		auto pShape = dynamic_pointer_cast<HShape>(primitives[i]);
-		if (pShape)
-		{
-			auto pMaterial = pShape->GetMaterial();
-			if (pMaterial && pMaterial->TextureEnable())
-			{
-				gpuHandle.Offset(m_cbvDescriptorSize);
-				pCommandList->SetGraphicsRootDescriptorTable(3, gpuHandle);
-			}
-		}
 	}
 
 	pCommandList->SetPipelineState(pPSOs.at("wireFrame").Get());
 	for (HUInt i = 0; i < debugMsgLineCount; i++)
 	{
+		HUInt cbvIndex = m_dxResources->GetCurrentFrameIndex() * renderCount + primitiveCount + i;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+		gpuHandle.Offset(cbvIndex * 2, m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
 		gpuHandle.Offset(m_cbvDescriptorSize);
 		pCommandList->SetGraphicsRootDescriptorTable(1, gpuHandle);
-		gpuHandle.Offset(m_cbvDescriptorSize);
 		debugMsgLines[i]->Render(pCommandList);
 	}
-
-	pCommandList->SetGraphicsRootDescriptorTable(2, gpuHandle);
-	gpuHandle.Offset(m_cbvDescriptorSize);
-
-	// 获取采样器。
-	gpuHandle = m_samplerHeap->GetGPUDescriptorHandleForHeapStart();
-	pCommandList->SetGraphicsRootDescriptorTable(4, gpuHandle);
 }
 
 void HScene::OnMouseDown(HEventArg eArg)
@@ -471,76 +431,68 @@ void HScene::UpdateDescriptors()
 	HUInt debugMsgLineCount = (HUInt)debugMsgLines.size();
 	HUInt renderCount = primitiveCount + debugMsgLineCount;
 
+	ComPtr<ID3D12DescriptorHeap>	pNewCbvHeap;
 	// 为常量缓冲区创建新的描述符堆。
-	ComPtr<ID3D12DescriptorHeap>	pNewCbvSrvHeap;
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = m_sceneManager->GetDescriptorCount();
+		heapDesc.NumDescriptors = DXResource::c_frameCount * renderCount * 2 + 1;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		// 此标志指示此描述符堆可以绑定到管道，并且其中包含的描述符可以由根表引用。
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&pNewCbvSrvHeap)));
+		DX::ThrowIfFailed(pD3DDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&pNewCbvHeap)));
 
-		DX::NAME_D3D12_OBJECT(pNewCbvSrvHeap);
+		DX::NAME_D3D12_OBJECT(pNewCbvHeap);
 	}
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 	for (HUInt n = 0; n < DXResource::c_frameCount; n++)
 	{
 		for (HUInt i = 0; i < primitiveCount; i++)
 		{
+			HInt heapIndex = n * renderCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = primitives[i]->GetConstantBuffer()->GetGPUVirtualAddress();
+			//cbvGpuAddress += heapIndex * primitives[i]->GetAlignedConstantBufferSize();
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
+			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 			// 将数据写入该资源
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 			desc.SizeInBytes = 256;
 			desc.BufferLocation = cbvGpuAddress;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 			desc.BufferLocation += 256;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
-
-			auto pShape = dynamic_pointer_cast<HShape>(primitives[i]);
-			if (pShape)
-			{
-				auto pMtrl = pShape->GetMaterial();
-				if (pMtrl && pMtrl->TextureEnable())
-				{
-					auto pTexture = pMtrl->GetTexture();
-
-					D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
-					::SecureZeroMemory(&srvDesc, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
-					srvDesc.Format = pTexture->resource.Get()->GetDesc().Format;
-					srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-					srvDesc.Texture2D.MipLevels = 1;
-					pD3DDevice->CreateShaderResourceView(pTexture->resource.Get(), &srvDesc, cbvCpuHandle);
-					cbvCpuHandle.Offset(m_cbvDescriptorSize);
-				}
-			}
 		}
 
 		for (HUInt i = 0; i < debugMsgLineCount; i++)
 		{
+			HInt heapIndex = n * renderCount + primitiveCount + i;
 			D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = debugMsgLines[i]->GetConstantBuffer()->GetGPUVirtualAddress();
-			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+			//cbvGpuAddress += heapIndex * debugMsgLines[i]->GetAlignedConstantBufferSize();
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
+			cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 			// 将数据写入该资源
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 			desc.SizeInBytes = 256;
 			desc.BufferLocation = cbvGpuAddress;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 
+			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 			desc.BufferLocation += 256;
 			pD3DDevice->CreateConstantBufferView(&desc, cbvCpuHandle);
-			cbvCpuHandle.Offset(m_cbvDescriptorSize);
 		}
 	}
 
+	HInt heapIndex = DXResource::c_frameCount * renderCount;
 	D3D12_GPU_VIRTUAL_ADDRESS cbvGpuAddress = m_mainCamera->GetConstantBuffer()->GetGPUVirtualAddress();
-	cbvCpuHandle.Offset(m_cbvDescriptorSize);
+	//cbvGpuAddress += heapIndex * m_mainCamera->GetAlignedConstantBufferSize();
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(pNewCbvHeap->GetCPUDescriptorHandleForHeapStart());
+	cbvCpuHandle.Offset(heapIndex * 2, m_cbvDescriptorSize);
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 	desc.SizeInBytes = 256;
@@ -549,7 +501,7 @@ void HScene::UpdateDescriptors()
 
 	//m_cbvHeap->Release();
 	m_dxResources->WaitForGpu();
-	m_cbvSrvHeap = pNewCbvSrvHeap;
+	m_cbvHeap = pNewCbvHeap;
 }
 
 void HScene::UpdateAccelerateStructure()
@@ -560,12 +512,12 @@ void HScene::UpdateAccelerateStructure()
 
 void HScene::UpdatePrimitive(ComPtr<ID3D12GraphicsCommandList> pCommandList)
 {
-	for (auto it = m_preLoadList.begin(); it != m_preLoadList.end(); it++)
+	for (auto it = m_prepareToLoadList.begin(); it != m_prepareToLoadList.end(); it++)
 	{
 		(*it)->GeneratePrimitiveBuffer(pCommandList);
 	}
 
-	m_preLoadList.clear();
+	m_prepareToLoadList.clear();
 
 	UpdateDescriptors();
 }

@@ -15,11 +15,6 @@ struct CBufferMeshData
 	HFloat3 vertColor;
 };
 
-struct CBufferMaterial
-{
-	HFloat3 color;
-};
-
 struct CBufferLineData
 {
 	HFloat3 lineColor;

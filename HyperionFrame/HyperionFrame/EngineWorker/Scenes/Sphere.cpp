@@ -2,11 +2,12 @@
 #include "PipelineManager.h"
 #include "Interaction.h"
 
+Sphere::Sphere()
+{
+}
+
 Sphere::Sphere(const shared_ptr<DXResource>& dxResources) :
-	HShape(dxResources),
-	m_radius(1.0f),
-	m_segmentHorizontal(16),
-	m_segmentVertical(16)
+	HShape(dxResources)
 {
 	m_type = ePrimitiveType::SPHERE;
 	m_renderType = eRenderType::Shape;
