@@ -418,7 +418,7 @@ void HScene::MakeBMPImageTile(HInt tileX, HInt tileY, HInt2 tilesize, HInt tileS
 }
 
 void HScene::UpdateDescriptors()
-{
+{ 
 	auto pD3DDevice = m_dxResources->GetD3DDevice();
 
 	HUInt primitiveCount = (HUInt)primitives.size();
